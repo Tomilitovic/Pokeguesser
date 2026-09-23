@@ -6,7 +6,6 @@ body {
     padding: 20px;
     color: white; 
     
-    /* Le fond pointe maintenant vers fond.jpeg */
     background-image: url("fond.jpeg");
     background-size: cover;
     background-attachment: fixed;
@@ -24,8 +23,12 @@ header {
 }
 
 #mascotte {
-    width: 150px; 
-    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4)); 
+    width: 150px;
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 50%; 
+    border: 3px solid white; 
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
 }
 
 h1 {
@@ -62,4 +65,24 @@ input:focus {
     gap: 15px;
     max-width: 1000px;
     margin: 0 auto; 
+}
+
+/* --- NOUVEAU : Apparence des cases des Pokémon vides --- */
+.pokemon-box {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(25, 35, 45, 0.8); /* Fond sombre légèrement transparent */
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid #34495e;
+}
+
+.pokemon-box span.numero {
+    font-size: 1.2rem;
+    color: #7f8c8d; /* Texte grisé */
+    font-weight: bold;
 }
