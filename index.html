@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Mon Quiz Pokémon</title>
+    <meta charset="UTF-8">
+    <title>POKEGUESSER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Devine le Pokémon !</h1>
-    <p>Tapez un nom de Pokémon :</p>
-    <input type="text" id="saisie" placeholder="Ex: Sabelette...">
-    <div id="resultat"></div>
+    <header>
+        <!-- Le code pointe maintenant vers logo.jpeg -->
+        <img src="logo.jpeg" alt="Logo du site" id="mascotte">
+        <h1>POKEGUESSER</h1>
+    </header>
+
+    <main>
+        <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
+        <div id="pokedex-grid"></div>
+    </main>
+
     <script src="script.js"></script>
 </body>
 </html>
