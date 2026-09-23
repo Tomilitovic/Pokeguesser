@@ -1,24 +1,100 @@
-// On cible la zone de la grille dans notre HTML
 const grid = document.getElementById('pokedex-grid');
+const input = document.getElementById('saisie');
 
-// On crée une boucle mathématique qui va de 1 à 151
+// 1. On crée la grille vide de 151 cases (comme on l'a fait précédemment)
 for (let i = 1; i <= 151; i++) {
-    
-    // 1. On crée une case (une balise 'div' en HTML)
     let box = document.createElement('div');
-    
-    // 2. On lui donne le style 'pokemon-box' défini dans le CSS
     box.classList.add('pokemon-box');
-    
-    // 3. On lui donne un identifiant unique (box-1, box-2, etc.) pour la retrouver plus tard
     box.id = "box-" + i;
-    
-    // 4. On formate le numéro pour qu'il affiche #001, #010, #151 (toujours 3 chiffres)
     let numeroFormate = "#" + i.toString().padStart(3, '0');
-    
-    // 5. On écrit ce numéro gris à l'intérieur de la case
     box.innerHTML = `<span class="numero">${numeroFormate}</span>`;
-    
-    // 6. On injecte la case terminée dans la grille de la page web
     grid.appendChild(box);
 }
+
+// 2. On prépare un dictionnaire vide en mémoire pour stocker les noms
+let pokemonsData = {};
+
+// 3. Fonction pour nettoyer le texte : enlève les majuscules et les accents (ex: transforme "Évoli" en "evoli")
+function normaliserTexte(texte) {
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+// 4. On récupère les données des 151 Pokémon d'un seul coup
+async function chargerPokemons() {
+    input.placeholder = "Chargement de la base de données...";
+    input.disabled = true; // On bloque la saisie le temps du chargement
+
+    // On utilise une requête spéciale très rapide pour demander à l'API les noms FR et EN
+    const requeteGraphQL = `
+    query {
+      pokemon_v2_pokemonspecies(where: {id: {_lte: 151}}) {
+        id
+        name
+        pokemon_v2_pokemonspeciesnames(where: {language_id: {_eq: 5}}) {
+          name
+        }
+      }
+    }`;
+
+    try {
+        const reponse = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: requeteGraphQL })
+        });
+        const data = await reponse.json();
+        
+        // On range les données reçues dans notre dictionnaire
+        data.data.pokemon_v2_pokemonspecies.forEach(pokemon => {
+            const id = pokemon.id;
+            const nomAnglais = normaliserTexte(pokemon.name);
+            const nomFrancais = normaliserTexte(pokemon.pokemon_v2_pokemonspeciesnames[0].name);
+            
+            // On associe les deux noms à l'identifiant (les deux marcheront !)
+            pokemonsData[nomFrancais] = id;
+            pokemonsData[nomAnglais] = id; 
+        });
+
+        // Le chargement est fini, on réactive la barre !
+        input.placeholder = "Tapez un nom de Pokémon (FR ou EN)...";
+        input.disabled = false;
+        input.focus();
+    } catch (erreur) {
+        input.placeholder = "Erreur de chargement de la PokéAPI !";
+    }
+}
+
+// 5. On écoute en direct chaque lettre tapée au clavier
+input.addEventListener('input', function(e) {
+    // On nettoie ce que le joueur vient de taper (pas de majuscule, pas d'accent)
+    const texteSaisi = normaliserTexte(e.target.value);
+    
+    // Si le texte correspond exactement à un Pokémon de notre dictionnaire...
+    if (pokemonsData[texteSaisi]) {
+        const idPokemon = pokemonsData[texteSaisi];
+        
+        // On cible la bonne case correspondante
+        const box = document.getElementById("box-" + idPokemon);
+        
+        // On vérifie qu'elle n'a pas déjà été trouvée
+        if (!box.classList.contains('trouve')) {
+            // On lui ajoute la classe CSS 'trouve' pour la bordure verte
+            box.classList.add('trouve');
+            
+            // On construit le lien de l'image officielle HD
+            const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${idPokemon}.png`;
+            
+            // On remplace le numéro gris par l'image et le nom que le joueur a tapé
+            box.innerHTML = `
+                <img src="${imageUrl}" alt="Pokemon ${idPokemon}" style="width: 80px; height: 80px; object-fit: contain;">
+                <span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${e.target.value.toUpperCase()}</span>
+            `;
+            
+            // On vide instantanément la barre de recherche pour passer au suivant !
+            e.target.value = "";
+        }
+    }
+});
+
+// On lance la fonction de chargement dès l'ouverture de la page
+chargerPokemons();

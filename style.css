@@ -86,3 +86,9 @@ input:focus {
     color: #7f8c8d; /* Texte grisé */
     font-weight: bold;
 }
+
+/* Apparence d'une case quand le Pokémon est trouvé */
+.pokemon-box.trouve {
+    background-color: rgba(46, 204, 113, 0.2); /* Fond légèrement vert */
+    border-color: #2ecc71; /* Bordure verte éclatante */
+}
