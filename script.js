@@ -19,25 +19,26 @@ function normaliserTexte(texte) {
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-// 4. On récupère les données des 151 Pokémon d'un seul coup
+// 4. On récupère les données des 151 Pokémon d'un seul coup (Version mise à jour v1beta2)
 async function chargerPokemons() {
     input.placeholder = "Chargement de la base de données...";
     input.disabled = true; // On bloque la saisie le temps du chargement
 
-    // On utilise une requête spéciale très rapide pour demander à l'API les noms FR et EN
+    // Nouvelle requête GraphQL sans le vieux préfixe 'pokemon_v2_'
     const requeteGraphQL = `
     query {
-      pokemon_v2_pokemonspecies(where: {id: {_lte: 151}}) {
+      pokemonspecies(where: {id: {_lte: 151}}) {
         id
         name
-        pokemon_v2_pokemonspeciesnames(where: {language_id: {_eq: 5}}) {
+        pokemonspeciesnames(where: {language_id: {_eq: 5}}) {
           name
         }
       }
     }`;
 
     try {
-        const reponse = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+        // On utilise la nouvelle adresse v1beta2
+        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: requeteGraphQL })
@@ -45,12 +46,12 @@ async function chargerPokemons() {
         const data = await reponse.json();
         
         // On range les données reçues dans notre dictionnaire
-        data.data.pokemon_v2_pokemonspecies.forEach(pokemon => {
+        data.data.pokemonspecies.forEach(pokemon => {
             const id = pokemon.id;
             const nomAnglais = normaliserTexte(pokemon.name);
-            const nomFrancais = normaliserTexte(pokemon.pokemon_v2_pokemonspeciesnames[0].name);
+            const nomFrancais = normaliserTexte(pokemon.pokemonspeciesnames[0].name);
             
-            // On associe les deux noms à l'identifiant (les deux marcheront !)
+            // On associe les deux noms à l'identifiant
             pokemonsData[nomFrancais] = id;
             pokemonsData[nomAnglais] = id; 
         });
@@ -61,6 +62,7 @@ async function chargerPokemons() {
         input.focus();
     } catch (erreur) {
         input.placeholder = "Erreur de chargement de la PokéAPI !";
+        console.error(erreur);
     }
 }
 
