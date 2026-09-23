@@ -8,10 +8,9 @@ body {
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
-    position: relative; /* Nécessaire pour le menu absolu */
+    position: relative; 
 }
 
-/* Le menu des générations */
 #menu-generations {
     position: absolute;
     top: 20px;
@@ -37,8 +36,12 @@ body {
     transition: 0.2s;
 }
 
+/* La règle qui force vos grandes images à devenir de belles icônes */
 .btn-gen img {
-    width: 40px;
+    width: 35px; 
+    height: 35px; 
+    object-fit: contain; 
+    border-radius: 5px; 
 }
 
 .btn-gen:hover {
@@ -87,7 +90,6 @@ h1 {
     gap: 20px;
 }
 
-/* Le bouton Réinitialiser */
 #btn-reset {
     background-color: #e74c3c;
     color: white;
