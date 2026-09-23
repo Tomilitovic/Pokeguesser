@@ -2,27 +2,40 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>POKEGUESSER</title>
+    <title>POKEGUESSER - Gen 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
-    <!-- Bibliothèque magique pour générer les feux d'artifice/confettis à la fin -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Nouveau menu pour les générations -->
+    <nav id="menu-generations">
+        <a href="index.html" class="btn-gen actif">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="Kanto">
+            Génération 1
+        </a>
+        <a href="gen2.html" class="btn-gen">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/155.png" alt="Johto">
+            Génération 2
+        </a>
+    </nav>
+
     <header>
         <img src="logo.jpeg" alt="Logo du site" id="mascotte">
         <h1>POKEGUESSER</h1>
     </header>
 
     <main>
-        <!-- Le compteur de score -->
-        <div id="score-container">Score : <span id="score">0</span> / 151</div>
+        <div id="score-container">
+            Score : <span id="score">0</span> / 151
+            <!-- Nouveau bouton pour réinitialiser -->
+            <button id="btn-reset">🔄 Réinitialiser</button>
+        </div>
 
         <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
         <div id="pokedex-grid"></div>
     </main>
 
-    <!-- Votre signature en bas de page -->
     <footer>
         Créé par Tomilitovic
     </footer>

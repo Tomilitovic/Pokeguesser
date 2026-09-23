@@ -4,8 +4,24 @@ const scoreText = document.getElementById('score');
 
 let scoreActuel = 0;
 let pokemonsData = {};
+let pokemonsTrouves = []; // Tableau de sauvegarde
 
-// 1. Génération de la grille vide
+// Alerte si le joueur tente de fermer l'onglet
+window.addEventListener('beforeunload', function (e) {
+    if (scoreActuel > 0 && scoreActuel < 151) {
+        e.preventDefault();
+        e.returnValue = ''; // Requis par les navigateurs modernes
+    }
+});
+
+// Action du bouton de réinitialisation
+document.getElementById('btn-reset').addEventListener('click', function() {
+    if(confirm("Voulez-vous vraiment tout effacer et recommencer à zéro ?")) {
+        localStorage.removeItem('sauvegardeGen1');
+        location.reload(); // Rafraîchit la page
+    }
+});
+
 for (let i = 1; i <= 151; i++) {
     let box = document.createElement('div');
     box.classList.add('pokemon-box');
@@ -19,12 +35,10 @@ function normaliserTexte(texte) {
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-// 2. Chargement des données (incluant les formes alternatives !)
 async function chargerPokemons() {
     input.placeholder = "Chargement des Pokémon...";
     input.disabled = true; 
 
-    // On a modifié la requête pour demander aussi les "pokemons" (les formes alternatives : Méga, Alola, etc.)
     const requeteGraphQL = `
     query {
       pokemonspecies(where: {id: {_lte: 151}}) {
@@ -51,14 +65,29 @@ async function chargerPokemons() {
             const id = espece.id;
             const nomAnglais = normaliserTexte(espece.name);
             const nomFrancais = normaliserTexte(espece.pokemonspeciesnames[0].name);
-            
-            // On récupère tous les IDs de ses formes (ex: Florizarre a la forme normale + la Méga-évolution)
             const toutesLesFormes = espece.pokemons.map(p => p.id);
             
-            // On stocke l'ID principal ET le tableau des formes alternatives
-            pokemonsData[nomFrancais] = { id: id, formes: toutesLesFormes };
-            pokemonsData[nomAnglais] = { id: id, formes: toutesLesFormes }; 
+            // On sauvegarde aussi le "vraiNom" avec sa majuscule pour l'affichage de la sauvegarde
+            pokemonsData[nomFrancais] = { id: id, formes: toutesLesFormes, vraiNom: espece.pokemonspeciesnames[0].name };
+            pokemonsData[nomAnglais] = { id: id, formes: toutesLesFormes, vraiNom: espece.name }; 
         });
+
+        // RÉCUPÉRATION DE LA SAUVEGARDE AU CHARGEMENT
+        const sauvegarde = localStorage.getItem('sauvegardeGen1');
+        if (sauvegarde) {
+            const idsSauvegardes = JSON.parse(sauvegarde); 
+            idsSauvegardes.forEach(id => {
+                let nomAffiche = "Trouvé";
+                for (let cle in pokemonsData) {
+                    if (pokemonsData[cle].id === id) {
+                        nomAffiche = pokemonsData[cle].vraiNom;
+                        break;
+                    }
+                }
+                // On valide le Pokémon sans jouer le cri (pour ne pas casser les oreilles au chargement)
+                validerPokemon(id, pokemonsData[normaliserTexte(nomAffiche)].formes, nomAffiche, false);
+            });
+        }
 
         input.placeholder = "Tapez un nom de Pokémon...";
         input.disabled = false;
@@ -68,13 +97,10 @@ async function chargerPokemons() {
     }
 }
 
-// 3. Fonction pour déclencher les feux d'artifice à la fin
 function declencherVictoire() {
-    // Le cri de Pikachu (ID 25)
     const criPikachu = new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg');
     criPikachu.play();
 
-    // La magie des feux d'artifice
     let duration = 15 * 1000;
     let animationEnd = Date.now() + duration;
     let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -90,58 +116,64 @@ function declencherVictoire() {
     }, 250);
 }
 
-// 4. Écoute de la saisie du joueur
+// Fonction séparée pour traiter la trouvaille d'un Pokémon
+function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
+    const box = document.getElementById("box-" + idPokemon);
+    
+    if (!box.classList.contains('trouve')) {
+        box.classList.add('trouve');
+        
+        scoreActuel++;
+        scoreText.innerText = scoreActuel;
+
+        // Si le joueur vient de taper le nom (joueurActif = true)
+        if(joueurActif) {
+            const cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`);
+            cri.volume = 0.5;
+            cri.play();
+            
+            // On ajoute l'ID à la mémoire
+            pokemonsTrouves.push(idPokemon);
+            localStorage.setItem('sauvegardeGen1', JSON.stringify(pokemonsTrouves));
+        } else {
+            // Si c'est un chargement de page, on rajoute discrètement l'ID dans le tableau local
+            pokemonsTrouves.push(idPokemon);
+        }
+        
+        box.innerHTML = `
+            <img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[0]}.png" alt="Pokemon" style="width: 80px; height: 80px; object-fit: contain;">
+            <span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${nomSaisi.toUpperCase()}</span>
+        `;
+        
+        if (formes.length > 1) {
+            let indexForme = 0;
+            setInterval(() => {
+                const imgElement = document.getElementById(`img-${idPokemon}`);
+                if (imgElement) {
+                    indexForme = (indexForme + 1) % formes.length;
+                    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[indexForme]}.png`;
+                }
+            }, 10000);
+        }
+
+        if (scoreActuel === 151 && joueurActif) {
+            input.disabled = true;
+            input.placeholder = "INCROYABLE ! VOUS AVEZ FINI !";
+            declencherVictoire();
+        }
+    }
+}
+
 input.addEventListener('input', function(e) {
     const texteSaisi = normaliserTexte(e.target.value);
     
-    // Si on trouve le Pokémon...
     if (pokemonsData[texteSaisi]) {
         const idPokemon = pokemonsData[texteSaisi].id;
         const formes = pokemonsData[texteSaisi].formes; 
-        const box = document.getElementById("box-" + idPokemon);
         
-        if (!box.classList.contains('trouve')) {
-            box.classList.add('trouve');
-            
-            // 1. Augmenter et afficher le score
-            scoreActuel++;
-            scoreText.innerText = scoreActuel;
-
-            // 2. Jouer le cri du Pokémon
-            const cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`);
-            cri.volume = 0.5; // On met le volume à la moitié pour que ça ne soit pas trop fort
-            cri.play();
-            
-            // 3. Afficher l'image (en lui donnant un identifiant unique)
-            box.innerHTML = `
-                <img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[0]}.png" alt="Pokemon" style="width: 80px; height: 80px; object-fit: contain;">
-                <span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${e.target.value.toUpperCase()}</span>
-            `;
-            
-            // 4. Si le Pokémon a des formes alternatives (Méga, Alola...), on les fait défiler toutes les 10s
-            if (formes.length > 1) {
-                let indexForme = 0;
-                setInterval(() => {
-                    const imgElement = document.getElementById(`img-${idPokemon}`);
-                    if (imgElement) {
-                        indexForme = (indexForme + 1) % formes.length;
-                        imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[indexForme]}.png`;
-                    }
-                }, 10000); // 10000 millisecondes = 10 secondes
-            }
-            
-            // On vide la barre
-            e.target.value = "";
-
-            // 5. Vérifier si on a gagné le jeu
-            if (scoreActuel === 151) {
-                input.disabled = true;
-                input.placeholder = "INCROYABLE ! VOUS AVEZ FINI !";
-                declencherVictoire();
-            }
-        }
+        validerPokemon(idPokemon, formes, e.target.value, true);
+        e.target.value = "";
     }
 });
 
-// Lancement de la récupération des données
 chargerPokemons();
