@@ -4,19 +4,28 @@
     <meta charset="UTF-8">
     <title>POKEGUESSER</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Bibliothèque magique pour générer les feux d'artifice/confettis à la fin -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <!-- Le code pointe maintenant vers logo.jpeg -->
         <img src="logo.jpeg" alt="Logo du site" id="mascotte">
         <h1>POKEGUESSER</h1>
     </header>
 
     <main>
+        <!-- Le compteur de score -->
+        <div id="score-container">Score : <span id="score">0</span> / 151</div>
+
         <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
         <div id="pokedex-grid"></div>
     </main>
+
+    <!-- Votre signature en bas de page -->
+    <footer>
+        Créé par Tomilitovic
+    </footer>
 
     <script src="script.js"></script>
 </body>

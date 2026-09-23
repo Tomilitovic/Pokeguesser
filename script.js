@@ -1,7 +1,11 @@
 const grid = document.getElementById('pokedex-grid');
 const input = document.getElementById('saisie');
+const scoreText = document.getElementById('score');
 
-// 1. On crée la grille vide de 151 cases (comme on l'a fait précédemment)
+let scoreActuel = 0;
+let pokemonsData = {};
+
+// 1. Génération de la grille vide
 for (let i = 1; i <= 151; i++) {
     let box = document.createElement('div');
     box.classList.add('pokemon-box');
@@ -11,20 +15,16 @@ for (let i = 1; i <= 151; i++) {
     grid.appendChild(box);
 }
 
-// 2. On prépare un dictionnaire vide en mémoire pour stocker les noms
-let pokemonsData = {};
-
-// 3. Fonction pour nettoyer le texte : enlève les majuscules et les accents (ex: transforme "Évoli" en "evoli")
 function normaliserTexte(texte) {
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-// 4. On récupère les données des 151 Pokémon d'un seul coup (Version mise à jour v1beta2)
+// 2. Chargement des données (incluant les formes alternatives !)
 async function chargerPokemons() {
-    input.placeholder = "Chargement de la base de données...";
-    input.disabled = true; // On bloque la saisie le temps du chargement
+    input.placeholder = "Chargement des Pokémon...";
+    input.disabled = true; 
 
-    // Nouvelle requête GraphQL sans le vieux préfixe 'pokemon_v2_'
+    // On a modifié la requête pour demander aussi les "pokemons" (les formes alternatives : Méga, Alola, etc.)
     const requeteGraphQL = `
     query {
       pokemonspecies(where: {id: {_lte: 151}}) {
@@ -33,11 +33,13 @@ async function chargerPokemons() {
         pokemonspeciesnames(where: {language_id: {_eq: 5}}) {
           name
         }
+        pokemons {
+          id
+        }
       }
     }`;
 
     try {
-        // On utilise la nouvelle adresse v1beta2
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -45,58 +47,101 @@ async function chargerPokemons() {
         });
         const data = await reponse.json();
         
-        // On range les données reçues dans notre dictionnaire
-        data.data.pokemonspecies.forEach(pokemon => {
-            const id = pokemon.id;
-            const nomAnglais = normaliserTexte(pokemon.name);
-            const nomFrancais = normaliserTexte(pokemon.pokemonspeciesnames[0].name);
+        data.data.pokemonspecies.forEach(espece => {
+            const id = espece.id;
+            const nomAnglais = normaliserTexte(espece.name);
+            const nomFrancais = normaliserTexte(espece.pokemonspeciesnames[0].name);
             
-            // On associe les deux noms à l'identifiant
-            pokemonsData[nomFrancais] = id;
-            pokemonsData[nomAnglais] = id; 
+            // On récupère tous les IDs de ses formes (ex: Florizarre a la forme normale + la Méga-évolution)
+            const toutesLesFormes = espece.pokemons.map(p => p.id);
+            
+            // On stocke l'ID principal ET le tableau des formes alternatives
+            pokemonsData[nomFrancais] = { id: id, formes: toutesLesFormes };
+            pokemonsData[nomAnglais] = { id: id, formes: toutesLesFormes }; 
         });
 
-        // Le chargement est fini, on réactive la barre !
-        input.placeholder = "Tapez un nom de Pokémon (FR ou EN)...";
+        input.placeholder = "Tapez un nom de Pokémon...";
         input.disabled = false;
         input.focus();
     } catch (erreur) {
-        input.placeholder = "Erreur de chargement de la PokéAPI !";
-        console.error(erreur);
+        input.placeholder = "Erreur de chargement !";
     }
 }
 
-// 5. On écoute en direct chaque lettre tapée au clavier
+// 3. Fonction pour déclencher les feux d'artifice à la fin
+function declencherVictoire() {
+    // Le cri de Pikachu (ID 25)
+    const criPikachu = new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg');
+    criPikachu.play();
+
+    // La magie des feux d'artifice
+    let duration = 15 * 1000;
+    let animationEnd = Date.now() + duration;
+    let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+    let interval = setInterval(function() {
+        let timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) { return clearInterval(interval); }
+        let particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
+}
+
+// 4. Écoute de la saisie du joueur
 input.addEventListener('input', function(e) {
-    // On nettoie ce que le joueur vient de taper (pas de majuscule, pas d'accent)
     const texteSaisi = normaliserTexte(e.target.value);
     
-    // Si le texte correspond exactement à un Pokémon de notre dictionnaire...
+    // Si on trouve le Pokémon...
     if (pokemonsData[texteSaisi]) {
-        const idPokemon = pokemonsData[texteSaisi];
-        
-        // On cible la bonne case correspondante
+        const idPokemon = pokemonsData[texteSaisi].id;
+        const formes = pokemonsData[texteSaisi].formes; 
         const box = document.getElementById("box-" + idPokemon);
         
-        // On vérifie qu'elle n'a pas déjà été trouvée
         if (!box.classList.contains('trouve')) {
-            // On lui ajoute la classe CSS 'trouve' pour la bordure verte
             box.classList.add('trouve');
             
-            // On construit le lien de l'image officielle HD
-            const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${idPokemon}.png`;
+            // 1. Augmenter et afficher le score
+            scoreActuel++;
+            scoreText.innerText = scoreActuel;
+
+            // 2. Jouer le cri du Pokémon
+            const cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`);
+            cri.volume = 0.5; // On met le volume à la moitié pour que ça ne soit pas trop fort
+            cri.play();
             
-            // On remplace le numéro gris par l'image et le nom que le joueur a tapé
+            // 3. Afficher l'image (en lui donnant un identifiant unique)
             box.innerHTML = `
-                <img src="${imageUrl}" alt="Pokemon ${idPokemon}" style="width: 80px; height: 80px; object-fit: contain;">
+                <img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[0]}.png" alt="Pokemon" style="width: 80px; height: 80px; object-fit: contain;">
                 <span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${e.target.value.toUpperCase()}</span>
             `;
             
-            // On vide instantanément la barre de recherche pour passer au suivant !
+            // 4. Si le Pokémon a des formes alternatives (Méga, Alola...), on les fait défiler toutes les 10s
+            if (formes.length > 1) {
+                let indexForme = 0;
+                setInterval(() => {
+                    const imgElement = document.getElementById(`img-${idPokemon}`);
+                    if (imgElement) {
+                        indexForme = (indexForme + 1) % formes.length;
+                        imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[indexForme]}.png`;
+                    }
+                }, 10000); // 10000 millisecondes = 10 secondes
+            }
+            
+            // On vide la barre
             e.target.value = "";
+
+            // 5. Vérifier si on a gagné le jeu
+            if (scoreActuel === 151) {
+                input.disabled = true;
+                input.placeholder = "INCROYABLE ! VOUS AVEZ FINI !";
+                declencherVictoire();
+            }
         }
     }
 });
 
-// On lance la fonction de chargement dès l'ouverture de la page
+// Lancement de la récupération des données
 chargerPokemons();

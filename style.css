@@ -1,24 +1,22 @@
-/* Réglages généraux du site */
+/* Réglages généraux */
 body {
     font-family: 'Montserrat', sans-serif;
     text-align: center;
     margin: 0;
     padding: 20px;
     color: white; 
-    
     background-image: url("fond.jpeg");
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
 }
 
-/* La zone de la bannière (Titre + Logo) */
 header {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px; 
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     margin-top: 20px;
 }
 
@@ -38,7 +36,15 @@ h1 {
     text-shadow: 3px 3px 6px rgba(0,0,0,0.6); 
 }
 
-/* La barre de saisie épurée */
+/* Le Compteur de Score */
+#score-container {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+/* La barre de saisie (qui suit le mouvement !) */
 input {
     padding: 15px 25px;
     font-size: 1.2rem;
@@ -46,18 +52,22 @@ input {
     border: none;
     width: 350px;
     max-width: 90%;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
     outline: none;
     margin-bottom: 40px;
     font-family: 'Montserrat', sans-serif;
     transition: transform 0.2s; 
+    
+    /* Ces trois lignes permettent à la barre de rester "collée" en haut quand on scroll */
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
 }
 
 input:focus {
     transform: scale(1.05); 
 }
 
-/* Le conteneur qui accueillera les 151 cases grises */
 #pokedex-grid {
     display: flex;
     flex-wrap: wrap;
@@ -67,11 +77,10 @@ input:focus {
     margin: 0 auto; 
 }
 
-/* --- NOUVEAU : Apparence des cases des Pokémon vides --- */
 .pokemon-box {
     width: 100px;
     height: 100px;
-    background-color: rgba(25, 35, 45, 0.8); /* Fond sombre légèrement transparent */
+    background-color: rgba(25, 35, 45, 0.8); 
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -83,12 +92,20 @@ input:focus {
 
 .pokemon-box span.numero {
     font-size: 1.2rem;
-    color: #7f8c8d; /* Texte grisé */
+    color: #7f8c8d; 
     font-weight: bold;
 }
 
-/* Apparence d'une case quand le Pokémon est trouvé */
 .pokemon-box.trouve {
-    background-color: rgba(46, 204, 113, 0.2); /* Fond légèrement vert */
-    border-color: #2ecc71; /* Bordure verte éclatante */
+    background-color: rgba(46, 204, 113, 0.2); 
+    border-color: #2ecc71; 
+}
+
+/* Votre signature */
+footer {
+    margin-top: 60px;
+    padding: 20px;
+    font-size: 1.2rem;
+    color: #bdc3c7;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
 }
