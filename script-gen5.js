@@ -9,26 +9,26 @@ btnMute.addEventListener('click', () => {
 
 const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie'), scoreText = document.getElementById('score'), timerText = document.getElementById('timer');
 let scoreActuel = 0, pokemonsData = {}, pokemonsTrouves = []; 
-let timerInterval, timerStarted = false, secondsElapsed = parseInt(localStorage.getItem('timerGen4')) || 0;
+let timerInterval, timerStarted = false, secondsElapsed = parseInt(localStorage.getItem('timerGen5')) || 0;
 
 function formatTime(sec) { return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`; }
 timerText.innerText = formatTime(secondsElapsed);
 
 function startTimer() {
-    if (!timerStarted && scoreActuel < 107) {
+    if (!timerStarted && scoreActuel < 156) {
         timerStarted = true;
         timerInterval = setInterval(() => {
-            secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); localStorage.setItem('timerGen4', secondsElapsed);
+            secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); localStorage.setItem('timerGen5', secondsElapsed);
         }, 1000);
     }
 }
 
-window.addEventListener('beforeunload', (e) => { if (scoreActuel > 0 && scoreActuel < 107) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', (e) => { if (scoreActuel > 0 && scoreActuel < 156) { e.preventDefault(); e.returnValue = ''; } });
 document.getElementById('btn-reset').addEventListener('click', () => {
-    if(confirm("Voulez-vous vraiment recommencer à zéro ?")) { localStorage.removeItem('sauvegardeGen4'); localStorage.removeItem('timerGen4'); location.reload(); }
+    if(confirm("Voulez-vous vraiment recommencer à zéro ?")) { localStorage.removeItem('sauvegardeGen5'); localStorage.removeItem('timerGen5'); location.reload(); }
 });
 
-for (let i = 387; i <= 493; i++) {
+for (let i = 494; i <= 649; i++) {
     let box = document.createElement('div'); box.classList.add('pokemon-box'); box.id = "box-" + i;
     box.innerHTML = `<span class="numero">#${i.toString().padStart(3, '0')}</span>`; grid.appendChild(box);
 }
@@ -37,7 +37,7 @@ function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true; 
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: 387, _lte: 493}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: 494, _lte: 649}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
@@ -46,7 +46,7 @@ async function chargerPokemons() {
             pokemonsData[nomFrancais] = { id, formes, vraiNom: e.pokemonspeciesnames[0].name }; pokemonsData[nomAnglais] = { id, formes, vraiNom: e.name }; 
         });
 
-        const sauvegarde = localStorage.getItem('sauvegardeGen4');
+        const sauvegarde = localStorage.getItem('sauvegardeGen5');
         if (sauvegarde) {
             JSON.parse(sauvegarde).forEach(id => {
                 let nomAffiche = "Trouvé";
@@ -59,7 +59,7 @@ async function chargerPokemons() {
 }
 
 function declencherVictoire() {
-    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/493.ogg').play();
+    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/494.ogg').play();
     let duration = 15000, end = Date.now() + duration;
     let interval = setInterval(() => {
         if (Date.now() > end) return clearInterval(interval);
@@ -74,7 +74,7 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
         if(joueurActif) {
             startTimer();
             let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`); cri.volume = 0.5; cri.play();
-            pokemonsTrouves.push(idPokemon); localStorage.setItem('sauvegardeGen4', JSON.stringify(pokemonsTrouves));
+            pokemonsTrouves.push(idPokemon); localStorage.setItem('sauvegardeGen5', JSON.stringify(pokemonsTrouves));
         } else { pokemonsTrouves.push(idPokemon); }
         
         box.innerHTML = `<img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[0]}.png" style="width: 80px; height: 80px; object-fit: contain;"><span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${nomSaisi.toUpperCase()}</span>`;
@@ -84,7 +84,7 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
                 if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[index]}.png`; }
             }, 10000);
         }
-        if (scoreActuel === 107 && joueurActif) {
+        if (scoreActuel === 156 && joueurActif) {
             clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! FINI !"; declencherVictoire();
         }
     }

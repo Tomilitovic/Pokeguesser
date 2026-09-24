@@ -12,44 +12,30 @@
         <button id="btn-mute">🔇 Musique OFF</button>
         <audio id="bg-music" src="musique.mp3" loop></audio>
     </div>
-
     <div id="menu-container">
         <button class="dropbtn">Générations ▼</button>
         <div id="menu-generations" class="dropdown-content">
-            <a href="index.html" class="btn-gen actif">
-                <img src="red.jpeg" alt="Red"> Génération 1
-            </a>
-            <a href="gen2.html" class="btn-gen">
-                <img src="gold.jpeg" alt="Gold"> Génération 2
-            </a>
-            <a href="gen3.html" class="btn-gen">
-                <img src="brandon.jpeg" alt="Brandon"> Génération 3
-            </a>
-            <a href="gen4.html" class="btn-gen">
-                <img src="pearl.jpeg" alt="Pearl"> Génération 4
-            </a>
+            <a href="index.html" class="btn-gen actif">Génération 1</a>
+            <a href="gen2.html" class="btn-gen">Génération 2</a>
+            <a href="gen3.html" class="btn-gen">Génération 3</a>
+            <a href="gen4.html" class="btn-gen">Génération 4</a>
+            <a href="gen5.html" class="btn-gen">Génération 5</a>
         </div>
     </div>
-
     <header>
         <img src="logo.jpeg" alt="Logo du site" id="mascotte">
-        <h1>POKEGUESSER</h1>
+        <img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu">
     </header>
-
     <main>
+        <div id="timer-container">⏱️ <span id="timer">00:00</span></div>
         <div id="score-container">
             Score : <span id="score">0</span> / 151
             <button id="btn-reset">🔄 Réinitialiser</button>
         </div>
-
         <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
         <div id="pokedex-grid"></div>
     </main>
-
-    <footer>
-        Créé par Tomilitovic
-    </footer>
-
+    <footer>Créé par Tomilitovic</footer>
     <script src="script.js"></script>
 </body>
 </html>
