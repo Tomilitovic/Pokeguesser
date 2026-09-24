@@ -8,20 +8,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav id="menu-generations">
-        <a href="index.html" class="btn-gen">
-            <img src="red.png" alt="Red">
-            Génération 1
-        </a>
-        <a href="gen2.html" class="btn-gen actif">
-            <img src="gold.png" alt="Gold">
-            Génération 2
-        </a>
-        <a href="gen3.html" class="btn-gen">
-            <img src="brandon.png" alt="Brandon">
-            Génération 3
-        </a>
-    </nav>
+    <div id="audio-controls">
+        <button id="btn-mute">🔇 Musique OFF</button>
+        <audio id="bg-music" src="musique.mp3" loop></audio>
+    </div>
+
+    <div id="menu-container">
+        <button class="dropbtn">Générations ▼</button>
+        <div id="menu-generations" class="dropdown-content">
+            <a href="index.html" class="btn-gen">
+                <img src="red.jpeg" alt="Red"> Génération 1
+            </a>
+            <a href="gen2.html" class="btn-gen actif">
+                <img src="gold.jpeg" alt="Gold"> Génération 2
+            </a>
+            <a href="gen3.html" class="btn-gen">
+                <img src="brandon.jpeg" alt="Brandon"> Génération 3
+            </a>
+        </div>
+    </div>
 
     <header>
         <img src="logo.jpeg" alt="Logo du site" id="mascotte">

@@ -1,3 +1,19 @@
+const bgMusic = document.getElementById('bg-music');
+const btnMute = document.getElementById('btn-mute');
+let isMusicPlaying = false;
+
+btnMute.addEventListener('click', function() {
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        btnMute.innerText = "🔇 Musique OFF";
+        isMusicPlaying = false;
+    } else {
+        bgMusic.play();
+        btnMute.innerText = "🔊 Musique ON";
+        isMusicPlaying = true;
+    }
+});
+
 const grid = document.getElementById('pokedex-grid');
 const input = document.getElementById('saisie');
 const scoreText = document.getElementById('score');
@@ -7,7 +23,6 @@ let pokemonsData = {};
 let pokemonsTrouves = []; 
 
 window.addEventListener('beforeunload', function (e) {
-    // 100 Pokémon pour la Gen 2
     if (scoreActuel > 0 && scoreActuel < 100) {
         e.preventDefault();
         e.returnValue = ''; 
@@ -16,13 +31,11 @@ window.addEventListener('beforeunload', function (e) {
 
 document.getElementById('btn-reset').addEventListener('click', function() {
     if(confirm("Voulez-vous vraiment tout effacer et recommencer à zéro ?")) {
-        // Supprime la sauvegarde Gen 2
         localStorage.removeItem('sauvegardeGen2');
         location.reload(); 
     }
 });
 
-// La grille de la Génération 2 (152 à 251)
 for (let i = 152; i <= 251; i++) {
     let box = document.createElement('div');
     box.classList.add('pokemon-box');
@@ -40,7 +53,6 @@ async function chargerPokemons() {
     input.placeholder = "Chargement des Pokémon...";
     input.disabled = true; 
 
-    // On récupère uniquement de l'ID 152 à 251
     const requeteGraphQL = `
     query {
       pokemonspecies(where: {id: {_gte: 152, _lte: 251}}) {
@@ -73,7 +85,6 @@ async function chargerPokemons() {
             pokemonsData[nomAnglais] = { id: id, formes: toutesLesFormes, vraiNom: espece.name }; 
         });
 
-        // On charge la sauvegarde Gen 2
         const sauvegarde = localStorage.getItem('sauvegardeGen2');
         if (sauvegarde) {
             const idsSauvegardes = JSON.parse(sauvegarde); 
@@ -98,7 +109,6 @@ async function chargerPokemons() {
 }
 
 function declencherVictoire() {
-    // Pichu pour la Gen 2 ? (ID 172)
     const criPichu = new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/172.ogg');
     criPichu.play();
 
@@ -153,7 +163,6 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
             }, 10000);
         }
 
-        // Victoire sur 100 Pokémon pour la Gen 2
         if (scoreActuel === 100 && joueurActif) {
             input.disabled = true;
             input.placeholder = "INCROYABLE ! VOUS AVEZ FINI !";

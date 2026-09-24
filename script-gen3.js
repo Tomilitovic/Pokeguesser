@@ -1,3 +1,19 @@
+const bgMusic = document.getElementById('bg-music');
+const btnMute = document.getElementById('btn-mute');
+let isMusicPlaying = false;
+
+btnMute.addEventListener('click', function() {
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        btnMute.innerText = "🔇 Musique OFF";
+        isMusicPlaying = false;
+    } else {
+        bgMusic.play();
+        btnMute.innerText = "🔊 Musique ON";
+        isMusicPlaying = true;
+    }
+});
+
 const grid = document.getElementById('pokedex-grid');
 const input = document.getElementById('saisie');
 const scoreText = document.getElementById('score');
@@ -20,7 +36,6 @@ document.getElementById('btn-reset').addEventListener('click', function() {
     }
 });
 
-// La grille de la Génération 3 (252 à 386)
 for (let i = 252; i <= 386; i++) {
     let box = document.createElement('div');
     box.classList.add('pokemon-box');
@@ -38,7 +53,6 @@ async function chargerPokemons() {
     input.placeholder = "Chargement des Pokémon...";
     input.disabled = true; 
 
-    // Requête pour les ID 252 à 386
     const requeteGraphQL = `
     query {
       pokemonspecies(where: {id: {_gte: 252, _lte: 386}}) {
@@ -71,7 +85,6 @@ async function chargerPokemons() {
             pokemonsData[nomAnglais] = { id: id, formes: toutesLesFormes, vraiNom: espece.name }; 
         });
 
-        // On charge la sauvegarde Gen 3
         const sauvegarde = localStorage.getItem('sauvegardeGen3');
         if (sauvegarde) {
             const idsSauvegardes = JSON.parse(sauvegarde); 
@@ -96,7 +109,6 @@ async function chargerPokemons() {
 }
 
 function declencherVictoire() {
-    // Le cri de Rayquaza (ID 384) pour fêter la Gen 3 !
     const criRayquaza = new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/384.ogg');
     criRayquaza.play();
 

@@ -1,3 +1,19 @@
+const bgMusic = document.getElementById('bg-music');
+const btnMute = document.getElementById('btn-mute');
+let isMusicPlaying = false;
+
+btnMute.addEventListener('click', function() {
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        btnMute.innerText = "🔇 Musique OFF";
+        isMusicPlaying = false;
+    } else {
+        bgMusic.play();
+        btnMute.innerText = "🔊 Musique ON";
+        isMusicPlaying = true;
+    }
+});
+
 const grid = document.getElementById('pokedex-grid');
 const input = document.getElementById('saisie');
 const scoreText = document.getElementById('score');
@@ -163,7 +179,6 @@ input.addEventListener('input', function(e) {
         const formes = pokemonsData[texteSaisi].formes; 
         const box = document.getElementById("box-" + idPokemon);
         
-        // CORRECTION MEW/MEWTWO :
         if (!box.classList.contains('trouve')) {
             validerPokemon(idPokemon, formes, e.target.value, true);
             e.target.value = "";
