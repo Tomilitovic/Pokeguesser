@@ -1,5 +1,4 @@
-const bgMusic = document.getElementById('bg-music');
-const btnMute = document.getElementById('btn-mute');
+const bgMusic = document.getElementById('bg-music'), btnMute = document.getElementById('btn-mute');
 let isMusicPlaying = false;
 btnMute.addEventListener('click', () => {
     if (isMusicPlaying) { bgMusic.pause(); btnMute.innerText = "🔇 Musique OFF"; } 
@@ -17,9 +16,7 @@ timerText.innerText = formatTime(secondsElapsed);
 function startTimer() {
     if (!timerStarted && scoreActuel < 135) {
         timerStarted = true;
-        timerInterval = setInterval(() => {
-            secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); localStorage.setItem('timerGen3', secondsElapsed);
-        }, 1000);
+        timerInterval = setInterval(() => { secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); localStorage.setItem('timerGen3', secondsElapsed); }, 1000);
     }
 }
 
@@ -84,9 +81,7 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
                 if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[index]}.png`; }
             }, 10000);
         }
-        if (scoreActuel === 135 && joueurActif) {
-            clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! FINI !"; declencherVictoire();
-        }
+        if (scoreActuel === 135 && joueurActif) { clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! FINI !"; declencherVictoire(); }
     }
 }
 
