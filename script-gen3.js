@@ -21,9 +21,7 @@ function startTimer() {
 }
 
 window.addEventListener('beforeunload', (e) => { if (scoreActuel > 0 && scoreActuel < 135) { e.preventDefault(); e.returnValue = ''; } });
-document.getElementById('btn-reset').addEventListener('click', () => {
-    if(confirm("Voulez-vous vraiment recommencer à zéro ?")) { localStorage.removeItem('sauvegardeGen3'); localStorage.removeItem('timerGen3'); location.reload(); }
-});
+document.getElementById('btn-reset').addEventListener('click', () => { if(confirm("Recommencer à zéro ?")) { localStorage.removeItem('sauvegardeGen3'); localStorage.removeItem('timerGen3'); location.reload(); } });
 
 for (let i = 252; i <= 386; i++) {
     let box = document.createElement('div'); box.classList.add('pokemon-box'); box.id = "box-" + i;
@@ -42,12 +40,10 @@ async function chargerPokemons() {
             const id = e.id, nomAnglais = normaliserTexte(e.name), nomFrancais = normaliserTexte(e.pokemonspeciesnames[0].name), formes = e.pokemons.map(p => p.id);
             pokemonsData[nomFrancais] = { id, formes, vraiNom: e.pokemonspeciesnames[0].name }; pokemonsData[nomAnglais] = { id, formes, vraiNom: e.name }; 
         });
-
         const sauvegarde = localStorage.getItem('sauvegardeGen3');
         if (sauvegarde) {
             JSON.parse(sauvegarde).forEach(id => {
-                let nomAffiche = "Trouvé";
-                for (let cle in pokemonsData) { if (pokemonsData[cle].id === id) { nomAffiche = pokemonsData[cle].vraiNom; break; } }
+                let nomAffiche = "Trouvé"; for (let cle in pokemonsData) { if (pokemonsData[cle].id === id) { nomAffiche = pokemonsData[cle].vraiNom; break; } }
                 validerPokemon(id, pokemonsData[normaliserTexte(nomAffiche)].formes, nomAffiche, false);
             });
         }
@@ -69,17 +65,12 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
     if (!box.classList.contains('trouve')) {
         box.classList.add('trouve'); scoreActuel++; scoreText.innerText = scoreActuel;
         if(joueurActif) {
-            startTimer();
-            let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`); cri.volume = 0.5; cri.play();
+            startTimer(); let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`); cri.volume = 0.5; cri.play();
             pokemonsTrouves.push(idPokemon); localStorage.setItem('sauvegardeGen3', JSON.stringify(pokemonsTrouves));
         } else { pokemonsTrouves.push(idPokemon); }
-        
         box.innerHTML = `<img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[0]}.png" style="width: 80px; height: 80px; object-fit: contain;"><span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${nomSaisi.toUpperCase()}</span>`;
         if (formes.length > 1) {
-            let index = 0; setInterval(() => {
-                let img = document.getElementById(`img-${idPokemon}`);
-                if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[index]}.png`; }
-            }, 10000);
+            let index = 0; setInterval(() => { let img = document.getElementById(`img-${idPokemon}`); if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${formes[index]}.png`; } }, 10000);
         }
         if (scoreActuel === 135 && joueurActif) { clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! FINI !"; declencherVictoire(); }
     }
@@ -87,8 +78,6 @@ function validerPokemon(idPokemon, formes, nomSaisi, joueurActif = true) {
 
 input.addEventListener('input', (e) => {
     const texte = normaliserTexte(e.target.value);
-    if (pokemonsData[texte] && !document.getElementById("box-" + pokemonsData[texte].id).classList.contains('trouve')) {
-        validerPokemon(pokemonsData[texte].id, pokemonsData[texte].formes, e.target.value, true); e.target.value = "";
-    }
+    if (pokemonsData[texte] && !document.getElementById("box-" + pokemonsData[texte].id).classList.contains('trouve')) { validerPokemon(pokemonsData[texte].id, pokemonsData[texte].formes, e.target.value, true); e.target.value = ""; }
 });
 chargerPokemons();
