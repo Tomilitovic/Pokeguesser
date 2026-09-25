@@ -13,11 +13,11 @@
         <audio id="bg-music" src="musique2.mp3" loop></audio>
     </div>
     
-    <!-- NOUVELLE BARRE DE NAVIGATION (SÉPARÉE) -->
-    <div id="top-nav">
-        <div id="menu-container">
+    <!-- LES DEUX ONGLETS SÉPARÉS -->
+    <div id="menu-wrapper">
+        <div class="menu-container">
             <button class="dropbtn">Générations ▼</button>
-            <div id="menu-generations" class="dropdown-content">
+            <div class="dropdown-content">
                 <a href="index.html" class="btn-gen">Génération 1</a>
                 <a href="gen2.html" class="btn-gen">Génération 2</a>
                 <a href="gen3.html" class="btn-gen">Génération 3</a>
@@ -30,7 +30,14 @@
                 <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
             </div>
         </div>
-        <a href="type.html" class="btn-onglet actif">TYPES 🌟</a>
+
+        <div class="menu-container">
+            <!-- L'onglet TYPES est jaune et actif ici -->
+            <button class="dropbtn actif">Par Type ▼</button>
+            <div class="dropdown-content">
+                <a href="type.html" class="btn-gen">Menu principal des Types</a>
+            </div>
+        </div>
     </div>
     
     <header>
@@ -39,21 +46,25 @@
     </header>
     
     <main>
-        <!-- Le menu des 18 types (généré en JS) -->
+        <!-- Grille des 18 gros logos de types -->
         <div id="type-menu"></div>
         
-        <!-- Le grand titre qui s'affichera lors du clic (ex: TYPE FEU) -->
+        <!-- Le titre dynamique qui s'affiche quand on choisit un type -->
         <h1 id="titre-type-choisi"></h1>
 
-        <div id="timer-container">⏱ <span id="timer">00:00</span></div>
-        <div id="score-container">
+        <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
+        <div id="score-container" style="display: none;">
             Score : <span id="score">0</span> / <span id="score-max">0</span>
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
+            <!-- Bouton pour cacher la grille et réafficher le menu des types -->
+            <button id="btn-retour-types" class="btn-action">🔙 Changer de Type</button>
         </div>
         
-        <input type="text" id="saisie" placeholder="Choisissez un type pour commencer...">
+        <input type="text" id="saisie" placeholder="Choisissez un type au-dessus pour commencer..." disabled>
+        
+        <!-- La grille compacte des Pokémon par génération -->
         <div id="pokedex-grid"></div>
     </main>
     

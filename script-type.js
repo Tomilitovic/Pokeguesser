@@ -9,6 +9,10 @@ btnMute.addEventListener('click', () => {
 const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie');
 const scoreText = document.getElementById('score'), timerText = document.getElementById('timer'), maxText = document.getElementById('score-max');
 const titreType = document.getElementById('titre-type-choisi');
+const typeMenu = document.getElementById('type-menu');
+const scoreContainer = document.getElementById('score-container');
+const timerContainer = document.getElementById('timer-container');
+const btnRetourTypes = document.getElementById('btn-retour-types');
 
 let allPokemons = [];
 let pokeDuTypeActuel = [];
@@ -18,7 +22,7 @@ let typeActif = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 let intervalsFormes = {};
 
-// Ordre et traductions exactes de ton image
+// Ordre et traductions exactes
 const typeConfig = {
     'water': { fr: 'Eau', color: '#6390F0' }, 'fire': { fr: 'Feu', color: '#EE8130' },
     'grass': { fr: 'Plante', color: '#7AC74C' }, 'ground': { fr: 'Sol', color: '#E2BF65' },
@@ -32,12 +36,10 @@ const typeConfig = {
 };
 
 // 1. GÉNÉRER LES BOUTONS (Grands cercles SVG + Texte)
-const typeMenu = document.getElementById('type-menu');
 for (let key in typeConfig) {
     let btn = document.createElement('button');
     btn.className = 'btn-type';
     btn.id = 'btn-type-' + key;
-    // La balise img utilise directement les icônes officielles qui sont déjà rondes !
     btn.innerHTML = `<img src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${key}.svg" alt="${typeConfig[key].fr}"> <span>${typeConfig[key].fr.toUpperCase()}</span>`;
     btn.onclick = () => chargerType(key);
     typeMenu.appendChild(btn);
@@ -54,14 +56,37 @@ function startTimer() {
 
 document.getElementById('btn-reset').addEventListener('click', () => { if(typeActif) chargerType(typeActif); });
 
+// Gérer le bouton "Retourner aux types"
+btnRetourTypes.addEventListener('click', () => {
+    typeActif = null;
+    clearInterval(timerInterval);
+    timerStarted = false;
+    grid.innerHTML = '';
+    titreType.style.display = 'none';
+    scoreContainer.style.display = 'none';
+    timerContainer.style.display = 'none';
+    btnRetourTypes.style.display = 'none';
+    input.disabled = true;
+    input.placeholder = "Choisissez un type au-dessus pour commencer...";
+    
+    // On réaffiche la grande grille des 18 types
+    typeMenu.style.display = 'flex';
+});
+
 function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase().trim(); }
 
 // 2. CHANGER DE TYPE ET PRÉPARER LA GRILLE
 function chargerType(type) {
     typeActif = type;
-    document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('actif'));
-    document.getElementById('btn-type-' + type).classList.add('actif');
     Object.values(intervalsFormes).forEach(clearInterval); intervalsFormes = {};
+
+    // CACHER LE MENU DES 18 TYPES
+    typeMenu.style.display = 'none';
+    
+    // AFFICHER LE SCORE, LE TIMER ET LE BOUTON RETOUR
+    scoreContainer.style.display = 'flex';
+    timerContainer.style.display = 'block';
+    btnRetourTypes.style.display = 'inline-block';
 
     // Afficher et colorer le titre
     titreType.innerText = `TYPE ${typeConfig[type].fr.toUpperCase()}`;
@@ -82,7 +107,7 @@ function chargerType(type) {
 
     grid.innerHTML = '';
     
-    // Construction des tableaux par génération avec la nouvelle classe ULTRA COMPACTE
+    // Construction des tableaux par génération
     for (let gen = 1; gen <= 9; gen++) {
         const pokeDeCetteGen = pokeDuTypeActuel.filter(p => p.generation === gen);
         if (pokeDeCetteGen.length > 0) {
@@ -94,7 +119,7 @@ function chargerType(type) {
 
             pokeDeCetteGen.forEach(p => {
                 let box = document.createElement('div');
-                box.classList.add('pokemon-box-micro'); // Rendu beaucoup plus petit !
+                box.classList.add('pokemon-box-micro');
                 box.id = "box-" + p.id;
                 box.innerHTML = `<span class="numero">#${p.id.toString().padStart(3, '0')}</span>`;
                 gridSmall.appendChild(box);
@@ -125,7 +150,7 @@ async function initialiserBaseDeDonnees() {
                 formes: e.pokemons.map(p => p.id), types: Array.from(typesSet)
             });
         });
-        input.placeholder = "Choisissez un type dans le menu ci-dessus !";
+        input.placeholder = "Choisissez un type au-dessus pour commencer...";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }
 
