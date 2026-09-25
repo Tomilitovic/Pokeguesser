@@ -43,7 +43,7 @@ header { display: flex; justify-content: center; align-items: center; gap: 20px;
 #btn-reset { background-color: #3498db; } #btn-reset:hover { background-color: #2980b9; }
 #btn-abandon { background-color: #e74c3c; } #btn-abandon:hover { background-color: #c0392b; }
 #btn-ombre { background-color: #9b59b6; } #btn-ombre:hover { background-color: #8e44ad; }
-#btn-retour-modes { background-color: #27ae60; display: none; } #btn-retour-modes:hover { background-color: #2ecc71; }
+#btn-retour-modes, #btn-retour-types { background-color: #27ae60; display: none; } #btn-retour-modes:hover, #btn-retour-types:hover { background-color: #2ecc71; }
 
 /* =========================================
    BARRE DE SAISIE
@@ -66,12 +66,16 @@ input:focus { transform: scale(1.05); }
 .gen-title { font-size: 1.5rem; color: #f1c40f; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #f1c40f; padding-bottom: 5px; text-align: left; }
 .grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
 
-.pokemon-box-micro { width: 50px; height: 50px; background-color: rgba(25, 35, 45, 0.8); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.pokemon-box-micro { width: 50px; height: 50px; background-color: rgba(25, 35, 45, 0.8); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
 .pokemon-box-micro span.numero { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; }
 .pokemon-box-micro.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
 .pokemon-box-micro.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
 .pokemon-box-micro img { width: 35px !important; height: 35px !important; }
 .pokemon-box-micro span.nom { font-size: 0.4rem !important; margin-top: 1px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
+
+/* --- SPÉCIAL : Affichage de la stat dans la case --- */
+.valeur-stat { font-size: 0.65rem; color: #f1c40f; font-weight: bold; margin-top: 2px; }
+.pokemon-box-micro.trouve .valeur-stat, .pokemon-box-micro.rate .valeur-stat { font-size: 0.45rem; margin-top: 0px; }
 
 /* =========================================
    MENU DES TYPES
@@ -84,10 +88,10 @@ input:focus { transform: scale(1.05); }
 .btn-type.actif img { transform: scale(1.15); box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
 .btn-type.actif span { background-color: #f1c40f; color: white; }
 
-#titre-dynamique { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); display: none; }
+#titre-dynamique, #titre-type-choisi { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); display: none; }
 
 /* =========================================
-   NOUVEAU : MENU DES MODES SPÉCIAUX
+   MENU DES MODES SPÉCIAUX
 ========================================= */
 #special-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; }
 .btn-special { background: linear-gradient(135deg, #8e44ad, #c0392b); color: white; padding: 15px 25px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
