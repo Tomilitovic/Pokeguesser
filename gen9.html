@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="audio-controls"><button id="btn-mute">🔇 Musique OFF</button><audio id="bg-music" src="musique.mp3" loop></audio></div>
+    <div id="audio-controls">
+        <button id="btn-mute">🔇 Musique OFF</button>
+        <audio id="bg-music" src="musique.mp3" loop></audio>
+    </div>
+    
     <div id="menu-container">
         <button class="dropbtn">Générations ▼</button>
         <div id="menu-generations" class="dropdown-content">
@@ -22,15 +26,28 @@
             <a href="gen8.html" class="btn-gen">Génération 8</a>
             <a href="gen9.html" class="btn-gen actif">Génération 9</a>
             <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
+            <a href="type.html" class="btn-gen">Par Type 🌟</a>
         </div>
     </div>
-    <header><img src="logo.jpeg" alt="Logo du site" id="mascotte"><img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu"></header>
+    
+    <header>
+        <img src="logo.jpeg" alt="Logo du site" id="mascotte">
+        <img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu">
+    </header>
+    
     <main>
-        <div id="timer-container">⏱️ <span id="timer">00:00</span></div>
-        <div id="score-container">Score : <span id="score">0</span> / 120 <button id="btn-reset">🔄 Réinitialiser</button></div>
+        <div id="timer-container">⏱ <span id="timer">00:00</span></div>
+        <div id="score-container">
+            Score : <span id="score">0</span> / 120
+            <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
+            <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
+            <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
+        </div>
+        
         <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
         <div id="pokedex-grid"></div>
     </main>
+    
     <footer>Créé par Tomilitovic</footer>
     <script src="script-gen9.js"></script>
 </body>

@@ -25,8 +25,8 @@
             <a href="gen7.html" class="btn-gen">Génération 7</a>
             <a href="gen8.html" class="btn-gen">Génération 8</a>
             <a href="gen9.html" class="btn-gen">Génération 9</a>
-            <!-- Le nouveau bouton pour le 100% -->
             <a href="gen-all.html" class="btn-gen actif">Le Pokédex Entier (1025)</a>
+            <a href="type.html" class="btn-gen">Par Type 🌟</a>
         </div>
     </div>
     
@@ -36,19 +36,20 @@
     </header>
     
     <main>
-        <div id="timer-container">⏱️ <span id="timer">00:00</span></div>
+        <div id="timer-container">⏱ <span id="timer">00:00</span></div>
         <div id="score-container">
             Score : <span id="score">0</span> / 1025
-            <button id="btn-reset">🔄 Réinitialiser</button>
+            <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
+            <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
+            <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
         </div>
         
         <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
-        <!-- C'est ici que le JavaScript va injecter les 9 grands blocs -->
+        <!-- C'est ici que le JavaScript va injecter les 9 grands blocs de générations -->
         <div id="pokedex-grid"></div>
     </main>
     
     <footer>Créé par Tomilitovic</footer>
-    
     <script src="script-all.js"></script>
 </body>
 </html>
