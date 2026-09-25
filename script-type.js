@@ -90,7 +90,9 @@ function chargerType(type) {
     clearInterval(timerInterval); timerStarted = false;
     document.getElementById('btn-ombre').disabled = false;
 
-    pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type));
+    // L'AJOUT EST ICI : On inclut Arceus (493) et Silvallié (773) d'office !
+    pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type) || p.id === 493 || p.id === 773);
+    
     scoreMax = pokeDuTypeActuel.length;
     scoreText.innerText = scoreActuel;
     maxText.innerText = scoreMax;
