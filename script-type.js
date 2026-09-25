@@ -8,6 +8,7 @@ btnMute.addEventListener('click', () => {
 
 const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie');
 const scoreText = document.getElementById('score'), timerText = document.getElementById('timer'), maxText = document.getElementById('score-max');
+const titreType = document.getElementById('titre-type-choisi');
 
 let allPokemons = [];
 let pokeDuTypeActuel = [];
@@ -17,7 +18,7 @@ let typeActif = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 let intervalsFormes = {};
 
-// Couleurs et traductions des 18 types
+// Ordre et traductions exactes de ton image
 const typeConfig = {
     'water': { fr: 'Eau', color: '#6390F0' }, 'fire': { fr: 'Feu', color: '#EE8130' },
     'grass': { fr: 'Plante', color: '#7AC74C' }, 'ground': { fr: 'Sol', color: '#E2BF65' },
@@ -30,14 +31,14 @@ const typeConfig = {
     'dark': { fr: 'Ténèbres', color: '#705746' }, 'fairy': { fr: 'Fée', color: '#D685AD' }
 };
 
-// 1. GÉNÉRER LES BOUTONS DES 18 TYPES
+// 1. GÉNÉRER LES BOUTONS (Grands cercles SVG + Texte)
 const typeMenu = document.getElementById('type-menu');
 for (let key in typeConfig) {
     let btn = document.createElement('button');
     btn.className = 'btn-type';
     btn.id = 'btn-type-' + key;
-    btn.style.backgroundColor = typeConfig[key].color;
-    btn.innerHTML = `<img src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${key}.svg" alt="${typeConfig[key].fr}"> ${typeConfig[key].fr}`;
+    // La balise img utilise directement les icônes officielles qui sont déjà rondes !
+    btn.innerHTML = `<img src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${key}.svg" alt="${typeConfig[key].fr}"> <span>${typeConfig[key].fr.toUpperCase()}</span>`;
     btn.onclick = () => chargerType(key);
     typeMenu.appendChild(btn);
 }
@@ -55,12 +56,17 @@ document.getElementById('btn-reset').addEventListener('click', () => { if(typeAc
 
 function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase().trim(); }
 
-// 2. CHANGER DE TYPE
+// 2. CHANGER DE TYPE ET PRÉPARER LA GRILLE
 function chargerType(type) {
     typeActif = type;
     document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('actif'));
     document.getElementById('btn-type-' + type).classList.add('actif');
     Object.values(intervalsFormes).forEach(clearInterval); intervalsFormes = {};
+
+    // Afficher et colorer le titre
+    titreType.innerText = `TYPE ${typeConfig[type].fr.toUpperCase()}`;
+    titreType.style.color = typeConfig[type].color;
+    titreType.style.display = 'block';
 
     pokemonsTrouves = [];
     scoreActuel = 0;
@@ -75,7 +81,8 @@ function chargerType(type) {
     maxText.innerText = scoreMax;
 
     grid.innerHTML = '';
-    // Construction des tableaux par génération
+    
+    // Construction des tableaux par génération avec la nouvelle classe ULTRA COMPACTE
     for (let gen = 1; gen <= 9; gen++) {
         const pokeDeCetteGen = pokeDuTypeActuel.filter(p => p.generation === gen);
         if (pokeDeCetteGen.length > 0) {
@@ -87,7 +94,7 @@ function chargerType(type) {
 
             pokeDeCetteGen.forEach(p => {
                 let box = document.createElement('div');
-                box.classList.add('pokemon-box-small');
+                box.classList.add('pokemon-box-micro'); // Rendu beaucoup plus petit !
                 box.id = "box-" + p.id;
                 box.innerHTML = `<span class="numero">#${p.id.toString().padStart(3, '0')}</span>`;
                 gridSmall.appendChild(box);
@@ -144,7 +151,7 @@ function validerPokemon(idPokemon, formes, nomSaisi) {
         
         box.innerHTML = `
             <img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idPokemon}.png">
-            <span class="nom" style="font-size: 0.45rem !important; margin-top: 2px !important; color: white; font-weight: bold;">${nomSaisi}</span>`;
+            <span class="nom">${nomSaisi}</span>`;
             
         if (formes.length > 1) {
             let index = 0; intervalsFormes[idPokemon] = setInterval(() => {
@@ -204,7 +211,7 @@ document.getElementById('btn-abandon').addEventListener('click', () => {
                 let box = document.getElementById("box-" + p.id);
                 box.classList.add('rate'); 
                 box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png">
-                <span class="nom" style="font-size: 0.45rem !important; margin-top: 2px !important; color: white; font-weight: bold;">${p.vraiNom}</span>`;
+                <span class="nom">${p.vraiNom}</span>`;
             }
         });
     }

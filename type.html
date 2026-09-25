@@ -13,21 +13,24 @@
         <audio id="bg-music" src="musique2.mp3" loop></audio>
     </div>
     
-    <div id="menu-container">
-        <button class="dropbtn">Générations ▼</button>
-        <div id="menu-generations" class="dropdown-content">
-            <a href="index.html" class="btn-gen">Génération 1</a>
-            <a href="gen2.html" class="btn-gen">Génération 2</a>
-            <a href="gen3.html" class="btn-gen">Génération 3</a>
-            <a href="gen4.html" class="btn-gen">Génération 4</a>
-            <a href="gen5.html" class="btn-gen">Génération 5</a>
-            <a href="gen6.html" class="btn-gen">Génération 6</a>
-            <a href="gen7.html" class="btn-gen">Génération 7</a>
-            <a href="gen8.html" class="btn-gen">Génération 8</a>
-            <a href="gen9.html" class="btn-gen">Génération 9</a>
-            <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
-            <a href="type.html" class="btn-gen actif">TYPES 🌟</a>
+    <!-- NOUVELLE BARRE DE NAVIGATION (SÉPARÉE) -->
+    <div id="top-nav">
+        <div id="menu-container">
+            <button class="dropbtn">Générations ▼</button>
+            <div id="menu-generations" class="dropdown-content">
+                <a href="index.html" class="btn-gen">Génération 1</a>
+                <a href="gen2.html" class="btn-gen">Génération 2</a>
+                <a href="gen3.html" class="btn-gen">Génération 3</a>
+                <a href="gen4.html" class="btn-gen">Génération 4</a>
+                <a href="gen5.html" class="btn-gen">Génération 5</a>
+                <a href="gen6.html" class="btn-gen">Génération 6</a>
+                <a href="gen7.html" class="btn-gen">Génération 7</a>
+                <a href="gen8.html" class="btn-gen">Génération 8</a>
+                <a href="gen9.html" class="btn-gen">Génération 9</a>
+                <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
+            </div>
         </div>
+        <a href="type.html" class="btn-onglet actif">TYPES 🌟</a>
     </div>
     
     <header>
@@ -36,8 +39,11 @@
     </header>
     
     <main>
-        <!-- Menu des 18 types généré par le JavaScript -->
+        <!-- Le menu des 18 types (généré en JS) -->
         <div id="type-menu"></div>
+        
+        <!-- Le grand titre qui s'affichera lors du clic (ex: TYPE FEU) -->
+        <h1 id="titre-type-choisi"></h1>
 
         <div id="timer-container">⏱ <span id="timer">00:00</span></div>
         <div id="score-container">
