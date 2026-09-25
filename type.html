@@ -13,10 +13,7 @@
         <audio id="bg-music" src="musique2.mp3" loop></audio>
     </div>
     
-    <!-- NOUVELLE BARRE DE NAVIGATION (SÉPARÉE) -->
     <div id="top-nav">
-        
-        <!-- ONGLET 1 : GÉNÉRATIONS (Menu déroulant) -->
         <div class="menu-container">
             <button class="dropbtn">Générations ▼</button>
             <div class="dropdown-content">
@@ -33,9 +30,7 @@
             </div>
         </div>
         
-        <!-- ONGLET 2 : TYPES (Bouton à côté) -->
         <a href="type.html" class="btn-onglet actif">Par Type 🌟</a>
-
     </div>
     
     <header>
@@ -44,10 +39,8 @@
     </header>
     
     <main>
-        <!-- Grille des 18 gros logos de types -->
         <div id="type-menu"></div>
         
-        <!-- Le titre dynamique qui s'affiche quand on choisit un type -->
         <h1 id="titre-type-choisi"></h1>
 
         <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
@@ -56,13 +49,11 @@
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
-            <!-- Bouton pour cacher la grille et réafficher le menu des types -->
             <button id="btn-retour-types" class="btn-action">🔙 Changer de Type</button>
         </div>
         
         <input type="text" id="saisie" placeholder="Choisissez un type au-dessus pour commencer..." disabled>
         
-        <!-- La grille compacte des Pokémon par génération -->
         <div id="pokedex-grid"></div>
     </main>
     

@@ -22,7 +22,6 @@ let typeActif = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 let intervalsFormes = {};
 
-// Ordre et traductions exactes
 const typeConfig = {
     'water': { fr: 'Eau', color: '#6390F0' }, 'fire': { fr: 'Feu', color: '#EE8130' },
     'grass': { fr: 'Plante', color: '#7AC74C' }, 'ground': { fr: 'Sol', color: '#E2BF65' },
@@ -35,7 +34,6 @@ const typeConfig = {
     'dark': { fr: 'Ténèbres', color: '#705746' }, 'fairy': { fr: 'Fée', color: '#D685AD' }
 };
 
-// 1. GÉNÉRER LES BOUTONS (Grands cercles SVG + Texte)
 for (let key in typeConfig) {
     let btn = document.createElement('button');
     btn.className = 'btn-type';
@@ -56,7 +54,6 @@ function startTimer() {
 
 document.getElementById('btn-reset').addEventListener('click', () => { if(typeActif) chargerType(typeActif); });
 
-// Gérer le bouton "Retourner aux types"
 btnRetourTypes.addEventListener('click', () => {
     typeActif = null;
     clearInterval(timerInterval);
@@ -68,27 +65,20 @@ btnRetourTypes.addEventListener('click', () => {
     btnRetourTypes.style.display = 'none';
     input.disabled = true;
     input.placeholder = "Choisissez un type au-dessus pour commencer...";
-    
-    // On réaffiche la grande grille des 18 types
     typeMenu.style.display = 'flex';
 });
 
 function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase().trim(); }
 
-// 2. CHANGER DE TYPE ET PRÉPARER LA GRILLE
 function chargerType(type) {
     typeActif = type;
     Object.values(intervalsFormes).forEach(clearInterval); intervalsFormes = {};
 
-    // CACHER LE MENU DES 18 TYPES
     typeMenu.style.display = 'none';
-    
-    // AFFICHER LE SCORE, LE TIMER ET LE BOUTON RETOUR
     scoreContainer.style.display = 'flex';
     timerContainer.style.display = 'block';
     btnRetourTypes.style.display = 'inline-block';
 
-    // Afficher et colorer le titre
     titreType.innerText = `TYPE ${typeConfig[type].fr.toUpperCase()}`;
     titreType.style.color = typeConfig[type].color;
     titreType.style.display = 'block';
@@ -107,7 +97,6 @@ function chargerType(type) {
 
     grid.innerHTML = '';
     
-    // Construction des tableaux par génération
     for (let gen = 1; gen <= 9; gen++) {
         const pokeDeCetteGen = pokeDuTypeActuel.filter(p => p.generation === gen);
         if (pokeDeCetteGen.length > 0) {
@@ -131,7 +120,6 @@ function chargerType(type) {
     input.disabled = false; input.focus();
 }
 
-// 3. TÉLÉCHARGEMENT INITIAL 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse des 18 types (patiente un peu)..."; input.disabled = true;
     const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name generation_id pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
@@ -192,7 +180,6 @@ function validerPokemon(idPokemon, formes, nomSaisi) {
     }
 }
 
-// 4. ÉCOUTE DE LA SAISIE
 input.addEventListener('input', (e) => {
     if (!typeActif) { e.target.value = ""; return; }
     startTimer();
@@ -212,7 +199,6 @@ input.addEventListener('input', (e) => {
     }
 });
 
-// ACTIONS OMBRE ET ABANDON
 document.getElementById('btn-ombre').addEventListener('click', () => {
     if (pokeDuTypeActuel.length === 0) return;
     startTimer();
