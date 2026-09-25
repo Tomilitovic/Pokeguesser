@@ -90,7 +90,7 @@ function chargerType(type) {
     clearInterval(timerInterval); timerStarted = false;
     document.getElementById('btn-ombre').disabled = false;
 
-    // L'AJOUT EST ICI : On inclut Arceus (493) et Silvallié (773) d'office !
+    // Arceus et Silvallié sont inclus d'office
     pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type) || p.id === 493 || p.id === 773);
     
     scoreMax = pokeDuTypeActuel.length;
@@ -140,6 +140,12 @@ async function initialiserBaseDeDonnees() {
                 formes: e.pokemons.map(p => p.id), types: Array.from(typesSet)
             });
         });
+
+        // ==========================================
+        // LA LIGNE MAGIQUE POUR TRIER LES POKÉMON :
+        // ==========================================
+        allPokemons.sort((a, b) => a.id - b.id);
+
         input.placeholder = "Choisissez un type au-dessus pour commencer...";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }
