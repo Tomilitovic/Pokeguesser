@@ -4,21 +4,16 @@
 body { font-family: 'Montserrat', sans-serif; text-align: center; margin: 0; padding: 20px; color: white; background-image: url("fond.jpeg"); background-size: cover; background-attachment: fixed; background-position: center; position: relative; }
 
 /* =========================================
-   NOUVELLE NAVIGATION : LES DEUX ONGLETS CÔTE À CÔTE
+   NOUVELLE NAVIGATION : LES ONGLETS CÔTE À CÔTE
 ========================================= */
 #top-nav { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 9999; align-items: flex-start; }
 
-.menu-container { 
-    position: relative; 
-    /* Le fameux "pont invisible" pour que la souris ne quitte jamais le menu */
-    padding-bottom: 20px; 
-}
+.menu-container { position: relative; padding-bottom: 20px; }
 
 .dropbtn, .btn-onglet { background-color: #2980b9; color: white; padding: 10px 20px; font-size: 1rem; font-family: 'Montserrat', sans-serif; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; display: inline-block; position: relative; z-index: 10000; }
 .dropbtn:hover, .btn-onglet:hover { background-color: #3498db; }
 .btn-onglet.actif { background-color: #f1c40f; color: #2c3e50; }
 
-/* Le menu est maintenant collé au bouton grâce à top: 100% */
 .dropdown-content { display: none; flex-direction: column; gap: 5px; position: absolute; top: 100%; left: 0; width: 250px; background: transparent; z-index: 10001; }
 .menu-container:hover .dropdown-content { display: flex; }
 
@@ -48,7 +43,7 @@ header { display: flex; justify-content: center; align-items: center; gap: 20px;
 #btn-reset { background-color: #3498db; } #btn-reset:hover { background-color: #2980b9; }
 #btn-abandon { background-color: #e74c3c; } #btn-abandon:hover { background-color: #c0392b; }
 #btn-ombre { background-color: #9b59b6; } #btn-ombre:hover { background-color: #8e44ad; }
-#btn-retour-types { background-color: #27ae60; display: none; } #btn-retour-types:hover { background-color: #2ecc71; }
+#btn-retour-modes { background-color: #27ae60; display: none; } #btn-retour-modes:hover { background-color: #2ecc71; }
 
 /* =========================================
    BARRE DE SAISIE
@@ -66,7 +61,7 @@ input:focus { transform: scale(1.05); }
 .pokemon-box.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
 .ombre { filter: brightness(0) invert(0); opacity: 0.6; }
 
-/* Cases très réduites pour le Pokédex Entier et le mode Par Type */
+/* Cases très réduites pour les modes avec beaucoup de Pokémon */
 .gen-container { background-color: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #34495e; width: 100%; }
 .gen-title { font-size: 1.5rem; color: #f1c40f; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #f1c40f; padding-bottom: 5px; text-align: left; }
 .grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
@@ -79,7 +74,7 @@ input:focus { transform: scale(1.05); }
 .pokemon-box-micro span.nom { font-size: 0.4rem !important; margin-top: 1px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
 
 /* =========================================
-   MENU DES TYPES (Grands ronds)
+   MENU DES TYPES
 ========================================= */
 #type-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
 .btn-type { display: flex; flex-direction: column; align-items: center; gap: 5px; background: transparent; border: none; cursor: pointer; color: #2c3e50; font-family: 'Montserrat', sans-serif; font-weight: bold; font-size: 0.9rem; transition: 0.2s; }
@@ -89,6 +84,14 @@ input:focus { transform: scale(1.05); }
 .btn-type.actif img { transform: scale(1.15); box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
 .btn-type.actif span { background-color: #f1c40f; color: white; }
 
-#titre-type-choisi { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); display: none; }
+#titre-dynamique { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); display: none; }
+
+/* =========================================
+   NOUVEAU : MENU DES MODES SPÉCIAUX
+========================================= */
+#special-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+.btn-special { background: linear-gradient(135deg, #8e44ad, #c0392b); color: white; padding: 15px 25px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+.btn-special:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+.btn-special.actif { border-color: #f1c40f; box-shadow: 0 0 20px rgba(241, 196, 15, 0.8); background: linear-gradient(135deg, #f39c12, #e67e22); }
 
 footer { margin-top: 60px; padding: 20px; font-size: 1.2rem; color: #bdc3c7; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }

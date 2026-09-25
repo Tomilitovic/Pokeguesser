@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>POKEGUESSER - Gen 9</title>
+    <title>POKEGUESSER - Modes Spéciaux</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -10,10 +10,13 @@
 <body>
     <div id="audio-controls">
         <button id="btn-mute">🔇 Musique OFF</button>
-        <audio id="bg-music" src="musique.mp3" loop></audio>
+        <!-- Piste audio dédiée aux modes spéciaux -->
+        <audio id="bg-music" src="musique3.mp3" loop></audio>
     </div>
     
+    <!-- BARRE DE NAVIGATION AVEC LES 3 ONGLETS -->
     <div id="top-nav">
+        <!-- ONGLET 1 : GÉNÉRATIONS -->
         <div class="menu-container">
             <button class="dropbtn">Générations ▼</button>
             <div class="dropdown-content">
@@ -25,12 +28,16 @@
                 <a href="gen6.html" class="btn-gen">Génération 6</a>
                 <a href="gen7.html" class="btn-gen">Génération 7</a>
                 <a href="gen8.html" class="btn-gen">Génération 8</a>
-                <a href="gen9.html" class="btn-gen actif">Génération 9</a>
+                <a href="gen9.html" class="btn-gen">Génération 9</a>
                 <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
             </div>
         </div>
+        
+        <!-- ONGLET 2 : TYPES -->
         <a href="type.html" class="btn-onglet">Par Type 🌟</a>
-        <a href="speciaux.html" class="btn-onglet">Spéciaux 🏆</a>
+
+        <!-- ONGLET 3 : SPÉCIAUX (Actif sur cette page) -->
+        <a href="speciaux.html" class="btn-onglet actif">Spéciaux 🏆</a>
     </div>
     
     <header>
@@ -39,19 +46,29 @@
     </header>
     
     <main>
-        <div id="timer-container">⏱ <span id="timer">00:00</span></div>
-        <div id="score-container">
-            Score : <span id="score">0</span> / 120
+        <!-- Grille des boutons pour les modes spéciaux (Générés par le JS) -->
+        <div id="special-menu"></div>
+        
+        <!-- Le titre dynamique (ex: TOP 100 ATTAQUE) -->
+        <h1 id="titre-dynamique"></h1>
+
+        <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
+        <div id="score-container" style="display: none;">
+            Score : <span id="score">0</span> / <span id="score-max">0</span>
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
+            <!-- Bouton pour revenir au choix des modes spéciaux -->
+            <button id="btn-retour-modes" class="btn-action">🔙 Changer de Mode</button>
         </div>
         
-        <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
+        <input type="text" id="saisie" placeholder="Choisissez un mode spécial au-dessus..." disabled>
+        
+        <!-- La grille des résultats -->
         <div id="pokedex-grid"></div>
     </main>
     
     <footer>Créé par Tomilitovic</footer>
-    <script src="script-gen9.js"></script>
+    <script src="script-speciaux.js"></script>
 </body>
 </html>
