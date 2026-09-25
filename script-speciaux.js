@@ -14,8 +14,8 @@ const scoreContainer = document.getElementById('score-container');
 const timerContainer = document.getElementById('timer-container');
 const btnRetour = document.getElementById('btn-retour-modes');
 
-let allForms = []; // Contiendra TOUTES les formes (Base, Méga, Primo, etc.)
-let pokemonsData = {}; // Répertoire de validation (Nom -> ID de l'espèce)
+let allForms = []; 
+let pokemonsData = {}; 
 let pokeDuModeActuel = [];
 let pokemonsTrouves = [];
 let scoreActuel = 0, scoreMax = 0;
@@ -73,7 +73,6 @@ function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse des statistiques et Méga-évolutions (patiente)..."; input.disabled = true;
     
-    // Requête géante : on prend TOUT (Statistiques, Poids, Taille, Rareté)
     const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id is_legendary is_mythical pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id name weight height is_default pokemonstats { base_stat stat { name } } } } }`;
     
     try {
@@ -85,13 +84,12 @@ async function initialiserBaseDeDonnees() {
             const vraiNom = e.pokemonspeciesnames[0].name;
             const nomNormalise = normaliserTexte(vraiNom);
 
-            // Création du dictionnaire pour la validation textuelle
             pokemonsData[nomNormalise] = speciesId;
 
-            // Catégorisation pour le mode Légendaires
+            // --- CATÉGORIES DE RARETÉ ---
             let category = null;
             const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
-            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 996, 997, 1009, 1010, 1020, 1021, 1022, 1023];
+            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1009, 1010, 1020, 1021, 1022, 1023];
             const pseudos = [149, 248, 373, 376, 445, 635, 706, 784, 887, 998];
 
             if (ubs.includes(speciesId)) category = "Ultra-Chimères";
@@ -100,12 +98,15 @@ async function initialiserBaseDeDonnees() {
             else if (e.is_mythical) category = "Fabuleux";
             else if (e.is_legendary) category = "Légendaires";
 
-            // Enregistrement de chaque FORME du Pokémon
             e.pokemons.forEach(p => {
+                // EXCLUSION DES DYNAMAX ET GIGAMAX
+                if (p.name.includes("-gmax") || p.name.includes("-eternamax") || p.name.includes("-totem")) {
+                    return; 
+                }
+
                 let stats = {};
                 p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
 
-                // Détection Méga/Primo
                 let isMega = false;
                 let displayName = vraiNom;
                 if (p.name.includes("-mega-x")) { displayName += " (Méga X)"; isMega = true; }
@@ -120,8 +121,8 @@ async function initialiserBaseDeDonnees() {
                     isDefault: p.is_default,
                     isMega: isMega,
                     category: category,
-                    weight: p.weight / 10, // Converti en Kg
-                    height: p.height / 10, // Converti en Mètres
+                    weight: p.weight / 10, 
+                    height: p.height / 10, 
                     hp: stats['hp'],
                     atk: stats['attack'],
                     def: stats['defense'],
@@ -156,9 +157,7 @@ function chargerMode(mode) {
     document.getElementById('btn-ombre').disabled = false;
     grid.innerHTML = '';
 
-    // LOGIQUE DE SÉLECTION SELON LE MODE
     if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(mode)) {
-        // Trie TOUTES les formes et garde les 100 premières
         pokeDuModeActuel = [...allForms].sort((a, b) => b[mode] - a[mode]).slice(0, 100);
         
         let container = document.createElement('div');
@@ -170,14 +169,12 @@ function chargerMode(mode) {
             let box = document.createElement('div');
             box.classList.add('pokemon-box-micro');
             box.id = "box-" + p.id;
-            // On affiche le classement ET la statistique secrète
             box.innerHTML = `<span class="numero">#${index + 1}</span><div class="valeur-stat">${p[mode]} ${specialConfig[mode].label}</div>`;
             gridSmall.appendChild(box);
         });
         container.appendChild(gridSmall); grid.appendChild(container);
 
     } else if (mode === 'mega') {
-        // Mode Méga : On récupère uniquement les méga-évolutions
         pokeDuModeActuel = allForms.filter(f => f.isMega);
         
         let container = document.createElement('div');
@@ -195,9 +192,14 @@ function chargerMode(mode) {
         container.appendChild(gridSmall); grid.appendChild(container);
 
     } else if (mode === 'legendaires') {
-        // Mode Légendaires : Uniquement les formes de base pour éviter les doublons
+        
+        // 1. On filtre uniquement ceux qui ont une catégorie et qui sont une forme de base
         pokeDuModeActuel = allForms.filter(f => f.category && f.isDefault);
         
+        // 2. ON TRIE LE TABLEAU PRINCIPAL PAR ORDRE NUMÉRIQUE DU POKÉDEX
+        pokeDuModeActuel.sort((a, b) => a.speciesId - b.speciesId);
+        
+        // 3. On génère les jolis sous-tableaux, l'ordre de tri sera conservé à l'intérieur !
         const ordreCategories = ["Pseudo-Légendaires", "Légendaires", "Fabuleux", "Ultra-Chimères", "Paradoxes"];
         
         ordreCategories.forEach(cat => {
@@ -238,7 +240,7 @@ function declencherVictoire() {
 }
 
 // =========================================
-// 4. VALIDATION INTÉLLIGENTE (Gère les Méga automatiquement !)
+// 4. VALIDATION INTÉLLIGENTE
 // =========================================
 function validerForme(forme, joueurActif = true) {
     const box = document.getElementById("box-" + forme.id);
@@ -249,14 +251,12 @@ function validerForme(forme, joueurActif = true) {
     scoreActuel++; scoreText.innerText = scoreActuel;
     pokemonsTrouves.push(forme.id);
     
-    // Joue le cri de l'espèce de base
     if(joueurActif) {
         startTimer();
         let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${forme.speciesId}.ogg`);
-        cri.volume = 0.5; cri.play().catch(e => {}); // Ignore les erreurs si audio manquant
+        cri.volume = 0.5; cri.play().catch(e => {}); 
     }
     
-    // Garde la statistique affichée si on est dans un mode Top 100
     let statInfo = "";
     if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(modeActif)) {
         statInfo = `<div class="valeur-stat">${forme[modeActif]} ${specialConfig[modeActif].label}</div>`;
@@ -286,10 +286,7 @@ input.addEventListener('input', (e) => {
         let trouveQuelqueChose = false;
         
         targetSpeciesIds.forEach(sId => {
-            // On cherche TOUTES les formes de ce Pokémon présentes dans la grille actuelle !
-            // Ex: Si tu tapes "Dracaufeu" dans le mode Méga, ça validera le X et le Y d'un seul coup.
             const formesAValider = pokeDuModeActuel.filter(f => f.speciesId === sId);
-            
             formesAValider.forEach(forme => {
                 if (!pokemonsTrouves.includes(forme.id)) {
                     validerForme(forme, true);
