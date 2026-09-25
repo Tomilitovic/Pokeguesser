@@ -4,19 +4,23 @@
 body { font-family: 'Montserrat', sans-serif; text-align: center; margin: 0; padding: 20px; color: white; background-image: url("fond.jpeg"); background-size: cover; background-attachment: fixed; background-position: center; position: relative; }
 
 /* =========================================
-   NOUVELLE NAVIGATION : MENUS SÉPARÉS
+   NOUVELLE NAVIGATION : LES DEUX ONGLETS CÔTE À CÔTE
 ========================================= */
-#menu-wrapper { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 1000; }
+#top-nav { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 1000; align-items: flex-start; }
 
 .menu-container { position: relative; }
 
-.dropbtn { background-color: #2980b9; color: white; padding: 10px 20px; font-size: 1rem; font-family: 'Montserrat', sans-serif; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; display: inline-block; }
-.dropbtn:hover { background-color: #3498db; }
+/* Design des boutons principaux (Générations et Types) */
+.dropbtn, .btn-onglet { background-color: #2980b9; color: white; padding: 10px 20px; font-size: 1rem; font-family: 'Montserrat', sans-serif; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; display: inline-block; }
+.dropbtn:hover, .btn-onglet:hover { background-color: #3498db; }
 
-/* L'onglet actif prend la couleur jaune pour bien se démarquer */
-.dropbtn.actif { background-color: #f1c40f; color: #2c3e50; }
+/* Onglet actif (en jaune pour se démarquer) */
+.btn-onglet.actif { background-color: #f1c40f; color: #2c3e50; }
 
+/* Le menu déroulant caché par défaut */
 .dropdown-content { display: none; flex-direction: column; gap: 5px; margin-top: 10px; position: absolute; width: 250px; background: transparent; }
+
+/* C'est cette ligne corrigée qui fait apparaître le menu au survol ! */
 .menu-container:hover .dropdown-content { display: flex; }
 
 .btn-gen { background-color: rgba(25, 35, 45, 0.9); color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; border: 2px solid #34495e; font-weight: bold; font-family: 'Montserrat', sans-serif; transition: 0.2s; text-align: left; }
