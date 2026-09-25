@@ -52,7 +52,7 @@ input { padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; border: none
 input:focus { transform: scale(1.05); }
 
 /* =========================================
-   GRILLES ET CASES (CLASSIQUE ET MICRO)
+   GRILLES ET CASES (CLASSIQUE)
 ========================================= */
 #pokedex-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
 .pokemon-box { width: 100px; height: 100px; background-color: rgba(25, 35, 45, 0.8); border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #34495e; }
@@ -61,10 +61,12 @@ input:focus { transform: scale(1.05); }
 .pokemon-box.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
 .ombre { filter: brightness(0) invert(0); opacity: 0.6; }
 
-/* Cases très réduites pour les modes avec beaucoup de Pokémon */
+/* =========================================
+   CASES "MICRO" (Pour le Pokédex Entier et Par Type)
+========================================= */
 .gen-container { background-color: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #34495e; width: 100%; }
 .gen-title { font-size: 1.5rem; color: #f1c40f; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #f1c40f; padding-bottom: 5px; text-align: left; }
-.grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 
 .pokemon-box-micro { width: 50px; height: 50px; background-color: rgba(25, 35, 45, 0.8); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
 .pokemon-box-micro span.numero { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; }
@@ -73,9 +75,19 @@ input:focus { transform: scale(1.05); }
 .pokemon-box-micro img { width: 35px !important; height: 35px !important; }
 .pokemon-box-micro span.nom { font-size: 0.4rem !important; margin-top: 1px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
 
-/* --- SPÉCIAL : Affichage de la stat dans la case --- */
-.valeur-stat { font-size: 0.65rem; color: #f1c40f; font-weight: bold; margin-top: 2px; }
-.pokemon-box-micro.trouve .valeur-stat, .pokemon-box-micro.rate .valeur-stat { font-size: 0.45rem; margin-top: 0px; }
+/* =========================================
+   NOUVEAU : CASES "SPÉCIALES" (75px)
+========================================= */
+.pokemon-box-special { width: 75px; height: 75px; background-color: rgba(25, 35, 45, 0.8); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
+.pokemon-box-special span.numero { font-size: 0.9rem; color: #7f8c8d; font-weight: bold; }
+.pokemon-box-special.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
+.pokemon-box-special.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
+.pokemon-box-special img { width: 45px !important; height: 45px !important; }
+.pokemon-box-special span.nom { font-size: 0.55rem !important; margin-top: 2px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
+
+/* Affichage des statistiques dans les cases Spéciales */
+.valeur-stat { font-size: 0.8rem; color: #f1c40f; font-weight: bold; margin-top: 2px; text-align: center; }
+.pokemon-box-special.trouve .valeur-stat, .pokemon-box-special.rate .valeur-stat { font-size: 0.55rem; margin-top: 0px; }
 
 /* =========================================
    MENU DES TYPES

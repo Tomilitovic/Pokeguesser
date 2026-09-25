@@ -21,10 +21,8 @@ let pokemonsTrouves = [];
 let scoreActuel = 0, scoreMax = 0;
 let modeActif = null; 
 let timerInterval, timerStarted = false, secondsElapsed = 0;
+let intervalsRotation = {}; 
 
-// =========================================
-// 1. CONFIGURATION DES MODES SPÉCIAUX
-// =========================================
 const specialConfig = {
     'weight': { titre: 'Top 100 Plus Lourds', icon: '⚖️', label: 'kg' },
     'height': { titre: 'Top 100 Plus Grands', icon: '📏', label: 'm' },
@@ -60,6 +58,7 @@ document.getElementById('btn-reset').addEventListener('click', () => { if(modeAc
 
 btnRetour.addEventListener('click', () => {
     modeActif = null; clearInterval(timerInterval); timerStarted = false; grid.innerHTML = '';
+    Object.values(intervalsRotation).forEach(clearInterval); intervalsRotation = {};
     titreMenu.style.display = 'none'; scoreContainer.style.display = 'none'; timerContainer.style.display = 'none'; btnRetour.style.display = 'none';
     input.disabled = true; input.placeholder = "Choisissez un mode spécial au-dessus...";
     specialMenu.style.display = 'flex';
@@ -67,11 +66,8 @@ btnRetour.addEventListener('click', () => {
 
 function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase().trim(); }
 
-// =========================================
-// 2. TÉLÉCHARGEMENT DE LA BASE DE DONNÉES ENRICHIE
-// =========================================
 async function initialiserBaseDeDonnees() {
-    input.placeholder = "Analyse des statistiques et Méga-évolutions (patiente)..."; input.disabled = true;
+    input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
     
     const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id is_legendary is_mythical pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id name weight height is_default pokemonstats { base_stat stat { name } } } } }`;
     
@@ -86,61 +82,107 @@ async function initialiserBaseDeDonnees() {
 
             pokemonsData[nomNormalise] = speciesId;
 
-            // --- CATÉGORIES DE RARETÉ ---
+            // --- CATÉGORIES CORRIGÉES ---
             let category = null;
             const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
-            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1009, 1010, 1020, 1021, 1022, 1023];
+            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1005, 1006, 1009, 1010, 1020, 1021, 1022, 1023]; 
             const pseudos = [149, 248, 373, 376, 445, 635, 706, 784, 887, 998];
 
             if (ubs.includes(speciesId)) category = "Ultra-Chimères";
             else if (paradoxes.includes(speciesId)) category = "Paradoxes";
             else if (pseudos.includes(speciesId)) category = "Pseudo-Légendaires";
-            else if (e.is_mythical) category = "Fabuleux";
+            else if (e.is_mythical) category = "Fabuleux"; 
             else if (e.is_legendary) category = "Légendaires";
 
+            let normalForms = [];
+            let megaForms = [];
+
             e.pokemons.forEach(p => {
-                // EXCLUSION DES DYNAMAX ET GIGAMAX
-                if (p.name.includes("-gmax") || p.name.includes("-eternamax") || p.name.includes("-totem")) {
-                    return; 
+                const name = p.name;
+                if (name.includes("-gmax") || name.includes("-eternamax") || name.includes("-totem")) return; 
+
+                if (name.includes("-mega") || name.includes("-primal")) {
+                    megaForms.push(p);
+                } else {
+                    normalForms.push(p);
                 }
+            });
 
-                let stats = {};
-                p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+            if (normalForms.length > 0) {
+                let maxWeight = 0, maxHeight = 0;
+                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                let formIds = [];
 
-                let isMega = false;
-                let displayName = vraiNom;
-                if (p.name.includes("-mega-x")) { displayName += " (Méga X)"; isMega = true; }
-                else if (p.name.includes("-mega-y")) { displayName += " (Méga Y)"; isMega = true; }
-                else if (p.name.includes("-mega")) { displayName += " (Méga)"; isMega = true; }
-                else if (p.name.includes("-primal")) { displayName += " (Primo)"; isMega = true; }
+                normalForms.forEach(p => {
+                    formIds.push(p.id);
+                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+
+                    let stats = {};
+                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                });
 
                 allForms.push({
-                    id: p.id,
+                    id: speciesId,
                     speciesId: speciesId,
-                    vraiNom: displayName,
-                    isDefault: p.is_default,
-                    isMega: isMega,
+                    vraiNom: vraiNom,
+                    formes: formIds,
+                    isMega: false,
+                    isDefault: true,
                     category: category,
-                    weight: p.weight / 10, 
-                    height: p.height / 10, 
-                    hp: stats['hp'],
-                    atk: stats['attack'],
-                    def: stats['defense'],
-                    spa: stats['special-attack'],
-                    spd: stats['special-defense'],
-                    spe: stats['speed']
+                    weight: maxWeight, height: maxHeight,
+                    hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
                 });
-            });
+            }
+
+            if (megaForms.length > 0) {
+                let maxWeight = 0, maxHeight = 0;
+                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                let formIds = [];
+
+                megaForms.forEach(p => {
+                    formIds.push(p.id);
+                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+
+                    let stats = {};
+                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                });
+
+                let suffix = megaForms[0].name.includes("-primal") ? " (Primo)" : " (Méga)";
+
+                allForms.push({
+                    id: formIds[0], 
+                    speciesId: speciesId,
+                    vraiNom: vraiNom + suffix,
+                    formes: formIds, 
+                    isMega: true,
+                    isDefault: false,
+                    category: null,
+                    weight: maxWeight, height: maxHeight,
+                    hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
+                });
+            }
         });
         input.placeholder = "Choisissez un mode spécial au-dessus !";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }
 
-// =========================================
-// 3. CHARGEMENT D'UN MODE SPÉCIFIQUE
-// =========================================
 function chargerMode(mode) {
     modeActif = mode;
+    Object.values(intervalsRotation).forEach(clearInterval); intervalsRotation = {};
     document.querySelectorAll('.btn-special').forEach(b => b.classList.remove('actif'));
     document.getElementById('btn-special-' + mode).classList.add('actif');
 
@@ -160,14 +202,13 @@ function chargerMode(mode) {
     if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(mode)) {
         pokeDuModeActuel = [...allForms].sort((a, b) => b[mode] - a[mode]).slice(0, 100);
         
-        let container = document.createElement('div');
-        container.classList.add('gen-container');
-        let gridSmall = document.createElement('div');
-        gridSmall.classList.add('grid-small');
+        let container = document.createElement('div'); container.classList.add('gen-container');
+        let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
 
         pokeDuModeActuel.forEach((p, index) => {
             let box = document.createElement('div');
-            box.classList.add('pokemon-box-micro');
+            // C'EST ICI : Utilisation de la nouvelle classe pokemon-box-special
+            box.classList.add('pokemon-box-special');
             box.id = "box-" + p.id;
             box.innerHTML = `<span class="numero">#${index + 1}</span><div class="valeur-stat">${p[mode]} ${specialConfig[mode].label}</div>`;
             gridSmall.appendChild(box);
@@ -175,16 +216,14 @@ function chargerMode(mode) {
         container.appendChild(gridSmall); grid.appendChild(container);
 
     } else if (mode === 'mega') {
-        pokeDuModeActuel = allForms.filter(f => f.isMega);
+        pokeDuModeActuel = allForms.filter(f => f.isMega).sort((a, b) => a.speciesId - b.speciesId);
         
-        let container = document.createElement('div');
-        container.classList.add('gen-container');
-        let gridSmall = document.createElement('div');
-        gridSmall.classList.add('grid-small');
+        let container = document.createElement('div'); container.classList.add('gen-container');
+        let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
 
         pokeDuModeActuel.forEach(p => {
             let box = document.createElement('div');
-            box.classList.add('pokemon-box-micro');
+            box.classList.add('pokemon-box-special');
             box.id = "box-" + p.id;
             box.innerHTML = `<span class="numero">Méga</span>`;
             gridSmall.appendChild(box);
@@ -192,28 +231,21 @@ function chargerMode(mode) {
         container.appendChild(gridSmall); grid.appendChild(container);
 
     } else if (mode === 'legendaires') {
-        
-        // 1. On filtre uniquement ceux qui ont une catégorie et qui sont une forme de base
         pokeDuModeActuel = allForms.filter(f => f.category && f.isDefault);
+        pokeDuModeActuel.sort((a, b) => a.speciesId - b.speciesId); 
         
-        // 2. ON TRIE LE TABLEAU PRINCIPAL PAR ORDRE NUMÉRIQUE DU POKÉDEX
-        pokeDuModeActuel.sort((a, b) => a.speciesId - b.speciesId);
-        
-        // 3. On génère les jolis sous-tableaux, l'ordre de tri sera conservé à l'intérieur !
         const ordreCategories = ["Pseudo-Légendaires", "Légendaires", "Fabuleux", "Ultra-Chimères", "Paradoxes"];
         
         ordreCategories.forEach(cat => {
             const pokeDeLaCat = pokeDuModeActuel.filter(p => p.category === cat);
             if (pokeDeLaCat.length > 0) {
-                let container = document.createElement('div');
-                container.classList.add('gen-container');
+                let container = document.createElement('div'); container.classList.add('gen-container');
                 container.innerHTML = `<h2 class="gen-title">${cat}</h2>`;
-                let gridSmall = document.createElement('div');
-                gridSmall.classList.add('grid-small');
+                let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
 
                 pokeDeLaCat.forEach(p => {
                     let box = document.createElement('div');
-                    box.classList.add('pokemon-box-micro');
+                    box.classList.add('pokemon-box-special');
                     box.id = "box-" + p.id;
                     box.innerHTML = `<span class="numero">#${p.speciesId.toString().padStart(3, '0')}</span>`;
                     gridSmall.appendChild(box);
@@ -239,9 +271,6 @@ function declencherVictoire() {
     }, 250);
 }
 
-// =========================================
-// 4. VALIDATION INTÉLLIGENTE
-// =========================================
 function validerForme(forme, joueurActif = true) {
     const box = document.getElementById("box-" + forme.id);
     if (!box || box.classList.contains('trouve')) return;
@@ -263,10 +292,21 @@ function validerForme(forme, joueurActif = true) {
     }
     
     box.innerHTML = `
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${forme.id}.png">
+        <img id="img-${forme.id}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${forme.id}.png">
         <span class="nom">${forme.vraiNom}</span>
         ${statInfo}
     `;
+
+    if (forme.formes.length > 1) {
+        let indexForme = 0;
+        intervalsRotation[forme.id] = setInterval(() => {
+            let img = document.getElementById(`img-${forme.id}`);
+            if (img) { 
+                indexForme = (indexForme + 1) % forme.formes.length; 
+                img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${forme.formes[indexForme]}.png`; 
+            }
+        }, 5000); 
+    }
         
     if (scoreActuel === scoreMax && joueurActif) {
         clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! MODE COMPLÉTÉ !";
@@ -299,7 +339,6 @@ input.addEventListener('input', (e) => {
     }
 });
 
-// ACTIONS OMBRE ET ABANDON
 document.getElementById('btn-ombre').addEventListener('click', () => {
     if (pokeDuModeActuel.length === 0) return;
     startTimer();
