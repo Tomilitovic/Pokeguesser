@@ -16,111 +16,130 @@ const btnRetour = document.getElementById('btn-retour-modes');
 
 let allPokemons = []; 
 let pokemonsData = {}; 
-let equipeActuelle = []; // Liste des objets { idPokemon, divId, trouve }
+let equipeActuelle = []; 
 let pokemonsTrouves = 0;
 let scoreMax = 0;
 let regionActive = null; 
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
 // =========================================
-// 1. LE DICTIONNAIRE DES DRESSEURS (La grosse base de données manuelle)
+// 1. LE DICTIONNAIRE DES DRESSEURS (Toutes les versions incluses !)
 // =========================================
-// Sprites : On utilise les sprites officiels de Pokémon Showdown
 const bddDresseurs = {
     'gen1': [
         {
             nom: "Pierre (Argenta)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/brock.png",
+            sprite: "pierre.png", // Image à héberger toi-même
             equipes: [
-                { nom: "Équipe Arène", pokemons: [74, 95] } // Racaillou, Onix
+                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [74, 95] }, // Racaillou, Onix
             ]
         },
         {
             nom: "Ondine (Azuria)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/misty.png",
+            sprite: "ondine.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [120, 121] } // Stari, Staross
+                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [120, 121] }, // Stari, Staross
             ]
         },
         {
             nom: "Major Bob (Carmin sur Mer)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/lt.surge.png",
+            sprite: "bob.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [100, 25, 26] } // Voltorbe, Pikachu, Raichu
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [100, 25, 26] }, // Voltorbe, Pikachu, Raichu
+                { nom: "Pokémon Jaune", pokemons: [26] }, // Raichu
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [100, 81, 26] } // Voltorbe, Magnéti, Raichu
             ]
         },
         {
             nom: "Érika (Céladopole)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/erika.png",
+            sprite: "erika.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [71, 114, 45] } // Empiflor, Saquedeneu, Rafflesia
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [71, 114, 45] }, // Empiflor, Saquedeneu, Rafflesia
+                { nom: "Pokémon Jaune", pokemons: [70, 114, 44] }, // Boustiflor, Saquedeneu, Ortide
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [114, 71, 45] } // Saquedeneu, Empiflor, Rafflesia
             ]
         },
         {
             nom: "Koga (Parmanie)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/koga.png",
+            sprite: "koga.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [109, 89, 109, 110] } // Smogo, Grotadmorv, Smogo, Smogogo
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [109, 89, 109, 110] }, // Smogo, Grotadmorv, Smogo, Smogogo
+                { nom: "Pokémon Jaune", pokemons: [48, 48, 48, 49] }, // Mimitoss x3, Aéromite
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [110, 89, 42, 49] } // Smogogo, Grotadmorv, Nosferalto, Aéromite
             ]
         },
         {
             nom: "Morgiane (Safrania)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/sabrina.png",
+            sprite: "morgiane.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [64, 122, 49, 65] } // Kadabra, M. Mime, Aéromite, Alakazam
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [64, 122, 49, 65] }, // Kadabra, M. Mime, Aéromite, Alakazam
+                { nom: "Pokémon Jaune", pokemons: [63, 64, 65] }, // Abra, Kadabra, Alakazam
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [122, 80, 124, 65] } // M. Mime, Flagadoss, Lippoutou, Alakazam
             ]
         },
         {
             nom: "Auguste (Cramois'Île)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/blaine.png",
+            sprite: "auguste.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [58, 77, 78, 59] } // Caninos, Ponyta, Galopa, Arcanin
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [58, 77, 78, 59] }, // Caninos, Ponyta, Galopa, Arcanin
+                { nom: "Pokémon Jaune", pokemons: [38, 78, 59] }, // Feunard, Galopa, Arcanin
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [126, 78, 38, 59] } // Magmar, Galopa, Feunard, Arcanin
             ]
         },
         {
             nom: "Giovanni (Jadielle)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/giovanni.png",
+            sprite: "giovanni.png",
             equipes: [
-                { nom: "Équipe Arène", pokemons: [111, 51, 31, 34, 112] } // Rhinocorne, Triopikeur, Nidoqueen, Nidoking, Rhinoféros
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [111, 51, 31, 34, 112] }, // Rhinocorne, Triopikeur, Nidoqueen, Nidoking, Rhinoféros
+                { nom: "Pokémon Jaune", pokemons: [51, 53, 31, 34, 112] }, // Triopikeur, Persian, Nidoqueen, Nidoking, Rhinoféros
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [51, 31, 34, 112] } // Triopikeur, Nidoqueen, Nidoking, Rhinoféros
             ]
         },
         // --- CONSEIL 4 ---
         {
             nom: "Olga (Conseil 4)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/lorelei.png",
+            sprite: "olga.png",
             equipes: [
-                { nom: "Équipe Ligue", pokemons: [87, 91, 80, 124, 131] }
+                { nom: "Toutes Versions Confondues", pokemons: [87, 91, 80, 124, 131] } // Lamantine, Crustabri, Flagadoss, Lippoutou, Lokhlass
             ]
         },
         {
             nom: "Aldo (Conseil 4)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/bruno.png",
+            sprite: "aldo.png",
             equipes: [
-                { nom: "Équipe Ligue", pokemons: [95, 107, 106, 95, 68] }
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [95, 107, 106, 95, 68] }, // Onix, Tygnon, Kicklee, Onix, Mackogneur
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [95, 106, 107, 62, 68] } // Onix, Kicklee, Tygnon, Tartard, Mackogneur
             ]
         },
         {
             nom: "Agatha (Conseil 4)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/agatha.png",
+            sprite: "agatha.png",
             equipes: [
-                { nom: "Équipe Ligue", pokemons: [94, 42, 93, 24, 94] }
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [94, 42, 93, 24, 94] }, // Ectoplasma, Nosferalto, Spectrum, Arbok, Ectoplasma
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [24, 94, 42, 110, 94] } // Arbok, Ectoplasma, Nosferalto, Smogogo, Ectoplasma
             ]
         },
         {
             nom: "Peter (Conseil 4)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/lance.png",
+            sprite: "peter.png",
             equipes: [
-                { nom: "Équipe Ligue", pokemons: [130, 148, 148, 142, 149] }
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [130, 148, 148, 142, 149] }, // Léviator, Draco x2, Ptéra, Dracolosse
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [117, 142, 130, 6, 149] } // Hypocéan, Ptéra, Léviator, Dracaufeu, Dracolosse
             ]
         },
-        // --- RIVAL (MAÎTRE) ---
+        // --- RIVAUX ---
         {
-            nom: "Blue (Maître de la Ligue)",
-            sprite: "https://play.pokemonshowdown.com/sprites/trainers/blue.png",
+            nom: "Blue / Trace (Maître de la Ligue)",
+            sprite: "blue.png",
             equipes: [
-                { nom: "Équipe Starter Plante (Bulbizarre)", pokemons: [18, 65, 112, 103, 130, 3] },
-                { nom: "Équipe Starter Feu (Salamèche)", pokemons: [18, 65, 112, 102, 130, 6] },
-                { nom: "Équipe Starter Eau (Carapuce)", pokemons: [18, 65, 112, 103, 59, 9] }
+                { nom: "Rouge / Bleu / RFVF (Starter Plante)", pokemons: [18, 65, 112, 103, 130, 3] }, // Florizarre
+                { nom: "Rouge / Bleu / RFVF (Starter Feu)", pokemons: [18, 65, 112, 103, 130, 6] }, // Dracaufeu
+                { nom: "Rouge / Bleu / RFVF (Starter Eau)", pokemons: [18, 65, 112, 103, 59, 9] }, // Tortank
+                { nom: "Jaune (Starter Évoli - Aquali)", pokemons: [28, 65, 38, 103, 112, 134] }, // Aquali
+                { nom: "Jaune (Starter Évoli - Voltali)", pokemons: [28, 65, 91, 103, 112, 135] }, // Voltali
+                { nom: "Jaune (Starter Évoli - Pyroli)", pokemons: [28, 65, 91, 103, 112, 136] }, // Pyroli
+                { nom: "Let's Go (Trace - Starter Évoli)", pokemons: [18, 78, 80, 105, 143, 135] }, // Voltali (Trace)
+                { nom: "Let's Go (Trace - Starter Pikachu)", pokemons: [18, 78, 80, 105, 143, 136] } // Raichu Alola / Pyroli (Trace)
             ]
         }
     ]
@@ -200,21 +219,19 @@ function lancerQuizDresseurs(regionKey) {
     equipeActuelle = [];
 
     const dresseursList = bddDresseurs[regionKey];
-    let uniqueIdCounter = 0; // Pour donner un ID HTML unique (car un pokémon peut apparaitre plusieurs fois !)
+    let uniqueIdCounter = 0; 
 
     dresseursList.forEach(dresseur => {
         let section = document.createElement('div');
         section.className = 'dresseur-section';
 
-        // L'en-tête avec la photo et le nom
         section.innerHTML = `
             <div class="dresseur-header">
-                <img src="${dresseur.sprite}" alt="${dresseur.nom}">
+                <img src="${dresseur.sprite}" alt="${dresseur.nom}" onerror="this.src='logo.jpeg'">
                 <h2>${dresseur.nom}</h2>
             </div>
         `;
 
-        // Génération des équipes
         dresseur.equipes.forEach(equipe => {
             let pContainer = document.createElement('div');
             
@@ -277,7 +294,6 @@ function declencherVictoire() {
 // =========================================
 // 5. VALIDATION GLOBALE
 // =========================================
-// Quand on tape un nom, on valide TOUTES les cases qui attendent ce Pokémon
 function validerEquipePokemon(pokeIdCible) {
     let trouveQuelqueChose = false;
 
@@ -318,7 +334,7 @@ input.addEventListener('input', (e) => {
     const texte = normaliserTexte(e.target.value);
     
     let pokeIdCible = null;
-    if (texte === "nidoran") pokeIdCible = 32; // Raccourci simple
+    if (texte === "nidoran") pokeIdCible = 32; 
     else if (pokemonsData[texte]) pokeIdCible = pokemonsData[texte];
 
     if (pokeIdCible) {
