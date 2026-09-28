@@ -23,123 +23,250 @@ let regionActive = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
 // =========================================
-// 1. LE DICTIONNAIRE DES DRESSEURS (Toutes les versions incluses !)
+// 1. LE DICTIONNAIRE DES DRESSEURS (Kanto + Johto)
 // =========================================
 const bddDresseurs = {
     'gen1': [
         {
             nom: "Pierre (Argenta)",
-            sprite: "pierre.png", // Image à héberger toi-même
+            sprite: "pierre.png", 
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [74, 95] }, // Racaillou, Onix
+                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [74, 95] }, 
             ]
         },
         {
             nom: "Ondine (Azuria)",
             sprite: "ondine.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [120, 121] }, // Stari, Staross
+                { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [120, 121] }, 
             ]
         },
         {
             nom: "Major Bob (Carmin sur Mer)",
             sprite: "bob.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [100, 25, 26] }, // Voltorbe, Pikachu, Raichu
-                { nom: "Pokémon Jaune", pokemons: [26] }, // Raichu
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [100, 81, 26] } // Voltorbe, Magnéti, Raichu
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [100, 25, 26] }, 
+                { nom: "Pokémon Jaune", pokemons: [26] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [100, 81, 26] } 
             ]
         },
         {
             nom: "Érika (Céladopole)",
             sprite: "erika.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [71, 114, 45] }, // Empiflor, Saquedeneu, Rafflesia
-                { nom: "Pokémon Jaune", pokemons: [70, 114, 44] }, // Boustiflor, Saquedeneu, Ortide
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [114, 71, 45] } // Saquedeneu, Empiflor, Rafflesia
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [71, 114, 45] }, 
+                { nom: "Pokémon Jaune", pokemons: [70, 114, 44] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [114, 71, 45] } 
             ]
         },
         {
             nom: "Koga (Parmanie)",
             sprite: "koga.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [109, 89, 109, 110] }, // Smogo, Grotadmorv, Smogo, Smogogo
-                { nom: "Pokémon Jaune", pokemons: [48, 48, 48, 49] }, // Mimitoss x3, Aéromite
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [110, 89, 42, 49] } // Smogogo, Grotadmorv, Nosferalto, Aéromite
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [109, 89, 109, 110] }, 
+                { nom: "Pokémon Jaune", pokemons: [48, 48, 48, 49] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [110, 89, 42, 49] } 
             ]
         },
         {
-            nom: "Morgiane (Safrania)",
-            sprite: "morgiane.png",
+            nom: "Morgane (Safrania)",
+            sprite: "morgane.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [64, 122, 49, 65] }, // Kadabra, M. Mime, Aéromite, Alakazam
-                { nom: "Pokémon Jaune", pokemons: [63, 64, 65] }, // Abra, Kadabra, Alakazam
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [122, 80, 124, 65] } // M. Mime, Flagadoss, Lippoutou, Alakazam
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [64, 122, 49, 65] }, 
+                { nom: "Pokémon Jaune", pokemons: [63, 64, 65] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [122, 80, 124, 65] } 
             ]
         },
         {
             nom: "Auguste (Cramois'Île)",
             sprite: "auguste.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [58, 77, 78, 59] }, // Caninos, Ponyta, Galopa, Arcanin
-                { nom: "Pokémon Jaune", pokemons: [38, 78, 59] }, // Feunard, Galopa, Arcanin
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [126, 78, 38, 59] } // Magmar, Galopa, Feunard, Arcanin
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [58, 77, 78, 59] }, 
+                { nom: "Pokémon Jaune", pokemons: [38, 78, 59] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [126, 78, 38, 59] } 
             ]
         },
         {
             nom: "Giovanni (Jadielle)",
             sprite: "giovanni.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [111, 51, 31, 34, 112] }, // Rhinocorne, Triopikeur, Nidoqueen, Nidoking, Rhinoféros
-                { nom: "Pokémon Jaune", pokemons: [51, 53, 31, 34, 112] }, // Triopikeur, Persian, Nidoqueen, Nidoking, Rhinoféros
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [51, 31, 34, 112] } // Triopikeur, Nidoqueen, Nidoking, Rhinoféros
+                { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [111, 51, 31, 34, 112] }, 
+                { nom: "Pokémon Jaune", pokemons: [51, 53, 31, 34, 112] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [51, 31, 34, 112] } 
             ]
         },
-        // --- CONSEIL 4 ---
+        // --- CONSEIL 4 KANTO ---
         {
             nom: "Olga (Conseil 4)",
             sprite: "olga.png",
             equipes: [
-                { nom: "Toutes Versions Confondues", pokemons: [87, 91, 80, 124, 131] } // Lamantine, Crustabri, Flagadoss, Lippoutou, Lokhlass
+                { nom: "Toutes Versions Confondues", pokemons: [87, 91, 80, 124, 131] } 
             ]
         },
         {
             nom: "Aldo (Conseil 4)",
             sprite: "aldo.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [95, 107, 106, 95, 68] }, // Onix, Tygnon, Kicklee, Onix, Mackogneur
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [95, 106, 107, 62, 68] } // Onix, Kicklee, Tygnon, Tartard, Mackogneur
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [95, 107, 106, 95, 68] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [95, 106, 107, 62, 68] } 
             ]
         },
         {
             nom: "Agatha (Conseil 4)",
             sprite: "agatha.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [94, 42, 93, 24, 94] }, // Ectoplasma, Nosferalto, Spectrum, Arbok, Ectoplasma
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [24, 94, 42, 110, 94] } // Arbok, Ectoplasma, Nosferalto, Smogogo, Ectoplasma
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [94, 42, 93, 24, 94] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [24, 94, 42, 110, 94] } 
             ]
         },
         {
             nom: "Peter (Conseil 4)",
             sprite: "peter.png",
             equipes: [
-                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [130, 148, 148, 142, 149] }, // Léviator, Draco x2, Ptéra, Dracolosse
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [117, 142, 130, 6, 149] } // Hypocéan, Ptéra, Léviator, Dracaufeu, Dracolosse
+                { nom: "Rouge / Bleu / Vert / Jaune / RFVF", pokemons: [130, 148, 148, 142, 149] }, 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [117, 142, 130, 6, 149] } 
             ]
         },
-        // --- RIVAUX ---
         {
             nom: "Blue / Trace (Maître de la Ligue)",
             sprite: "blue.png",
             equipes: [
-                { nom: "Rouge / Bleu / RFVF (Starter Plante)", pokemons: [18, 65, 112, 103, 130, 3] }, // Florizarre
-                { nom: "Rouge / Bleu / RFVF (Starter Feu)", pokemons: [18, 65, 112, 103, 130, 6] }, // Dracaufeu
-                { nom: "Rouge / Bleu / RFVF (Starter Eau)", pokemons: [18, 65, 112, 103, 59, 9] }, // Tortank
-                { nom: "Jaune (Starter Évoli - Aquali)", pokemons: [28, 65, 38, 103, 112, 134] }, // Aquali
-                { nom: "Jaune (Starter Évoli - Voltali)", pokemons: [28, 65, 91, 103, 112, 135] }, // Voltali
-                { nom: "Jaune (Starter Évoli - Pyroli)", pokemons: [28, 65, 91, 103, 112, 136] }, // Pyroli
-                { nom: "Let's Go (Trace - Starter Évoli)", pokemons: [18, 78, 80, 105, 143, 135] }, // Voltali (Trace)
-                { nom: "Let's Go (Trace - Starter Pikachu)", pokemons: [18, 78, 80, 105, 143, 136] } // Raichu Alola / Pyroli (Trace)
+                { nom: "Rouge / Bleu / RFVF (Starter Plante)", pokemons: [18, 65, 112, 103, 130, 3] }, 
+                { nom: "Rouge / Bleu / RFVF (Starter Feu)", pokemons: [18, 65, 112, 103, 130, 6] }, 
+                { nom: "Rouge / Bleu / RFVF (Starter Eau)", pokemons: [18, 65, 112, 103, 59, 9] }, 
+                { nom: "Jaune (Starter Évoli - Aquali)", pokemons: [28, 65, 38, 103, 112, 134] }, 
+                { nom: "Jaune (Starter Évoli - Voltali)", pokemons: [28, 65, 91, 103, 112, 135] }, 
+                { nom: "Jaune (Starter Évoli - Pyroli)", pokemons: [28, 65, 91, 103, 112, 136] }, 
+                { nom: "Let's Go (Trace - Starter Évoli)", pokemons: [18, 78, 80, 105, 143, 135] }, 
+                { nom: "Let's Go (Trace - Starter Pikachu)", pokemons: [18, 78, 80, 105, 143, 136] } 
+            ]
+        }
+    ],
+
+    // ==========================================================
+    // GÉNÉRATION 2 (JOHTO)
+    // ==========================================================
+    'gen2': [
+        {
+            nom: "Albert (Mauville)",
+            sprite: "albert.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [16, 17] } ] 
+        },
+        {
+            nom: "Hector (Écorcia)",
+            sprite: "hector.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [11, 14, 123] } ] 
+        },
+        {
+            nom: "Blanche (Doublonville)",
+            sprite: "blanche.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [35, 241] } ] 
+        },
+        {
+            nom: "Mortimer (Rosalia)",
+            sprite: "mortimer.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [92, 93, 93, 94] } ] 
+        },
+        {
+            nom: "Gaspard (Irisia)",
+            sprite: "gaspard.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [57, 62] } ] 
+        },
+        {
+            nom: "Jasmine (Oliville)",
+            sprite: "jasmine.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [81, 81, 208] } ] 
+        },
+        {
+            nom: "Frédo (Acajou)",
+            sprite: "fredo.png",
+            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [86, 87, 221] } ] 
+        },
+        {
+            nom: "Sandra (Ébènelle)",
+            sprite: "sandra.png",
+            equipes: [
+                { nom: "Or / Argent / Cristal", pokemons: [148, 148, 148, 230] }, 
+                { nom: "HeartGold / SoulSilver", pokemons: [130, 148, 148, 230] } 
+            ]
+        },
+        // --- ADMINS TEAM ROCKET ---
+        {
+            nom: "Amos (Admin Rocket)",
+            sprite: "amos.png",
+            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [41, 109] } ] 
+        },
+        {
+            nom: "Lambda (Admin Rocket)",
+            sprite: "lambda.png",
+            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [109, 109, 109, 109, 109, 110] } ] 
+        },
+        {
+            nom: "Lance (Admin Rocket)",
+            sprite: "lance_rocket.png",
+            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [24, 198, 45] } ] 
+        },
+        {
+            nom: "Apollon (Admin Rocket)",
+            sprite: "apollon.png",
+            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [228, 109, 229] } ] 
+        },
+        // --- CONSEIL 4 JOHTO ---
+        {
+            nom: "Clément (Conseil 4)",
+            sprite: "clement.png",
+            equipes: [
+                { nom: "1er Passage (Ligue)", pokemons: [178, 124, 103, 80, 178] }, 
+                { nom: "2nd Passage (Remakes HGSS)", pokemons: [437, 124, 326, 80, 282, 178] } 
+            ]
+        },
+        {
+            nom: "Koga (Conseil 4)",
+            sprite: "koga_ligue.png",
+            equipes: [
+                { nom: "1er Passage (Ligue)", pokemons: [168, 49, 205, 89, 169] }, 
+                { nom: "2nd Passage (Remakes HGSS)", pokemons: [435, 49, 317, 89, 454, 169] } 
+            ]
+        },
+        {
+            nom: "Aldo (Conseil 4)",
+            sprite: "aldo_ligue.png",
+            equipes: [
+                { nom: "1er Passage (Ligue)", pokemons: [237, 107, 106, 95, 68] }, 
+                { nom: "2nd Passage (Remakes HGSS)", pokemons: [237, 107, 106, 297, 448, 68] } 
+            ]
+        },
+        {
+            nom: "Marion (Conseil 4)",
+            sprite: "marion.png",
+            equipes: [
+                { nom: "1er Passage (Ligue)", pokemons: [197, 45, 94, 198, 229] }, 
+                { nom: "2nd Passage (Remakes HGSS)", pokemons: [461, 442, 359, 430, 229, 197] } 
+            ]
+        },
+        {
+            nom: "Peter (Maître de la Ligue)",
+            sprite: "peter_maitre.png",
+            equipes: [
+                { nom: "1er Passage (Ligue)", pokemons: [130, 149, 149, 142, 6, 149] }, 
+                { nom: "2nd Passage (Remakes HGSS)", pokemons: [373, 445, 334, 142, 6, 149] } 
+            ]
+        },
+        // --- RIVAL & BOSS SECRET ---
+        {
+            nom: "Silver (Rival)",
+            sprite: "silver.png",
+            equipes: [
+                { nom: "Combat Final (Starter Plante - Méganium)", pokemons: [215, 169, 82, 94, 65, 154] }, 
+                { nom: "Combat Final (Starter Feu - Typhlosion)", pokemons: [215, 169, 82, 94, 65, 157] }, 
+                { nom: "Combat Final (Starter Eau - Aligatueur)", pokemons: [215, 169, 82, 94, 65, 160] } 
+            ]
+        },
+        {
+            nom: "Red (Boss Mont Argenté)",
+            sprite: "red_boss.png",
+            equipes: [
+                { nom: "Équipe Ultime (HGSS)", pokemons: [25, 131, 143, 3, 6, 9] } 
             ]
         }
     ]
@@ -166,10 +293,13 @@ btnRetour.addEventListener('click', () => {
     specialMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[- ]/g, "").toLowerCase().trim(); }
+// NOUVELLE FONCTION DE NORMALISATION : Efface les "." pour M. Mime !
+function normaliserTexte(texte) { 
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[- .']/g, "").toLowerCase().trim(); 
+}
 
 // =========================================
-// 3. TÉLÉCHARGEMENT DES DONNÉES (Pour avoir les Types)
+// 3. TÉLÉCHARGEMENT DES DONNÉES
 // =========================================
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Chargement du Pokédex (patiente)..."; input.disabled = true;
@@ -183,7 +313,6 @@ async function initialiserBaseDeDonnees() {
             const vraiNom = e.pokemonspeciesnames[0].name;
             const nomNormalise = normaliserTexte(vraiNom);
 
-            // On cherche les types de sa forme de base
             let types = [];
             let defaultForm = e.pokemons.find(p => p.is_default);
             if(defaultForm) {
@@ -208,7 +337,10 @@ function lancerQuizDresseurs(regionKey) {
     timerContainer.style.display = 'block';
     btnRetour.style.display = 'inline-block';
 
-    const titreRegion = regionKey === 'gen1' ? 'Génération 1 (Kanto)' : 'Génération Inconnue';
+    let titreRegion = "Génération Inconnue";
+    if (regionKey === 'gen1') titreRegion = "Génération 1 (Kanto)";
+    else if (regionKey === 'gen2') titreRegion = "Génération 2 (Johto)";
+
     titreMenu.innerText = `Dresseurs : ${titreRegion}`;
     titreMenu.style.display = 'block';
 
@@ -258,7 +390,6 @@ function lancerQuizDresseurs(regionKey) {
                 box.className = 'pokemon-box-special';
                 box.id = htmlId;
 
-                // Affichage des types en guise d'indice
                 let typeHtml = `<div class="types-inconnus">`;
                 pokeInfo.types.forEach(t => {
                     typeHtml += `<img src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${t}.svg" alt="${t}">`;
@@ -321,7 +452,7 @@ function validerEquipePokemon(pokeIdCible) {
         cri.volume = 0.5; cri.play().catch(e => {});
 
         if (pokemonsTrouves === scoreMax) {
-            clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! KANTO COMPLÉTÉ !";
+            clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! RÉGION COMPLÉTÉE !";
             declencherVictoire();
         }
     }
@@ -343,7 +474,6 @@ input.addEventListener('input', (e) => {
     }
 });
 
-// ACTIONS OMBRE ET ABANDON
 document.getElementById('btn-ombre').addEventListener('click', () => {
     if (equipeActuelle.length === 0) return;
     startTimer();
@@ -358,7 +488,7 @@ document.getElementById('btn-ombre').addEventListener('click', () => {
 
 document.getElementById('btn-abandon').addEventListener('click', () => {
     if (equipeActuelle.length === 0) return;
-    if (confirm(`Voulez-vous vraiment abandonner la région ${regionActive} ?`)) {
+    if (confirm(`Voulez-vous vraiment abandonner la région ?`)) {
         clearInterval(timerInterval); 
         input.disabled = true; input.placeholder = "Quiz terminé !";
         
