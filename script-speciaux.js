@@ -23,12 +23,9 @@ let modeActif = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 let intervalsRotation = {}; 
 
-// =========================================
-// 1. CONFIGURATION DES MODES SPÉCIAUX (Nouveaux Ajouts !)
-// =========================================
 const specialConfig = {
-    'bst': { titre: 'Top 100 Bases Stats Totales', icon: '🌟', label: 'BST' }, // NOUVEAU
-    'favoris': { titre: 'Top 100 Pokémon Préférés', icon: '⭐', label: 'Votes' }, // NOUVEAU
+    'bst': { titre: 'Top 100 Bases Stats Totales', icon: '🌟', label: 'BST' },
+    'favoris': { titre: 'Top 100 Pokémon Préférés', icon: '⭐', label: 'Votes' },
     'weight': { titre: 'Top 100 Plus Lourds', icon: '⚖️', label: 'kg' },
     'height': { titre: 'Top 100 Plus Grands', icon: '📏', label: 'm' },
     'atk': { titre: 'Top 100 Attaque', icon: '⚔️', label: 'ATK' },
@@ -41,8 +38,6 @@ const specialConfig = {
     'legendaires': { titre: 'Légendaires & Raretés', icon: '👑', label: '' }
 };
 
-// Le classement officiel du "Pokémon of the Year 2020" par Google
-// Liste des IDs des 100 Pokémon les plus aimés dans l'ordre (1er au 100ème)
 const top100FavorisIDs = [
     658, 448, 778, 6, 197, 282, 445, 384, 112, 94, 
     254, 248, 1, 157, 249, 130, 25, 133, 405, 190, 
@@ -82,7 +77,6 @@ btnRetour.addEventListener('click', () => {
     titreMenu.style.display = 'none'; scoreContainer.style.display = 'none'; timerContainer.style.display = 'none'; btnRetour.style.display = 'none';
     input.disabled = true; input.placeholder = "Choisissez un mode spécial au-dessus...";
     
-    // Supprime l'alerte d'information si elle existe
     let alertInfo = document.getElementById('info-favoris');
     if(alertInfo) alertInfo.remove();
 
@@ -135,7 +129,7 @@ async function initialiserBaseDeDonnees() {
             if (normalForms.length > 0) {
                 let maxWeight = 0, maxHeight = 0;
                 let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
-                let bst = 0; // Ajout du Base Stat Total
+                let bst = 0;
                 let formIds = [];
 
                 normalForms.forEach(p => {
@@ -169,7 +163,7 @@ async function initialiserBaseDeDonnees() {
                     category: category,
                     weight: maxWeight, height: maxHeight,
                     hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe,
-                    bst: bst // Enregistrement de la stat totale
+                    bst: bst
                 });
             }
 
@@ -231,11 +225,9 @@ function chargerMode(mode) {
     timerContainer.style.display = 'block';
     btnRetour.style.display = 'inline-block';
 
-    // Affiche le titre dynamiquement
     titreMenu.innerText = specialConfig[mode].titre;
     titreMenu.style.display = 'block';
 
-    // Affichage de l'information pour le mode Favoris
     let oldAlert = document.getElementById('info-favoris');
     if(oldAlert) oldAlert.remove();
     
@@ -254,7 +246,6 @@ function chargerMode(mode) {
     document.getElementById('btn-ombre').disabled = false;
     grid.innerHTML = '';
 
-    // LOGIQUE DU TOP 100 DES FAVORIS
     if (mode === 'favoris') {
         pokeDuModeActuel = [];
         top100FavorisIDs.forEach(id => {
@@ -269,12 +260,11 @@ function chargerMode(mode) {
             let box = document.createElement('div');
             box.classList.add('pokemon-box-special');
             box.id = "box-" + p.id;
-            box.innerHTML = `<span class="numero">#${index + 1}</span>`; // L'ordre du sondage
+            box.innerHTML = `<span class="numero">#${index + 1}</span>`; 
             gridSmall.appendChild(box);
         });
         container.appendChild(gridSmall); grid.appendChild(container);
 
-    // LOGIQUE DES AUTRES TOP 100 (Statistiques, Taille, Poids)
     } else if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp', 'bst'].includes(mode)) {
         pokeDuModeActuel = [...allForms].sort((a, b) => b[mode] - a[mode]).slice(0, 100);
         

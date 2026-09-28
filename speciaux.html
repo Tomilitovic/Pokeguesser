@@ -10,13 +10,10 @@
 <body>
     <div id="audio-controls">
         <button id="btn-mute">🔇 Musique OFF</button>
-        <!-- Piste audio dédiée aux modes spéciaux -->
         <audio id="bg-music" src="musique3.mp3" loop></audio>
     </div>
     
-    <!-- BARRE DE NAVIGATION AVEC LES 3 ONGLETS -->
     <div id="top-nav">
-        <!-- ONGLET 1 : GÉNÉRATIONS -->
         <div class="menu-container">
             <button class="dropbtn">Générations ▼</button>
             <div class="dropdown-content">
@@ -32,12 +29,9 @@
                 <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
             </div>
         </div>
-        
-        <!-- ONGLET 2 : TYPES -->
         <a href="type.html" class="btn-onglet">Par Type 🌟</a>
-
-        <!-- ONGLET 3 : SPÉCIAUX (Actif sur cette page) -->
         <a href="speciaux.html" class="btn-onglet actif">Spéciaux 🏆</a>
+        <a href="dresseurs.html" class="btn-onglet">Dresseurs ⚔️</a>
     </div>
     
     <header>
@@ -46,11 +40,9 @@
     </header>
     
     <main>
-        <!-- Grille des boutons pour les modes spéciaux (Générés par le JS) -->
         <div id="special-menu"></div>
         
-        <!-- Le titre dynamique (ex: TOP 100 ATTAQUE) -->
-        <h1 id="titre-dynamique"></h1>
+        <h1 id="titre-dynamique" style="display: none;"></h1>
 
         <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
         <div id="score-container" style="display: none;">
@@ -58,18 +50,15 @@
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
-            <!-- Bouton pour revenir au choix des modes spéciaux -->
             <button id="btn-retour-modes" class="btn-action">🔙 Changer de Mode</button>
         </div>
         
         <input type="text" id="saisie" placeholder="Choisissez un mode spécial au-dessus..." disabled>
         
-        <!-- La grille des résultats -->
         <div id="pokedex-grid"></div>
     </main>
     
     <footer>Créé par Tomilitovic</footer>
-    <!-- Appel du nouveau moteur d'analyse -->
     <script src="script-speciaux.js"></script>
 </body>
 </html>
