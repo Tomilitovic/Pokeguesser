@@ -23,7 +23,7 @@ let regionActive = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
 // =========================================
-// 1. LE DICTIONNAIRE DES DRESSEURS (Kanto + Johto)
+// 1. LE DICTIONNAIRE DES DRESSEURS (Avec les 2èmes passages et la Team Rocket regroupée)
 // =========================================
 const bddDresseurs = {
     'gen1': [
@@ -32,6 +32,7 @@ const bddDresseurs = {
             sprite: "pierre.png", 
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [74, 95] }, 
+                { nom: "2nd Passage (Revanche)", pokemons: [76, 95, 139, 141, 142] } // Grolem, Onix, Amonistar, Kabutops, Ptéra
             ]
         },
         {
@@ -39,6 +40,7 @@ const bddDresseurs = {
             sprite: "ondine.png",
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF / Let's Go", pokemons: [120, 121] }, 
+                { nom: "2nd Passage (Revanche)", pokemons: [55, 122, 131, 121, 130] } // Akwakwak, M.Mime, Lokhlass, Staross, Léviator
             ]
         },
         {
@@ -47,7 +49,8 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [100, 25, 26] }, 
                 { nom: "Pokémon Jaune", pokemons: [26] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [100, 81, 26] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [100, 81, 26] },
+                { nom: "2nd Passage (Revanche)", pokemons: [101, 125, 82, 101, 26] } // Électrode, Élektek, Magnéton, Électrode, Raichu
             ]
         },
         {
@@ -56,7 +59,8 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [71, 114, 45] }, 
                 { nom: "Pokémon Jaune", pokemons: [70, 114, 44] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [114, 71, 45] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [114, 71, 45] },
+                { nom: "2nd Passage (Revanche)", pokemons: [114, 45, 71, 103, 73] } // Saquedeneu, Rafflesia, Empiflor, Noadkoko, Tentacruel
             ]
         },
         {
@@ -65,7 +69,8 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [109, 89, 109, 110] }, 
                 { nom: "Pokémon Jaune", pokemons: [48, 48, 48, 49] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [110, 89, 42, 49] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [110, 89, 42, 49] },
+                { nom: "2nd Passage (Revanche)", pokemons: [110, 89, 49, 73, 42] } // Smogogo, Grotadmorv, Aéromite, Tentacruel, Nosferalto
             ]
         },
         {
@@ -74,7 +79,8 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [64, 122, 49, 65] }, 
                 { nom: "Pokémon Jaune", pokemons: [63, 64, 65] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [122, 80, 124, 65] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [122, 80, 124, 65] },
+                { nom: "2nd Passage (Revanche)", pokemons: [122, 80, 124, 65, 97] } // M.Mime, Flagadoss, Lippoutou, Alakazam, Hypnomade
             ]
         },
         {
@@ -83,7 +89,8 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [58, 77, 78, 59] }, 
                 { nom: "Pokémon Jaune", pokemons: [38, 78, 59] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [126, 78, 38, 59] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [126, 78, 38, 59] },
+                { nom: "2nd Passage (Revanche)", pokemons: [126, 78, 38, 59, 105] } // Magmar, Galopa, Feunard, Arcanin, Ossatueur
             ]
         },
         {
@@ -92,10 +99,10 @@ const bddDresseurs = {
             equipes: [
                 { nom: "Rouge / Bleu / Vert / RFVF", pokemons: [111, 51, 31, 34, 112] }, 
                 { nom: "Pokémon Jaune", pokemons: [51, 53, 31, 34, 112] }, 
-                { nom: "Let's Go Pikachu / Évoli", pokemons: [51, 31, 34, 112] } 
+                { nom: "Let's Go Pikachu / Évoli", pokemons: [51, 31, 34, 112] },
+                { nom: "2nd Passage (Revanche Tournoi)", pokemons: [53, 31, 34, 464, 445, 112] } // PWT : Persian, Nidoqueen, Nidoking, Rhinastoc, Carchacrok, Rhinoféros
             ]
         },
-        // --- CONSEIL 4 KANTO ---
         {
             nom: "Olga (Conseil 4)",
             sprite: "olga.png",
@@ -144,72 +151,84 @@ const bddDresseurs = {
     ],
 
     // ==========================================================
-    // GÉNÉRATION 2 (JOHTO)
+    // GÉNÉRATION 2 (JOHTO - Avec Revaches et Admins Rocket Regroupés)
     // ==========================================================
     'gen2': [
         {
             nom: "Albert (Mauville)",
             sprite: "albert.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [16, 17] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [16, 17] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [398, 164, 277, 430, 279, 18] }
+            ] 
         },
         {
             nom: "Hector (Écorcia)",
             sprite: "hector.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [11, 14, 123] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [11, 14, 123] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [292, 416, 127, 214, 469, 212] }
+            ] 
         },
         {
             nom: "Blanche (Doublonville)",
             sprite: "blanche.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [35, 241] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [35, 241] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [463, 301, 36, 417, 424, 241] }
+            ] 
         },
         {
             nom: "Mortimer (Rosalia)",
             sprite: "mortimer.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [92, 93, 93, 94] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [92, 93, 93, 94] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [426, 477, 302, 429, 94, 94] }
+            ] 
         },
         {
             nom: "Gaspard (Irisia)",
             sprite: "gaspard.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [57, 62] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [57, 62] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [308, 107, 106, 286, 57, 62] }
+            ] 
         },
         {
             nom: "Jasmine (Oliville)",
             sprite: "jasmine.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [81, 81, 208] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [81, 81, 208] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [376, 227, 437, 462, 395, 208] }
+            ] 
         },
         {
             nom: "Frédo (Acajou)",
             sprite: "fredo.png",
-            equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [86, 87, 221] } ] 
+            equipes: [ 
+                { nom: "Or / Argent / Cristal / HGSS", pokemons: [86, 87, 221] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [460, 87, 362, 478, 365, 473] }
+            ] 
         },
         {
             nom: "Sandra (Ébènelle)",
             sprite: "sandra.png",
             equipes: [
                 { nom: "Or / Argent / Cristal", pokemons: [148, 148, 148, 230] }, 
-                { nom: "HeartGold / SoulSilver", pokemons: [130, 148, 148, 230] } 
+                { nom: "HeartGold / SoulSilver", pokemons: [130, 148, 148, 230] },
+                { nom: "2nd Passage (Revanche HGSS)", pokemons: [130, 142, 230, 6, 149, 149] } 
             ]
         },
-        // --- ADMINS TEAM ROCKET ---
+        // --- ADMINS TEAM ROCKET REGROUPÉS ---
         {
-            nom: "Amos (Admin Rocket)",
-            sprite: "amos.png",
-            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [41, 109] } ] 
-        },
-        {
-            nom: "Lambda (Admin Rocket)",
-            sprite: "lambda.png",
-            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [109, 109, 109, 109, 109, 110] } ] 
-        },
-        {
-            nom: "Lance (Admin Rocket)",
-            sprite: "lance_rocket.png",
-            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [24, 198, 45] } ] 
-        },
-        {
-            nom: "Apollon (Admin Rocket)",
-            sprite: "apollon.png",
-            equipes: [ { nom: "Tour Radio (HGSS)", pokemons: [228, 109, 229] } ] 
+            nom: "Admins Team Rocket",
+            sprite: "admin_rocket.png", // Un sprite de groupe pour les admins
+            equipes: [ 
+                { nom: "Amos (Tour Radio)", pokemons: [41, 109] },
+                { nom: "Lambda (Tour Radio)", pokemons: [109, 109, 109, 109, 109, 110] },
+                { nom: "Lance (Tour Radio)", pokemons: [24, 198, 45] },
+                { nom: "Apollon (Tour Radio)", pokemons: [228, 109, 229] }
+            ] 
         },
         // --- CONSEIL 4 JOHTO ---
         {
