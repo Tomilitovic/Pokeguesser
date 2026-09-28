@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>POKEGUESSER - Équipes de Dresseurs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="audio-controls">
+        <button id="btn-mute">🔇 Musique OFF</button>
+        <!-- On peut garder la musique des modes spéciaux ou en mettre une autre -->
+        <audio id="bg-music" src="musique3.mp3" loop></audio> 
+    </div>
+    
+    <div id="top-nav">
+        <div class="menu-container">
+            <button class="dropbtn">Générations ▼</button>
+            <div class="dropdown-content">
+                <a href="index.html" class="btn-gen">Génération 1</a>
+                <a href="gen2.html" class="btn-gen">Génération 2</a>
+                <a href="gen3.html" class="btn-gen">Génération 3</a>
+                <a href="gen4.html" class="btn-gen">Génération 4</a>
+                <a href="gen5.html" class="btn-gen">Génération 5</a>
+                <a href="gen6.html" class="btn-gen">Génération 6</a>
+                <a href="gen7.html" class="btn-gen">Génération 7</a>
+                <a href="gen8.html" class="btn-gen">Génération 8</a>
+                <a href="gen9.html" class="btn-gen">Génération 9</a>
+                <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
+            </div>
+        </div>
+        <a href="type.html" class="btn-onglet">Par Type 🌟</a>
+        <a href="speciaux.html" class="btn-onglet">Spéciaux 🏆</a>
+        <!-- LE NOUVEL ONGLET -->
+        <a href="dresseurs.html" class="btn-onglet actif">Dresseurs ⚔️</a>
+    </div>
+    
+    <header>
+        <img src="logo.jpeg" alt="Logo du site" id="mascotte">
+        <img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu">
+    </header>
+    
+    <main>
+        <!-- Le menu de sélection des générations pour ce mode spécifique -->
+        <div id="special-menu">
+            <button class="btn-special" id="btn-dresseur-gen1" onclick="lancerQuizDresseurs('gen1')">
+                <span>🔴</span> <span>Génération 1 (Kanto)</span>
+            </button>
+        </div>
+        
+        <h1 id="titre-dynamique" style="display:none;"></h1>
+
+        <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
+        <div id="score-container" style="display: none;">
+            Score : <span id="score">0</span> / <span id="score-max">0</span>
+            <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
+            <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
+            <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
+            <button id="btn-retour-modes" class="btn-action">🔙 Changer de Région</button>
+        </div>
+        
+        <input type="text" id="saisie" placeholder="Choisissez une génération de dresseurs au-dessus..." disabled>
+        
+        <div id="pokedex-grid"></div>
+    </main>
+    
+    <footer>Créé par Tomilitovic</footer>
+    <script src="script-dresseurs.js"></script>
+</body>
+</html>
