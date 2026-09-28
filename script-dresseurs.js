@@ -133,20 +133,41 @@ const bddDresseurs = {
         { nom: "Boss des DLC (Galar/Hisui)", sprite: "dlc8.png", equipes: [ { nom: "Mustar (Isolarmure)", pokemons: [620, 819, 776, 784, 86, 892] }, { nom: "Dhilan (Couronneige)", pokemons: [879, 567, 365, 884] }, { nom: "Saturnin (Isolarmure)", pokemons: [65, 80, 528, 867] }, { nom: "Sophora (Isolarmure)", pokemons: [452, 110, 569, 808] } ] }
     ],
 
+    // --- GÉNÉRATION 9 (CORRIGÉE !) ---
     'gen9': [
         { nom: "Éra (Plante)", sprite: "era.png", equipes: [ { nom: "1er Passage", pokemons: [401, 192, 216] }, { nom: "2nd Passage (Revanche)", pokemons: [286, 185, 401, 357, 192] } ] },
         { nom: "Colza (Insecte)", sprite: "colza.png", equipes: [ { nom: "1er Passage", pokemons: [174, 191, 185] }, { nom: "2nd Passage (Revanche)", pokemons: [189, 192, 174, 763, 357] } ] },
         { nom: "Mashynn (Électrik)", sprite: "mashynn.png", equipes: [ { nom: "1er Passage", pokemons: [100, 73, 977, 939] }, { nom: "2nd Passage (Revanche)", pokemons: [101, 479, 100, 977, 939] } ] },
         { nom: "Kombu (Eau)", sprite: "kombu.png", equipes: [ { nom: "1er Passage", pokemons: [962, 51, 978] }, { nom: "2nd Passage (Revanche)", pokemons: [963, 977, 740, 962, 978] } ] },
-        { nom: "Okuba (Normal)", sprite: "okuba.png", equipes: [ { nom: "1er Passage", pokemons: [354, 971, 972] }, { nom: "2nd Passage (Revanche)", pokemons: [354, 971, 206, 981, 972] } ] },
+        { nom: "Okuba (Arène - Normal)", sprite: "okuba.png", equipes: [ { nom: "1er Passage", pokemons: [354, 971, 972] }, { nom: "2nd Passage (Revanche)", pokemons: [354, 971, 206, 981, 972] } ] },
         { nom: "Laïmi (Spectre)", sprite: "laimi.png", equipes: [ { nom: "1er Passage", pokemons: [948, 979] }, { nom: "2nd Passage (Revanche)", pokemons: [354, 479, 429, 948, 979] } ] },
         { nom: "Tully (Psy)", sprite: "tully.png", equipes: [ { nom: "1er Passage", pokemons: [981, 282, 959] }, { nom: "2nd Passage (Revanche)", pokemons: [981, 282, 678, 475, 959] } ] },
         { nom: "Grusha (Glace)", sprite: "grusha.png", equipes: [ { nom: "1er Passage", pokemons: [873, 975, 974] }, { nom: "2nd Passage (Revanche)", pokemons: [873, 975, 461, 414, 974] } ] },
-        { nom: "Team Star", sprite: "star.png", equipes: [ { nom: "Cassiopée (Boss Final)", pokemons: [197, 134, 135, 136, 471, 700] }, { nom: "Brome (Ténèbres)", pokemons: [625, 933, 966] }, { nom: "Meloco (Feu)", pokemons: [324, 936, 966] }, { nom: "Erio (Poison)", pokemons: [317, 89, 934, 966] } ] },
-        { nom: "Conseil 4 (Ligue Paldea)", sprite: "ligue9.png", equipes: [ { nom: "Cayenn (Sol)", pokemons: [998, 53, 950, 462, 980] }, { nom: "Popi (Acier)", pokemons: [879, 462, 966, 966, 959] }, { nom: "Okuba (Normal)", pokemons: [981, 206, 971, 354, 972] }, { nom: "Thaïs (Dragon)", pokemons: [715, 691, 334, 970, 997] } ] },
-        { nom: "Alisma & Professeurs", sprite: "alisma_prof.png", equipes: [ { nom: "Alisma (Maîtresse en Chef)", pokemons: [956, 673, 977, 959, 939, 970] }, { nom: "Prof Olim / Turum (IA Final)", pokemons: [984, 985, 986, 987, 988, 989] } ] },
-        { nom: "Menzi (Rival)", sprite: "menzi.png", equipes: [ { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 906, 982, 706, 922, 911] }, { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 906, 982, 706, 922, 914] }, { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 906, 982, 706, 922, 908] } ] },
-        { nom: "Boss des DLC (Paldea)", sprite: "dlc9.png", equipes: [ { nom: "Kassis (Maître DLC 2)", pokemons: [149, 472, 727, 474, 982, 1019] }, { nom: "Roseille (DLC 2)", pokemons: [227, 38, 971, 1013, 865] }, { nom: "Taro (C4 Institut Myrtille)", pokemons: [901, 80, 730, 79, 985] }, { nom: "Nérine (C4 Institut Myrtille)", pokemons: [85, 227, 376, 479, 1010] }, { nom: "Rubépin (C4 Institut Myrtille)", pokemons: [72, 85, 9, 254, 990] }, { nom: "Irido (C4 Institut Myrtille)", pokemons: [149, 330, 254, 409, 1011] } ] }
+        { nom: "Team Star", sprite: "star.png", equipes: [ { nom: "Cassiopée (Boss Final)", pokemons: [197, 134, 135, 136, 471, 700] } ] },
+        { nom: "Conseil 4 (Ligue Paldea)", sprite: "ligue9.png", equipes: [
+            { nom: "Cayenn (Sol)", pokemons: [340, 323, 232, 53, 980] },
+            { nom: "Popi (Acier)", pokemons: [879, 462, 437, 823, 959] },
+            { nom: "Okuba (Vol - Ligue)", pokemons: [357, 741, 334, 398, 973] },
+            { nom: "Thaïs (Dragon)", pokemons: [715, 691, 612, 840, 997] }
+        ] },
+        { nom: "Alisma & Professeurs", sprite: "alisma_prof.png", equipes: [
+            { nom: "Alisma (Maîtresse en Chef)", pokemons: [956, 673, 977, 713, 983, 970] },
+            { nom: "Prof Olim (IA - Écarlate)", pokemons: [985, 986, 987, 989, 988, 1005] },
+            { nom: "Prof Turum (IA - Violet)", pokemons: [994, 991, 992, 993, 995, 1006] }
+        ] },
+        { nom: "Menzi (Rival)", sprite: "menzi.png", equipes: [
+            { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 968, 982, 706, 923, 911] },
+            { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 968, 982, 706, 923, 914] },
+            { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 968, 982, 706, 923, 908] }
+        ] },
+        { nom: "Boss des DLC (Paldea)", sprite: "dlc9.png", equipes: [
+            { nom: "Kassis (Maître DLC 2)", pokemons: [149, 472, 727, 474, 982, 1019] },
+            { nom: "Roseille (DLC 2)", pokemons: [227, 38, 971, 1013, 865] },
+            { nom: "Taro (C4 Myrtille)", pokemons: [901, 80, 730, 79, 985] },
+            { nom: "Nérine (C4 Myrtille)", pokemons: [85, 227, 376, 479, 1010] },
+            { nom: "Rubépin (C4 Myrtille)", pokemons: [72, 85, 9, 254, 990] },
+            { nom: "Irido (C4 Myrtille)", pokemons: [149, 330, 254, 409, 1011] }
+        ] }
     ]
 };
 
