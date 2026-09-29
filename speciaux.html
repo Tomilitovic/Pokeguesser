@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>POKEGUESSER - Spéciaux</title>
+    <title>POKEGUESSER - Modes Spéciaux</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -10,7 +10,7 @@
 <body>
     <div id="audio-controls">
         <button id="btn-mute">🔇 Musique OFF</button>
-        <audio id="bg-music" src="musique3.mp3" loop></audio> 
+        <audio id="bg-music" src="musique3.mp3" loop></audio>
     </div>
     
     <div id="top-nav">
@@ -19,14 +19,18 @@
             <div class="dropdown-content">
                 <a href="index.html" class="btn-gen">Génération 1</a>
                 <a href="gen2.html" class="btn-gen">Génération 2</a>
-                <!-- Autres générations... -->
+                <a href="gen3.html" class="btn-gen">Génération 3</a>
+                <a href="gen4.html" class="btn-gen">Génération 4</a>
+                <a href="gen5.html" class="btn-gen">Génération 5</a>
+                <a href="gen6.html" class="btn-gen">Génération 6</a>
+                <a href="gen7.html" class="btn-gen">Génération 7</a>
+                <a href="gen8.html" class="btn-gen">Génération 8</a>
+                <a href="gen9.html" class="btn-gen">Génération 9</a>
                 <a href="gen-all.html" class="btn-gen">Le Pokédex Entier (1025)</a>
             </div>
         </div>
         <a href="type.html" class="btn-onglet">Par Type 🌟</a>
         <a href="speciaux.html" class="btn-onglet actif">Spéciaux 🏆</a>
-        <a href="dresseurs.html" class="btn-onglet">Dresseurs ⚔️</a>
-        <a href="donjon.html" class="btn-onglet">Personnalité 🔮</a>
     </div>
     
     <header>
@@ -36,8 +40,8 @@
     
     <main>
         <div id="special-menu"></div>
-        <h1 id="titre-dynamique" style="display: none;"></h1>
-        
+        <h1 id="titre-dynamique"></h1>
+
         <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
         <div id="score-container" style="display: none;">
             Score : <span id="score">0</span> / <span id="score-max">0</span>
@@ -48,20 +52,8 @@
         </div>
         
         <input type="text" id="saisie" placeholder="Choisissez un mode spécial au-dessus..." disabled>
-        
-        <!-- Le conteneur Blind Test qui s'affiche via JS -->
-        <div id="container-bt" style="display:none;">
-             <h2 style="color:#2c3e50;">Écoute le cri et devine le Pokémon !</h2>
-             <h3 style="color:#e74c3c;">Score : <span id="bt-score">0</span></h3>
-             <button id="btn-play-sound" class="btn-action">▶️ ÉCOUTER</button>
-             <input type="text" id="saisie-bt" placeholder="Qui est-ce ?">
-             <div id="bt-resultat"></div>
-             <button id="btn-retour-speciaux-bt" class="btn-action">🔙 Retour</button>
-        </div>
-
         <div id="pokedex-grid"></div>
     </main>
-    
     <footer>Créé par Tomilitovic</footer>
     <script src="script-speciaux.js"></script>
 </body>

@@ -1,243 +1,287 @@
-// --- GESTION DE LA MUSIQUE ---
-const bgMusic = document.getElementById('bg-music');
-const btnMute = document.getElementById('btn-mute');
+const bgMusic = document.getElementById('bg-music'), btnMute = document.getElementById('btn-mute');
 let isMusicPlaying = false;
-
 btnMute.addEventListener('click', () => {
-    if (isMusicPlaying) { 
-        bgMusic.pause(); 
-        btnMute.innerText = "🔇 Musique OFF"; 
-    } else { 
-        bgMusic.play(); 
-        btnMute.innerText = "🔊 Musique ON"; 
-    }
+    if (isMusicPlaying) { bgMusic.pause(); btnMute.innerText = "🔇 Musique OFF"; }
+    else { bgMusic.play(); btnMute.innerText = "🔊 Musique ON"; }
     isMusicPlaying = !isMusicPlaying;
 });
 
-// --- VARIABLES GLOBALES ---
-const grid = document.getElementById('pokedex-grid');
-const input = document.getElementById('saisie');
-const scoreText = document.getElementById('score');
-const timerText = document.getElementById('timer');
+const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie');
+const scoreText = document.getElementById('score'), timerText = document.getElementById('timer'), maxText = document.getElementById('score-max');
 const titreMenu = document.getElementById('titre-dynamique');
 const specialMenu = document.getElementById('special-menu');
 const scoreContainer = document.getElementById('score-container');
 const timerContainer = document.getElementById('timer-container');
+const btnRetour = document.getElementById('btn-retour-modes');
 
-let pokemonsData = {};
+let allForms = []; 
+let pokemonsData = {}; 
 let pokeDuModeActuel = [];
 let pokemonsTrouves = [];
 let scoreActuel = 0, scoreMax = 0;
+let modeActif = null; 
 let timerInterval, timerStarted = false, secondsElapsed = 0;
+let intervalsRotation = {}; 
 
-// Configuration des modes spéciaux incluant BST et Favoris[cite: 1]
 const specialConfig = {
-    'bst': { titre: 'Top 100 Bases Stats Totales', icon: '🌟', label: 'BST' },
-    'favoris': { titre: 'Top 100 Pokémon Préférés', icon: '⭐', label: 'Votes' },
-    'weight': { titre: 'Top 100 Plus Lourds', icon: '⚖️', label: 'kg' },
-    'height': { titre: 'Top 100 Plus Grands', icon: '📏', label: 'm' },
-    'atk': { titre: 'Top 100 Attaque', icon: '⚔️', label: 'ATK' },
-    'spa': { titre: 'Top 100 Attaque Spéciale', icon: '🔮', label: 'ATK SPÉ' },
-    'def': { titre: 'Top 100 Défense', icon: '🛡️', label: 'DEF' },
-    'spd': { titre: 'Top 100 Défense Spéciale', icon: '✨', label: 'DEF SPÉ' },
-    'spe': { titre: 'Top 100 Vitesse', icon: '🏃', label: 'VIT' },
-    'hp': { titre: 'Top 100 PV', icon: '❤️', label: 'PV' },
-    'mega': { titre: 'Méga-Évolutions', icon: '🧬', label: '' },
-    'legendaires': { titre: 'Légendaires & Raretés', icon: '👑', label: '' }
+    'weight': { titre: 'Top 100 Plus Lourds', icon: '⚖️ ', label: 'kg' },
+    'height': { titre: 'Top 100 Plus Grands', icon: '📏 ', label: 'm' },
+    'atk': { titre: 'Top 100 Attaque', icon: '⚔️ ', label: 'ATK' },
+    'spa': { titre: 'Top 100 Attaque Spéciale', icon: '🔮 ', label: 'ATK SPÉ' },
+    'def': { titre: 'Top 100 Défense', icon: '🛡️ ', label: 'DEF' },
+    'spd': { titre: 'Top 100 Défense Spéciale', icon: '✨ ', label: 'DEF SPÉ' },
+    'spe': { titre: 'Top 100 Vitesse', icon: '🏃 ', label: 'VIT' },
+    'hp': { titre: 'Top 100 PV', icon: '❤️ ', label: 'PV' },
+    'mega': { titre: 'Méga-Évolutions', icon: '🧬 ', label: '' },
+    'legendaires': { titre: 'Légendaires & Raretés', icon: '👑 ', label: '' }
 };
 
-// Le classement officiel du "Pokémon of the Year 2020" par Google[cite: 1]
-const top100FavorisIDs = [
-    658, 448, 778, 6, 197, 282, 445, 384, 112, 94,
-    254, 248, 1, 157, 249, 130, 25, 133, 405, 190,
-    150, 4, 385, 393, 260, 143, 212, 149, 257, 196,
-    155, 158, 253, 3, 280, 722, 131, 381, 700, 395,
-    380, 258, 250, 653, 330, 350, 483, 373, 471, 151,
-    160, 493, 444, 390, 484, 134, 724, 706, 9, 255,
-    491, 136, 152, 609, 392, 470, 7, 715, 478, 135,
-    468, 78, 403, 39, 63, 612, 702, 635, 230, 386,
-    214, 53, 5, 26, 497, 655, 461, 334, 447, 494,
-    479, 744, 681, 245, 144, 460, 169, 175, 430, 10
-];
-
-// --- INITIALISATION DU MENU ---
-function formatTime(sec) { 
-    return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`;
+for (let key in specialConfig) {
+    let btn = document.createElement('button');
+    btn.className = 'btn-special';
+    btn.id = 'btn-special-' + key;
+    btn.innerHTML = `<span>${specialConfig[key].icon}</span> <span>${specialConfig[key].titre}</span>`;
+    btn.onclick = () => chargerMode(key);
+    specialMenu.appendChild(btn);
 }
+
+function formatTime(sec) { return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`; }
 
 function startTimer() {
-    if (!timerStarted && scoreActuel < scoreMax) {
+    if (!timerStarted && scoreActuel < scoreMax && modeActif) {
         timerStarted = true;
-        timerInterval = setInterval(() => {
-            secondsElapsed++;
-            if(document.getElementById('timer')) document.getElementById('timer').innerText = formatTime(secondsElapsed);
-        }, 1000);
+        timerInterval = setInterval(() => { secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); }, 1000);
     }
 }
 
-function normaliserTexte(texte) { 
-    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase().trim(); 
-}
+document.getElementById('btn-reset').addEventListener('click', () => { if(modeActif) chargerMode(modeActif); });
+btnRetour.addEventListener('click', () => {
+    modeActif = null; clearInterval(timerInterval); timerStarted = false; grid.innerHTML = '';
+    Object.values(intervalsRotation).forEach(clearInterval); intervalsRotation = {};
+    titreMenu.style.display = 'none'; scoreContainer.style.display = 'none'; timerContainer.style.display = 'none';
+    btnRetour.style.display = 'none';
+    input.disabled = true; input.placeholder = "Choisissez un mode spécial au-dessus...";
+    specialMenu.style.display = 'flex';
+});
 
-// Variables pour le Blind Test
-let pokemonMystereBT = null;
-let audioCri = new Audio();
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
 
-async function chargerPokemonsGlobaux() {
-    const reponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
-    const data = await reponse.json();
-    data.results.forEach((poke, index) => {
-        let id = index + 1;
-        pokemonsData[normaliserTexte(poke.name)] = { id: id, vraiNom: poke.name };
-    });
-}
+async function initialiserBaseDeDonnees() {
+    input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id is_legendary is_mythical pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id name is_default height weight pokemonstats { base_stat stat { name } } } } }`;
+    try {
+        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
+        const data = await reponse.json();
+        
+        data.data.pokemonspecies.forEach(e => {
+            const speciesId = e.id;
+            const vraiNom = e.pokemonspeciesnames[0].name;
+            const nomNormalise = normaliserTexte(vraiNom);
+            pokemonsData[nomNormalise] = speciesId;
+            
+            let category = null;
+            const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
+            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1005, 1006, 1009, 1010, 1020, 1021, 1022, 1023];
+            const pseudos = [149, 248, 373, 376, 445, 635, 706, 784, 887, 998];
+            
+            if (ubs.includes(speciesId)) category = "Ultra-Chimères";
+            else if (paradoxes.includes(speciesId)) category = "Paradoxes";
+            else if (pseudos.includes(speciesId)) category = "Pseudo-Légendaires";
+            else if (e.is_mythical) category = "Fabuleux"; 
+            else if (e.is_legendary) category = "Légendaires";
+            
+            let normalForms = [];
+            let megaForms = [];
+            e.pokemons.forEach(p => {
+                const name = p.name;
+                if (name.includes("-gmax") || name.includes("-eternamax") || name.includes("-totem")) return; 
+                if (name.includes("-mega") || name.includes("-primal")) { megaForms.push(p); } 
+                else { normalForms.push(p); }
+            });
 
-// Fonction de lancement des modes Statistiques
-window.lancerQuizStat = function(modeStr, titreCustom) {
-    document.getElementById('special-menu').style.display = 'none';
-    document.getElementById('stats-container').style.display = 'block';
-    document.getElementById('titre-stat-choisi').innerText = titreCustom;
-    
-    scoreMax = 100; // Ou la longueur de ta liste
-    document.getElementById('score').innerText = "0";
-    
-    input.disabled = false;
-    input.placeholder = "Tapez un nom de Pokémon...";
-    input.id = "saisie-stat"; // On change l'ID pour ne pas cibler la mauvaise barre
-
-    // Ici tu chargerais tes requêtes API pour trier les 100 plus lourds/rapides
-    // (Simplifié ici pour l'intégration de la structure)
-    pokeDuModeActuel = top100FavorisIDs; 
-    
-    grid.innerHTML = "";
-    pokeDuModeActuel.forEach(id => {
-        let box = document.createElement('div');
-        box.classList.add('pokemon-box-small');
-        box.id = "box-" + id;
-        box.innerHTML = `<span class="numero">#${id.toString().padStart(3, '0')}</span>`;
-        grid.appendChild(box);
-    });
-}
-
-// Lancement spécifique du Blind Test
-window.lancerBlindTest = function() {
-    document.getElementById('special-menu').style.display = 'none';
-    document.getElementById('blind-test-container').style.display = 'block';
-    nouveauPokemonBlindTest();
-}
-
-function nouveauPokemonBlindTest() {
-    const idAleatoire = Math.floor(Math.random() * 1025) + 1;
-    pokemonMystereBT = idAleatoire;
-    audioCri.src = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idAleatoire}.ogg`;
-    
-    document.getElementById('bt-resultat').innerHTML = "";
-    const barreSaisieBT = document.getElementById('saisie-bt');
-    barreSaisieBT.value = "";
-    barreSaisieBT.disabled = false;
-    barreSaisieBT.placeholder = "Qui est-ce ?";
-    barreSaisieBT.focus();
-}
-
-// Gestion des saisies spécifiques au mode Stats
-document.addEventListener('input', (e) => {
-    if(e.target.id === 'saisie-stat') {
-        const texteSaisi = normaliserTexte(e.target.value);
-        if (pokemonsData[texteSaisi]) {
-            const idPokemon = pokemonsData[texteSaisi].id;
-            // Correction Mew/Mewtwo : on ne vide que si nouveau ![cite: 3]
-            if (pokeDuModeActuel.includes(idPokemon) && !pokemonsTrouves.includes(idPokemon)) {
-                validerStatPokemon(idPokemon, pokemonsData[texteSaisi].vraiNom);
-                e.target.value = ""; 
+            if (normalForms.length > 0) {
+                let maxWeight = 0, maxHeight = 0;
+                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                let formIds = [];
+                normalForms.forEach(p => {
+                    formIds.push(p.id);
+                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+                    let stats = {};
+                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                });
+                allForms.push({
+                    id: speciesId, speciesId: speciesId, vraiNom: vraiNom, formes: formIds, isMega: false, isDefault: true, category: category,
+                    weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
+                });
             }
-        }
+
+            if (megaForms.length > 0) {
+                let maxWeight = 0, maxHeight = 0;
+                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                let formIds = [];
+                megaForms.forEach(p => {
+                    formIds.push(p.id);
+                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+                    let stats = {};
+                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                });
+                let suffix = megaForms[0].name.includes("-primal") ? " (Primo)" : " (Méga)";
+                allForms.push({
+                    id: formIds[0], speciesId: speciesId, vraiNom: vraiNom + suffix, formes: formIds, isMega: true, isDefault: false, category: null,
+                    weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
+                });
+            }
+        });
+        input.placeholder = "Choisissez un mode spécial au-dessus !";
+    } catch (err) { input.placeholder = "Erreur réseau !"; }
+}
+
+function chargerMode(mode) {
+    modeActif = mode;
+    Object.values(intervalsRotation).forEach(clearInterval); intervalsRotation = {};
+    document.querySelectorAll('.btn-special').forEach(b => b.classList.remove('actif'));
+    document.getElementById('btn-special-' + mode).classList.add('actif');
+    specialMenu.style.display = 'none'; scoreContainer.style.display = 'flex'; timerContainer.style.display = 'block'; btnRetour.style.display = 'inline-block';
+    titreMenu.innerText = specialConfig[mode].titre; titreMenu.style.display = 'block';
+    pokemonsTrouves = []; scoreActuel = 0; secondsElapsed = 0;
+    timerText.innerText = formatTime(0); clearInterval(timerInterval); timerStarted = false;
+    document.getElementById('btn-ombre').disabled = false; grid.innerHTML = '';
+
+    if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(mode)) {
+        pokeDuModeActuel = [...allForms].sort((a, b) => b[mode] - a[mode]).slice(0, 100);
+        let container = document.createElement('div'); container.classList.add('gen-container');
+        let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
+        pokeDuModeActuel.forEach((p, index) => {
+            let box = document.createElement('div'); box.classList.add('pokemon-box-micro'); box.id = "box-" + p.id;
+            box.innerHTML = `<span class="numero">#${index + 1}</span><div class="valeur-stat">${p[mode]} ${specialConfig[mode].label}</div>`;
+            gridSmall.appendChild(box);
+        });
+        container.appendChild(gridSmall); grid.appendChild(container);
+    } else if (mode === 'mega') {
+        pokeDuModeActuel = allForms.filter(f => f.isMega).sort((a, b) => a.speciesId - b.speciesId);
+        let container = document.createElement('div'); container.classList.add('gen-container');
+        let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
+        pokeDuModeActuel.forEach(p => {
+            let box = document.createElement('div'); box.classList.add('pokemon-box-micro'); box.id = "box-" + p.id;
+            box.innerHTML = `<span class="numero">Méga</span>`;
+            gridSmall.appendChild(box);
+        });
+        container.appendChild(gridSmall); grid.appendChild(container);
+    } else if (mode === 'legendaires') {
+        pokeDuModeActuel = allForms.filter(f => f.category && f.isDefault);
+        pokeDuModeActuel.sort((a, b) => a.speciesId - b.speciesId); 
+        const ordreCategories = ["Pseudo-Légendaires", "Légendaires", "Fabuleux", "Ultra-Chimères", "Paradoxes"];
+        ordreCategories.forEach(cat => {
+            const pokeDeLaCat = pokeDuModeActuel.filter(p => p.category === cat);
+            if (pokeDeLaCat.length > 0) {
+                let container = document.createElement('div'); container.classList.add('gen-container');
+                container.innerHTML = `<h2 class="gen-title">${cat}</h2>`;
+                let gridSmall = document.createElement('div'); gridSmall.classList.add('grid-small');
+                pokeDeLaCat.forEach(p => {
+                    let box = document.createElement('div'); box.classList.add('pokemon-box-micro'); box.id = "box-" + p.id;
+                    box.innerHTML = `<span class="numero">#${p.speciesId.toString().padStart(3, '0')}</span>`;
+                    gridSmall.appendChild(box);
+                });
+                container.appendChild(gridSmall); grid.appendChild(container);
+            }
+        });
     }
-    else if(e.target.id === 'saisie-bt') {
-        const texteSaisi = normaliserTexte(e.target.value);
-        if (pokemonsData[texteSaisi] && pokemonsData[texteSaisi].id === pokemonMystereBT) {
-            validerBlindTest(pokemonsData[texteSaisi].vraiNom);
-            e.target.value = ""; 
-        }
+    scoreMax = pokeDuModeActuel.length; scoreText.innerText = scoreActuel; maxText.innerText = scoreMax;
+    input.placeholder = `Tapez un nom de Pokémon...`; input.disabled = false; input.focus();
+}
+
+function declencherVictoire() {
+    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg').play();
+    let duration = 15000, end = Date.now() + duration;
+    let interval = setInterval(() => {
+        if (Date.now() > end) return clearInterval(interval);
+        confetti({ particleCount: 50, startVelocity: 30, spread: 360, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+    }, 250);
+}
+
+function validerForme(forme, joueurActif = true) {
+    const box = document.getElementById("box-" + forme.id);
+    if (!box || box.classList.contains('trouve')) return;
+    box.classList.remove('rate'); box.classList.add('trouve');
+    scoreActuel++; scoreText.innerText = scoreActuel; pokemonsTrouves.push(forme.id);
+    
+    if(joueurActif) {
+        startTimer();
+        let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${forme.speciesId}.ogg`);
+        cri.volume = 0.5; cri.play().catch(e => {}); 
+    }
+    
+    let statInfo = "";
+    if (['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(modeActif)) {
+        statInfo = `<div class="valeur-stat">${forme[modeActif]} ${specialConfig[modeActif].label}</div>`;
+    }
+    box.innerHTML = `<img id="img-${forme.id}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${forme.id}.png"><span class="nom">${forme.vraiNom}</span>${statInfo}`;
+    
+    if (forme.formes.length > 1) {
+        let indexForme = 0;
+        intervalsRotation[forme.id] = setInterval(() => {
+            let img = document.getElementById(`img-${forme.id}`);
+            if (img) { indexForme = (indexForme + 1) % forme.formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${forme.formes[indexForme]}.png`; }
+        }, 5000); 
+    }
+    
+    if (scoreActuel === scoreMax && joueurActif) { clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! MODE COMPLÉTÉ !"; declencherVictoire(); }
+}
+
+input.addEventListener('input', (e) => {
+    if (!modeActif) return;
+    const texte = normaliserTexte(e.target.value);
+    let targetSpeciesIds = [];
+    if (texte === "nidoran") targetSpeciesIds = [29, 32];
+    else if (pokemonsData[texte]) targetSpeciesIds = [pokemonsData[texte]];
+    if (targetSpeciesIds.length > 0) {
+        let trouveQuelqueChose = false;
+        targetSpeciesIds.forEach(sId => {
+            const formesAValider = pokeDuModeActuel.filter(f => f.speciesId === sId);
+            formesAValider.forEach(forme => {
+                if (!pokemonsTrouves.includes(forme.id)) { validerForme(forme, true); trouveQuelqueChose = true; }
+            });
+        });
+        if (trouveQuelqueChose) e.target.value = "";
     }
 });
 
-function validerStatPokemon(id, vraiNom) {
-    if (pokemonsTrouves.includes(id)) return;
+document.getElementById('btn-ombre').addEventListener('click', () => {
+    if (pokeDuModeActuel.length === 0) return;
     startTimer();
-    pokemonsTrouves.push(id);
-    scoreActuel++;
-    document.getElementById('score').innerText = scoreActuel;
-    
-    let box = document.getElementById("box-" + id);
-    if(box) {
-        box.classList.add('trouve');
-        box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png">
-                         <span class="nom" style="font-size: 0.45rem !important; margin-top: 2px !important; color: white; font-weight: bold;">${vraiNom.toUpperCase()}</span>`; // Taille ajustée[cite: 3]
-    }
-}
+    pokeDuModeActuel.forEach(p => {
+        let box = document.getElementById("box-" + p.id);
+        if (!box.classList.contains('trouve') && !box.classList.contains('rate')) { box.innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png">`; }
+    });
+    document.getElementById('btn-ombre').disabled = true;
+});
 
-function validerBlindTest(vraiNom) {
-    scoreActuel++;
-    document.getElementById('bt-score').innerText = scoreActuel;
-    document.getElementById('saisie-bt').disabled = true;
-    
-    const resultat = document.getElementById('bt-resultat');
-    resultat.innerHTML = `
-        <h2 style="color:#2ecc71;">Bravo ! C'était bien ${vraiNom.toUpperCase()} !</h2>
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonMystereBT}.png" style="width:150px; height:150px;">
-        <button class="btn-action" onclick="nouveauPokemonBlindTest()" style="margin-top:15px;">Pokémon Suivant ➡️</button>
-    `;
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-}
-
-// --- ÉVÉNEMENTS BOUTONS ---
-if(document.getElementById('btn-play-sound')) {
-    document.getElementById('btn-play-sound').addEventListener('click', () => audioCri.play());
-}
-
-if(document.getElementById('btn-retour-speciaux')) {
-    document.getElementById('btn-retour-speciaux').addEventListener('click', () => location.reload());
-}
-if(document.getElementById('btn-retour-speciaux-stat')) {
-    document.getElementById('btn-retour-speciaux-stat').addEventListener('click', () => location.reload());
-}
-if(document.getElementById('btn-reset-stat')) {
-    document.getElementById('btn-reset-stat').addEventListener('click', () => location.reload());
-}
-
-// Abandon et Ombre mode Stats
-if(document.getElementById('btn-ombre')) {
-    document.getElementById('btn-ombre').addEventListener('click', () => {
-        startTimer();
-        pokeDuModeActuel.forEach(id => {
-            let box = document.getElementById("box-" + id);
-            if (box && !box.classList.contains('trouve') && !box.classList.contains('rate')) {
-                box.innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png">`;
+document.getElementById('btn-abandon').addEventListener('click', () => {
+    if (pokeDuModeActuel.length === 0) return;
+    if (confirm(`Voulez-vous vraiment abandonner le mode ${specialConfig[modeActif].titre} ?`)) {
+        clearInterval(timerInterval); input.disabled = true; input.placeholder = "Quiz terminé !";
+        pokeDuModeActuel.forEach(p => {
+            if (!pokemonsTrouves.includes(p.id)) {
+                let box = document.getElementById("box-" + p.id); box.classList.add('rate'); 
+                let statInfo = ['weight', 'height', 'atk', 'def', 'spa', 'spd', 'spe', 'hp'].includes(modeActif) ? `<div class="valeur-stat">${p[modeActif]} ${specialConfig[modeActif].label}</div>` : "";
+                box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png"><span class="nom">${p.vraiNom}</span>${statInfo}`;
             }
         });
-        document.getElementById('btn-ombre').disabled = true;
-    });
-}
+    }
+});
 
-if(document.getElementById('btn-abandon')) {
-    document.getElementById('btn-abandon').addEventListener('click', () => {
-        if (confirm("Voulez-vous vraiment abandonner et révéler les réponses ?")) {
-            clearInterval(timerInterval);
-            document.getElementById('saisie-stat').disabled = true;
-            document.getElementById('saisie-stat').placeholder = "Quiz terminé !";
-            
-            pokeDuModeActuel.forEach(id => {
-                if (!pokemonsTrouves.includes(id)) {
-                    let box = document.getElementById("box-" + id);
-                    if(box) {
-                        box.classList.add('rate');
-                        box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png">
-                                         <span class="nom" style="font-size: 0.45rem !important; margin-top: 2px !important; color: white; font-weight: bold;">Inconnu</span>`; // Taille ajustée[cite: 3]
-                    }
-                }
-            });
-        }
-    });
-}
-
-chargerPokemonsGlobaux();
+initialiserBaseDeDonnees();

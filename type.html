@@ -10,7 +10,7 @@
 <body>
     <div id="audio-controls">
         <button id="btn-mute">🔇 Musique OFF</button>
-        <audio id="bg-music" src="musique2.mp3" loop></audio> 
+        <audio id="bg-music" src="musique2.mp3" loop></audio>
     </div>
     
     <div id="top-nav">
@@ -31,8 +31,6 @@
         </div>
         <a href="type.html" class="btn-onglet actif">Par Type 🌟</a>
         <a href="speciaux.html" class="btn-onglet">Spéciaux 🏆</a>
-        <a href="dresseurs.html" class="btn-onglet">Dresseurs ⚔️</a>
-        <a href="donjon.html" class="btn-onglet">Personnalité 🔮</a>
     </div>
     
     <header>
@@ -42,7 +40,7 @@
     
     <main>
         <div id="type-menu"></div>
-        <h1 id="titre-type-choisi" style="display: none;"></h1>
+        <h1 id="titre-type-choisi"></h1>
         
         <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
         <div id="score-container" style="display: none;">
@@ -53,11 +51,11 @@
             <button id="btn-retour-types" class="btn-action">🔙 Changer de Type</button>
         </div>
         
-        <input type="text" id="saisie" placeholder="Veuillez patienter, chargement du Pokédex..." disabled>
+        <input type="text" id="saisie" placeholder="Choisissez un type au-dessus pour commencer..." disabled>
         <div id="pokedex-grid"></div>
     </main>
     
     <footer>Créé par Tomilitovic</footer>
-    <script src="script-type.js"></script> 
+    <script src="script-type.js"></script>
 </body>
 </html>

@@ -10,8 +10,9 @@
 <body>
     <div id="audio-controls">
         <button id="btn-mute">🔇 Musique OFF</button>
-        <audio id="bg-music" src="musique.mp3" loop></audio> 
+        <audio id="bg-music" src="musique.mp3" loop></audio>
     </div>
+    
     <div id="top-nav">
         <div class="menu-container">
             <button class="dropbtn">Générations ▼</button>
@@ -30,25 +31,26 @@
         </div>
         <a href="type.html" class="btn-onglet">Par Type 🌟</a>
         <a href="speciaux.html" class="btn-onglet">Spéciaux 🏆</a>
-        <a href="dresseurs.html" class="btn-onglet">Dresseurs ⚔️</a>
-        <a href="donjon.html" class="btn-onglet">Personnalité 🔮</a>
     </div>
+    
     <header>
         <img src="logo.jpeg" alt="Logo du site" id="mascotte">
         <img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu">
     </header>
+    
     <main>
-        <h1>Le Pokédex Entier (1025)</h1>
         <div id="timer-container">⏱ <span id="timer">00:00</span></div>
         <div id="score-container">
-            Score : <span id="score">0</span> / <span id="score-max">1025</span>
+            Score : <span id="score">0</span> / 1025
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
         </div>
-        <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon..." autofocus>
+        
+        <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon...">
         <div id="pokedex-grid"></div>
     </main>
+    
     <footer>Créé par Tomilitovic</footer>
     <script src="script-all.js"></script>
 </body>
