@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>POKEGUESSER - Quel Pokémon es-tu ?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles spécifiques pour le mode Donjon Mystère */
+        #donjon-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: #333;
+        }
+        .intro-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: bold;
+        }
+        .question-box {
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        .btn-reponse {
+            display: block;
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-reponse:hover {
+            background-color: #2980b9;
+            transform: scale(1.02);
+        }
+        
+        /* Couleurs pour la question finale (8 choix) */
+        .btn-rouge { background-color: #e74c3c; color: white; } .btn-rouge:hover { background-color: #c0392b; }
+        .btn-bleu { background-color: #3498db; color: white; } .btn-bleu:hover { background-color: #2980b9; }
+        .btn-vert { background-color: #2ecc71; color: white; } .btn-vert:hover { background-color: #27ae60; }
+        .btn-noir { background-color: #34495e; color: white; } .btn-noir:hover { background-color: #2c3e50; }
+        .btn-rose { background-color: #fd79a8; color: white; } .btn-rose:hover { background-color: #e84393; }
+        .btn-blanc { background-color: #f1f2f6; color: #333; border: 1px solid #ccc; } .btn-blanc:hover { background-color: #ced6e0; }
+        .btn-marron { background-color: #d35400; color: white; } .btn-marron:hover { background-color: #a04000; }
+        .btn-jaune { background-color: #f1c40f; color: #333; } .btn-jaune:hover { background-color: #f39c12; }
+        
+        #resultat-container { display: none; text-align: center; }
+        #resultat-img { width: 200px; height: 200px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+        #resultat-nom { font-size: 2.5em; font-weight: 800; color: #e74c3c; margin: 10px 0; text-transform: uppercase; }
+        #resultat-desc { font-size: 1.2em; font-style: italic; color: #333; margin-bottom: 20px; }
+        .btn-restart { background-color: #f1c40f; color: #333; }
+    </style>
+</head>
+<body>
+    <div id="audio-controls">
+        <button id="btn-mute">🔇 Musique OFF</button>
+        <audio id="bg-music" src="musique5.mp3" loop></audio> 
+    </div>
+    
+    <div id="top-nav">
+        <a href="index.html" class="btn-onglet">Pokédex 📖</a>
+        <a href="type.html" class="btn-onglet">Par Type 🌟</a>
+        <a href="dresseurs.html" class="btn-onglet">Dresseurs ⚔️</a>
+        <a href="donjon.html" class="btn-onglet actif">Personnalité 🔮</a>
+    </div>
+    
+    <header>
+        <img src="logo.jpeg" alt="Logo du site" id="mascotte">
+        <img src="pokeguesser.png" alt="Titre Pokeguesser" id="titre-jeu">
+    </header>
+    
+    <main>
+        <div id="donjon-container">
+            <div id="intro-container">
+                <h2>Bienvenue dans le test de personnalité !</h2>
+                <p class="intro-text">Ce questionnaire s'inspire des légendaires jeux Pokémon Donjon Mystère. Il va explorer ton esprit pour découvrir quel Pokémon sommeille en toi.</p>
+                <p class="intro-text">Réponds à ces 10 questions le plus sincèrement possible, sans trop réfléchir. Prêt à découvrir ta vraie nature ?</p>
+                <button id="btn-start" class="btn-reponse btn-restart" style="margin-top: 20px;">Commencer le Test !</button>
+            </div>
+
+            <div id="quiz-container" style="display: none;">
+                <p class="intro-text" id="compteur-question">Question 1 / 10</p>
+                <div class="question-box" id="texte-question">Chargement...</div>
+                <div id="reponses-container"></div>
+            </div>
+
+            <div id="resultat-container">
+                <h2>L'aura qui t'entoure est claire... Tu es un :</h2>
+                <img id="resultat-img" src="" alt="Pokémon">
+                <div id="resultat-nom">POKÉMON</div>
+                <div id="resultat-desc">Description de la personnalité...</div>
+                <button id="btn-restart-quiz" class="btn-reponse btn-restart">Refaire le Test 🔄</button>
+            </div>
+        </div>
+    </main>
+    
+    <footer>Créé par Tomilitovic</footer>
+    <script src="script-donjon.js"></script>
+</body>
+</html>
