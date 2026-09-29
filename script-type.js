@@ -6,231 +6,149 @@ btnMute.addEventListener('click', () => {
     isMusicPlaying = !isMusicPlaying;
 });
 
-const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie');
-const scoreText = document.getElementById('score'), timerText = document.getElementById('timer'), maxText = document.getElementById('score-max');
-const titreType = document.getElementById('titre-type-choisi');
+const grid = document.getElementById('pokedex-grid');
+const input = document.getElementById('saisie');
+const scoreText = document.getElementById('score'), maxText = document.getElementById('score-max'), timerText = document.getElementById('timer');
 const typeMenu = document.getElementById('type-menu');
-const scoreContainer = document.getElementById('score-container');
-const timerContainer = document.getElementById('timer-container');
-const btnRetourTypes = document.getElementById('btn-retour-types');
+const titreMenu = document.getElementById('titre-dynamique');
+const scoreContainer = document.getElementById('score-container'), timerContainer = document.getElementById('timer-container');
+const btnRetour = document.getElementById('btn-retour-modes');
 
 let allPokemons = [];
-let pokeDuTypeActuel = [];
-let pokemonsTrouves = [];
-let scoreActuel = 0, scoreMax = 0;
-let typeActif = null; 
+let pokemonsData = {};
+let equipeActuelle = [];
+let pokemonsTrouves = 0, scoreMax = 0;
+let typeActif = null, typeFrActif = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
-let intervalsFormes = {};
-
-const typeConfig = {
-    'water': { fr: 'Eau', color: '#6390F0' }, 'fire': { fr: 'Feu', color: '#EE8130' },
-    'grass': { fr: 'Plante', color: '#7AC74C' }, 'ground': { fr: 'Sol', color: '#E2BF65' },
-    'rock': { fr: 'Roche', color: '#B6A136' }, 'steel': { fr: 'Acier', color: '#B7B7CE' },
-    'ice': { fr: 'Glace', color: '#96D9D6' }, 'electric': { fr: 'Électrik', color: '#F7D02C' },
-    'dragon': { fr: 'Dragon', color: '#6F35FC' }, 'ghost': { fr: 'Spectre', color: '#735797' },
-    'psychic': { fr: 'Psy', color: '#F95587' }, 'normal': { fr: 'Normal', color: '#A8A77A' },
-    'fighting': { fr: 'Combat', color: '#C22E28' }, 'poison': { fr: 'Poison', color: '#A33EA1' },
-    'bug': { fr: 'Insecte', color: '#A6B91A' }, 'flying': { fr: 'Vol', color: '#A98FF3' },
-    'dark': { fr: 'Ténèbres', color: '#705746' }, 'fairy': { fr: 'Fée', color: '#D685AD' }
-};
-
-for (let key in typeConfig) {
-    let btn = document.createElement('button');
-    btn.className = 'btn-type';
-    btn.id = 'btn-type-' + key;
-    btn.innerHTML = `<img src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${key}.svg" alt="${typeConfig[key].fr}"> <span>${typeConfig[key].fr.toUpperCase()}</span>`;
-    btn.onclick = () => chargerType(key);
-    typeMenu.appendChild(btn);
-}
 
 function formatTime(sec) { return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`; }
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[- .']/g, "").toLowerCase().trim(); }
 
 function startTimer() {
-    if (!timerStarted && scoreActuel < scoreMax && typeActif) {
+    if (!timerStarted && pokemonsTrouves < scoreMax) {
         timerStarted = true;
         timerInterval = setInterval(() => { secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); }, 1000);
     }
 }
 
-document.getElementById('btn-reset').addEventListener('click', () => { if(typeActif) chargerType(typeActif); });
-
-btnRetourTypes.addEventListener('click', () => {
-    typeActif = null;
-    clearInterval(timerInterval);
-    timerStarted = false;
-    grid.innerHTML = '';
-    titreType.style.display = 'none';
-    scoreContainer.style.display = 'none';
-    timerContainer.style.display = 'none';
-    btnRetourTypes.style.display = 'none';
-    input.disabled = true;
-    input.placeholder = "Choisissez un type au-dessus pour commencer...";
+btnRetour.addEventListener('click', () => {
+    typeActif = null; typeFrActif = null; clearInterval(timerInterval); timerStarted = false; grid.innerHTML = '';
+    titreMenu.style.display = 'none'; scoreContainer.style.display = 'none'; timerContainer.style.display = 'none'; btnRetour.style.display = 'none';
+    input.disabled = true; input.placeholder = "Choisissez un type au-dessus...";
     typeMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase().trim(); }
-
-function chargerType(type) {
-    typeActif = type;
-    Object.values(intervalsFormes).forEach(clearInterval); intervalsFormes = {};
-
-    typeMenu.style.display = 'none';
-    scoreContainer.style.display = 'flex';
-    timerContainer.style.display = 'block';
-    btnRetourTypes.style.display = 'inline-block';
-
-    titreType.innerText = `TYPE ${typeConfig[type].fr.toUpperCase()}`;
-    titreType.style.color = typeConfig[type].color;
-    titreType.style.display = 'block';
-
-    pokemonsTrouves = [];
-    scoreActuel = 0;
-    secondsElapsed = 0;
-    timerText.innerText = formatTime(0);
-    clearInterval(timerInterval); timerStarted = false;
-    document.getElementById('btn-ombre').disabled = false;
-
-    // Arceus et Silvallié sont inclus d'office
-    pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type) || p.id === 493 || p.id === 773);
-    
-    scoreMax = pokeDuTypeActuel.length;
-    scoreText.innerText = scoreActuel;
-    maxText.innerText = scoreMax;
-
-    grid.innerHTML = '';
-    
-    for (let gen = 1; gen <= 9; gen++) {
-        const pokeDeCetteGen = pokeDuTypeActuel.filter(p => p.generation === gen);
-        if (pokeDeCetteGen.length > 0) {
-            let container = document.createElement('div');
-            container.classList.add('gen-container');
-            container.innerHTML = `<h2 class="gen-title">Génération ${gen}</h2>`;
-            let gridSmall = document.createElement('div');
-            gridSmall.classList.add('grid-small');
-
-            pokeDeCetteGen.forEach(p => {
-                let box = document.createElement('div');
-                box.classList.add('pokemon-box-micro');
-                box.id = "box-" + p.id;
-                box.innerHTML = `<span class="numero">#${p.id.toString().padStart(3, '0')}</span>`;
-                gridSmall.appendChild(box);
-            });
-            container.appendChild(gridSmall); grid.appendChild(container);
-        }
-    }
-    input.placeholder = `Tapez un nom de Pokémon de type ${typeConfig[type].fr}...`;
-    input.disabled = false; input.focus();
-}
+document.getElementById('btn-reset').addEventListener('click', () => { if(typeActif) lancerQuizType(typeActif, typeFrActif); });
 
 async function initialiserBaseDeDonnees() {
-    input.placeholder = "Analyse des 18 types (patiente un peu)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name generation_id pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
-    
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id is_default pokemontypes { type { name } } } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
         
         data.data.pokemonspecies.forEach(e => {
-            let typesSet = new Set();
-            e.pokemons.forEach(p => p.pokemontypes.forEach(pt => typesSet.add(pt.type.name)));
-            allPokemons.push({
-                id: e.id, generation: e.generation_id,
-                nomAnglais: normaliserTexte(e.name), nomFrancais: normaliserTexte(e.pokemonspeciesnames[0].name),
-                vraiNom: e.pokemonspeciesnames[0].name,
-                formes: e.pokemons.map(p => p.id), types: Array.from(typesSet)
-            });
+            const vraiNom = e.pokemonspeciesnames[0].name;
+            const nomNormalise = normaliserTexte(vraiNom);
+            let types = [];
+            let defaultForm = e.pokemons.find(p => p.is_default);
+            if(defaultForm) defaultForm.pokemontypes.forEach(pt => types.push(pt.type.name));
+
+            allPokemons[e.id] = { id: e.id, vraiNom: vraiNom, types: types };
+            pokemonsData[nomNormalise] = e.id;
         });
-
-        // ==========================================
-        // LA LIGNE MAGIQUE POUR TRIER LES POKÉMON :
-        // ==========================================
-        allPokemons.sort((a, b) => a.id - b.id);
-
-        input.placeholder = "Choisissez un type au-dessus pour commencer...";
+        input.placeholder = "Le Pokédex est prêt ! Choisissez un type au-dessus 🌟";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }
 
-function declencherVictoire() {
-    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg').play();
-    let duration = 15000, end = Date.now() + duration;
-    let interval = setInterval(() => {
-        if (Date.now() > end) return clearInterval(interval);
-        confetti({ particleCount: 50, startVelocity: 30, spread: 360, origin: { x: Math.random(), y: Math.random() } });
-    }, 250);
-}
+function lancerQuizType(typeApi, typeFr) {
+    typeActif = typeApi; typeFrActif = typeFr;
+    typeMenu.style.display = 'none';
+    scoreContainer.style.display = 'flex';
+    timerContainer.style.display = 'block';
+    btnRetour.style.display = 'inline-block';
+    
+    titreMenu.innerText = `Type : ${typeFr}`;
+    titreMenu.style.display = 'block';
 
-function validerPokemon(idPokemon, formes, nomSaisi) {
-    const box = document.getElementById("box-" + idPokemon);
-    if (!box.classList.contains('trouve')) {
-        box.classList.remove('rate'); 
-        box.classList.add('trouve');
-        scoreActuel++; scoreText.innerText = scoreActuel;
-        pokemonsTrouves.push(idPokemon);
-        
-        let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`);
-        cri.volume = 0.5; cri.play();
-        
-        box.innerHTML = `
-            <img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idPokemon}.png">
-            <span class="nom">${nomSaisi}</span>`;
-            
-        if (formes.length > 1) {
-            let index = 0; intervalsFormes[idPokemon] = setInterval(() => {
-                let img = document.getElementById(`img-${idPokemon}`);
-                if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formes[index]}.png`; }
-            }, 10000);
-        }
-        
-        if (scoreActuel === scoreMax) {
-            clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! TYPE COMPLÉTÉ !";
-            declencherVictoire();
+    pokemonsTrouves = 0; scoreMax = 0; secondsElapsed = 0;
+    timerText.innerText = formatTime(0); clearInterval(timerInterval); timerStarted = false;
+    document.getElementById('btn-ombre').disabled = false;
+    grid.innerHTML = ''; equipeActuelle = [];
+
+    // Recherche de tous les Pokémon possédant ce type
+    for(let id=1; id<=1025; id++) {
+        if(allPokemons[id] && allPokemons[id].types.includes(typeApi)) {
+            scoreMax++;
+            equipeActuelle.push({ pokeId: id, htmlId: `box-type-${id}`, trouve: false });
+
+            let box = document.createElement('div');
+            box.className = 'pokemon-box';
+            box.id = `box-type-${id}`;
+            box.innerText = `#${id}`;
+            grid.appendChild(box);
         }
     }
+    maxText.innerText = scoreMax;
+    scoreText.innerText = pokemonsTrouves;
+    input.placeholder = `Tapez le nom d'un Pokémon de type ${typeFr}...`;
+    input.disabled = false; input.focus();
+}
+
+function validerPokemon(pokeIdCible) {
+    let trouveQuelqueChose = false;
+    equipeActuelle.forEach(slot => {
+        if (slot.pokeId === pokeIdCible && !slot.trouve) {
+            slot.trouve = true; trouveQuelqueChose = true; pokemonsTrouves++;
+            const box = document.getElementById(slot.htmlId);
+            box.classList.add('trouve');
+            box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeIdCible}.png"><span class="nom">${allPokemons[pokeIdCible].vraiNom}</span>`;
+        }
+    });
+
+    if (trouveQuelqueChose) {
+        scoreText.innerText = pokemonsTrouves;
+        startTimer();
+        let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokeIdCible}.ogg`);
+        cri.volume = 0.5; cri.play().catch(()=>{});
+
+        if (pokemonsTrouves === scoreMax) {
+            clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! TYPE COMPLÉTÉ !";
+            confetti({ particleCount: 150, spread: 180 });
+        }
+    }
+    return trouveQuelqueChose;
 }
 
 input.addEventListener('input', (e) => {
-    if (!typeActif) { e.target.value = ""; return; }
-    startTimer();
+    if (!typeActif) return;
     const texte = normaliserTexte(e.target.value);
-    
-    if (texte === "nidoran") {
-        const pF = pokeDuTypeActuel.find(p => p.id === 29), pM = pokeDuTypeActuel.find(p => p.id === 32);
-        if (pF && !pokemonsTrouves.includes(29)) validerPokemon(29, pF.formes, pF.vraiNom);
-        if (pM && !pokemonsTrouves.includes(32)) validerPokemon(32, pM.formes, pM.vraiNom);
-        e.target.value = ""; return;
-    }
+    let pokeIdCible = null;
+    if (texte === "nidoran") pokeIdCible = 32; 
+    else if (pokemonsData[texte]) pokeIdCible = pokemonsData[texte];
 
-    const p = pokeDuTypeActuel.find(poke => poke.nomAnglais === texte || poke.nomFrancais === texte);
-    if (p && !pokemonsTrouves.includes(p.id)) {
-        validerPokemon(p.id, p.formes, p.vraiNom);
-        e.target.value = "";
-    }
+    if (pokeIdCible && validerPokemon(pokeIdCible)) e.target.value = "";
 });
 
 document.getElementById('btn-ombre').addEventListener('click', () => {
-    if (pokeDuTypeActuel.length === 0) return;
+    if (equipeActuelle.length === 0) return;
     startTimer();
-    pokeDuTypeActuel.forEach(p => {
-        let box = document.getElementById("box-" + p.id);
-        if (!box.classList.contains('trouve') && !box.classList.contains('rate')) {
-            box.innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png"><span class="numero">#${p.id.toString().padStart(3, '0')}</span>`;
+    equipeActuelle.forEach(slot => {
+        if (!slot.trouve) {
+            document.getElementById(slot.htmlId).innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${slot.pokeId}.png">`;
         }
     });
     document.getElementById('btn-ombre').disabled = true;
 });
 
 document.getElementById('btn-abandon').addEventListener('click', () => {
-    if (pokeDuTypeActuel.length === 0) return;
-    if (confirm(`Voulez-vous vraiment abandonner le type ${typeConfig[typeActif].fr} ?`)) {
-        clearInterval(timerInterval); 
-        input.disabled = true; input.placeholder = "Quiz terminé !";
-        
-        pokeDuTypeActuel.forEach(p => {
-            if (!pokemonsTrouves.includes(p.id)) {
-                let box = document.getElementById("box-" + p.id);
+    if (equipeActuelle.length === 0) return;
+    if (confirm(`Voulez-vous vraiment abandonner le type ${typeFrActif} ?`)) {
+        clearInterval(timerInterval); input.disabled = true; input.placeholder = "Quiz terminé !";
+        equipeActuelle.forEach(slot => {
+            if (!slot.trouve) {
+                const box = document.getElementById(slot.htmlId);
                 box.classList.add('rate'); 
-                box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png">
-                <span class="nom">${p.vraiNom}</span>`;
+                box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${slot.pokeId}.png"><span class="nom">${allPokemons[slot.pokeId].vraiNom}</span>`;
             }
         });
     }

@@ -41,22 +41,43 @@
     </header>
     
     <main>
-        <h1>Mode Par Type</h1>
+        <div id="type-menu" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:20px; max-width: 900px; margin: 0 auto;">
+            <button class="btn-action" style="background-color:#A8A77A; color:white;" onclick="lancerQuizType('normal', 'Normal')">⚪ Normal</button>
+            <button class="btn-action" style="background-color:#EE8130; color:white;" onclick="lancerQuizType('fire', 'Feu')">🔥 Feu</button>
+            <button class="btn-action" style="background-color:#6390F0; color:white;" onclick="lancerQuizType('water', 'Eau')">💧 Eau</button>
+            <button class="btn-action" style="background-color:#7AC74C; color:white;" onclick="lancerQuizType('grass', 'Plante')">🍃 Plante</button>
+            <button class="btn-action" style="background-color:#F7D02C; color:black;" onclick="lancerQuizType('electric', 'Électrik')">⚡ Électrik</button>
+            <button class="btn-action" style="background-color:#96D9D6; color:black;" onclick="lancerQuizType('ice', 'Glace')">❄️ Glace</button>
+            <button class="btn-action" style="background-color:#C22E28; color:white;" onclick="lancerQuizType('fighting', 'Combat')">🥊 Combat</button>
+            <button class="btn-action" style="background-color:#A33EA1; color:white;" onclick="lancerQuizType('poison', 'Poison')">☠️ Poison</button>
+            <button class="btn-action" style="background-color:#E2BF65; color:black;" onclick="lancerQuizType('ground', 'Sol')">🌍 Sol</button>
+            <button class="btn-action" style="background-color:#A98FF3; color:white;" onclick="lancerQuizType('flying', 'Vol')">🦅 Vol</button>
+            <button class="btn-action" style="background-color:#F95587; color:white;" onclick="lancerQuizType('psychic', 'Psy')">🧠 Psy</button>
+            <button class="btn-action" style="background-color:#A6B91A; color:white;" onclick="lancerQuizType('bug', 'Insecte')">🐛 Insecte</button>
+            <button class="btn-action" style="background-color:#B6A136; color:white;" onclick="lancerQuizType('rock', 'Roche')">🪨 Roche</button>
+            <button class="btn-action" style="background-color:#735797; color:white;" onclick="lancerQuizType('ghost', 'Spectre')">👻 Spectre</button>
+            <button class="btn-action" style="background-color:#6F35FC; color:white;" onclick="lancerQuizType('dragon', 'Dragon')">🐉 Dragon</button>
+            <button class="btn-action" style="background-color:#705746; color:white;" onclick="lancerQuizType('dark', 'Ténèbres')">🌑 Ténèbres</button>
+            <button class="btn-action" style="background-color:#B7B7CE; color:black;" onclick="lancerQuizType('steel', 'Acier')">⚙️ Acier</button>
+            <button class="btn-action" style="background-color:#D685AD; color:white;" onclick="lancerQuizType('fairy', 'Fée')">✨ Fée</button>
+        </div>
+
+        <h1 id="titre-dynamique" style="display:none; margin-top:20px;"></h1>
         
-        <div id="timer-container">⏱ <span id="timer">00:00</span></div>
-        <div id="score-container">
-            Score : <span id="score">0</span> / <span id="score-max">?</span>
+        <div id="timer-container" style="display: none;">⏱ <span id="timer">00:00</span></div>
+        <div id="score-container" style="display: none;">
+            Score : <span id="score">0</span> / <span id="score-max">0</span>
             <button id="btn-reset" class="btn-action">🔄 Recommencer</button>
             <button id="btn-ombre" class="btn-action">👤 Afficher l'ombre</button>
             <button id="btn-abandon" class="btn-action">🏳️ Abandonner</button>
+            <button id="btn-retour-modes" class="btn-action">🔙 Changer de Type</button>
         </div>
         
-        <input type="text" id="saisie" placeholder="Tapez un nom de Pokémon..." autofocus>
+        <input type="text" id="saisie" placeholder="Veuillez patienter, chargement du Pokédex..." disabled>
         <div id="pokedex-grid"></div>
     </main>
     
     <footer>Créé par Tomilitovic</footer>
-    <!-- Vérifie que c'est bien le nom de ton fichier JS pour le mode type -->
     <script src="script-type.js"></script> 
 </body>
 </html>
