@@ -116,14 +116,23 @@ const bddDresseurs = {
         { nom: "Serena / Kalem (Rival)", sprite: "serena_kalem.png", equipes: [ { nom: "Combat Final Post-Game (Starter Plante)", pokemons: [461, 35, 135, 334, 359, 652] }, { nom: "Combat Final Post-Game (Starter Feu)", pokemons: [461, 35, 134, 334, 359, 655] }, { nom: "Combat Final Post-Game (Starter Eau)", pokemons: [461, 35, 136, 334, 359, 658] } ] }
     ],
 
-    // --- GÉNÉRATION 7 (CORRIGÉE À 100% !) ---
+    // --- GÉNÉRATION 7 (CORRIGÉE : Capitaines + Défense de Danh + Différences USUL) ---
     'gen7': [
+        { nom: "Capitaines d'Épreuve", sprite: "capitaines.png", equipes: [ 
+            { nom: "Althéo (Normal)", pokemons: [735, 235, 775] }, // Argouste, Queulorior, Dodoala (Revanche)
+            { nom: "Néphie (Eau)", pokemons: [171, 91, 752] }, // Lanturn, Crustabri, Tarenbulle (Revanche)
+            { nom: "Kiawe (Feu)", pokemons: [59, 663, 105] }, // Arcanin, Flambusard, Ossatueur d'Alola (Revanche)
+            { nom: "Barbara (Plante)", pokemons: [709, 763, 756] }, // Desséliande, Sucreine, Lampignon (Revanche)
+            { nom: "Chrys (Électrik)", pokemons: [777, 462, 466, 76] }, // Togedemaru, Magnézone, Élekable, Grolem d'Alola
+            { nom: "Oléa (Fée)", pokemons: [707, 210, 756, 40, 743] } // Trousselin, Granbull, Lampignon, Grodoudou, Rubombelle
+        ] },
         { nom: "Doyens d'Alola (Kahunas)", sprite: "doyens.png", equipes: [ 
             { nom: "Pectorius (Mele-Mele S/L)", pokemons: [56, 296, 739] }, 
             { nom: "Pectorius (Mele-Mele US/UL)", pokemons: [66, 296, 739] }, 
             { nom: "Alyxia (Akala S/L)", pokemons: [299, 525, 745] }, 
             { nom: "Alyxia (Akala US/UL)", pokemons: [347, 345, 745] }, 
             { nom: "Danh (Ula-Ula)", pokemons: [302, 552, 53] }, 
+            { nom: "Danh (Défense Titre)", pokemons: [302, 553, 430, 359, 53] }, // Ténéfix, Crocorible, Corboss, Absol, Persian
             { nom: "Paulie (Poni S/L)", pokemons: [51, 423, 330, 750] }, 
             { nom: "Paulie (Poni US/UL)", pokemons: [623, 423, 330, 750] } 
         ] },
@@ -133,22 +142,22 @@ const bddDresseurs = {
             { nom: "Elsa-Mina (Boss Æther)", pokemons: [36, 549, 760, 428, 350] } 
         ] },
         { nom: "Conseil 4 (Ligue Alola)", sprite: "ligue7.png", equipes: [ 
-            { nom: "Pectorius (Ligue S/L)", pokemons: [297, 57, 760, 62, 740] }, 
-            { nom: "Molène (Ligue US/UL)", pokemons: [707, 625, 462, 376, 51] }, 
+            { nom: "Pectorius (Ligue S/L)", pokemons: [297, 57, 760, 62, 740] }, // Colossinge !
+            { nom: "Molène (Ligue US/UL)", pokemons: [707, 625, 462, 376, 51] }, // Triopikeur d'Alola pour l'Acier
             { nom: "Alyxia (Ligue S/L)", pokemons: [369, 703, 76, 476, 745] }, 
             { nom: "Alyxia (Ligue US/UL)", pokemons: [348, 346, 526, 476, 745] }, 
-            { nom: "Margie (Ligue S/L)", pokemons: [302, 426, 781, 478, 770] }, 
+            { nom: "Margie (Ligue S/L)", pokemons: [302, 426, 781, 478, 770] }, // Trépassable !
             { nom: "Margie (Ligue US/UL)", pokemons: [354, 426, 781, 478, 770] }, 
             { nom: "Kahili (Ligue S/L)", pokemons: [227, 169, 741, 630, 733] }, 
             { nom: "Kahili (Ligue US/UL)", pokemons: [628, 701, 741, 630, 733] } 
         ] },
         { nom: "Prof Euphorbe & Tili", sprite: "euphorbe_tili.png", equipes: [ 
-            { nom: "Euphorbe (S/L - Starter Plante)", pokemons: [745, 38, 628, 462, 143, 727] }, 
-            { nom: "Euphorbe (S/L - Starter Feu)", pokemons: [745, 38, 628, 462, 143, 730] }, 
-            { nom: "Euphorbe (S/L - Starter Eau)", pokemons: [745, 38, 628, 462, 143, 724] }, 
-            { nom: "Tili (US/UL - Starter Plante)", pokemons: [26, 136, 128, 715, 740, 727] }, 
-            { nom: "Tili (US/UL - Starter Feu)", pokemons: [26, 134, 128, 715, 740, 730] }, 
-            { nom: "Tili (US/UL - Starter Eau)", pokemons: [26, 135, 128, 715, 740, 724] }, 
+            { nom: "Euphorbe (S/L - Plante)", pokemons: [745, 38, 628, 462, 143, 727] }, 
+            { nom: "Euphorbe (S/L - Feu)", pokemons: [745, 38, 628, 462, 143, 730] }, 
+            { nom: "Euphorbe (S/L - Eau)", pokemons: [745, 38, 628, 462, 143, 724] }, 
+            { nom: "Tili (US/UL - Plante)", pokemons: [26, 136, 128, 715, 740, 727] }, 
+            { nom: "Tili (US/UL - Feu)", pokemons: [26, 134, 128, 715, 740, 730] }, 
+            { nom: "Tili (US/UL - Eau)", pokemons: [26, 135, 128, 715, 740, 724] }, 
             { nom: "Gladio (Défense du Titre)", pokemons: [169, 448, 773, 134, 745, 474] } 
         ] }
     ],
@@ -186,9 +195,9 @@ const bddDresseurs = {
             { nom: "Prof Turum (IA - Violet)", pokemons: [994, 991, 992, 993, 995, 1006] }
         ] },
         { nom: "Menzi (Rival)", sprite: "menzi.png", equipes: [
-            { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 906, 982, 706, 922, 911] },
-            { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 906, 982, 706, 922, 914] },
-            { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 906, 982, 706, 922, 908] }
+            { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 968, 982, 706, 923, 911] },
+            { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 968, 982, 706, 923, 914] },
+            { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 968, 982, 706, 923, 908] }
         ] },
         { nom: "Boss des DLC (Paldea)", sprite: "dlc9.png", equipes: [
             { nom: "Kassis (Maître DLC 2)", pokemons: [149, 472, 727, 474, 982, 1019] },
