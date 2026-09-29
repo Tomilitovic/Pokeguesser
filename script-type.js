@@ -140,7 +140,7 @@ function validerPokemon(idPokemon, formes, nomSaisi) {
         box.innerHTML = `<img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idPokemon}.png"><span class="nom">${nomSaisi}</span>`;
         
         if (formes.length > 1) {
-            let index = 0; intervalsFormes[idPokemon] = setInterval(() => {
+            let index = 0; setInterval(() => {
                 let img = document.getElementById(`img-${idPokemon}`);
                 if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formes[index]}.png`; }
             }, 10000);

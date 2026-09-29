@@ -4,19 +4,15 @@
 body { font-family: 'Montserrat', sans-serif; text-align: center; margin: 0; padding: 20px; color: white; background-image: url("fond.jpeg"); background-size: cover; background-attachment: fixed; background-position: center; position: relative; }
 
 /* =========================================
-   NOUVELLE NAVIGATION : LES ONGLETS CÔTE À CÔTE
+   NOUVELLE NAVIGATION LES ONGLETS CÔTE À CÔTE
 ========================================= */
 #top-nav { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 9999; align-items: flex-start; }
-
 .menu-container { position: relative; padding-bottom: 20px; }
-
 .dropbtn, .btn-onglet { background-color: #2980b9; color: white; padding: 10px 20px; font-size: 1rem; font-family: 'Montserrat', sans-serif; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; display: inline-block; position: relative; z-index: 10000; }
 .dropbtn:hover, .btn-onglet:hover { background-color: #3498db; }
 .btn-onglet.actif { background-color: #f1c40f; color: #2c3e50; }
-
 .dropdown-content { display: none; flex-direction: column; gap: 5px; position: absolute; top: 100%; left: 0; width: 250px; background: transparent; z-index: 10001; }
 .menu-container:hover .dropdown-content { display: flex; }
-
 .btn-gen { background-color: rgba(25, 35, 45, 0.95); color: white; text-decoration: none; padding: 12px 15px; border-radius: 8px; border: 2px solid #34495e; font-weight: bold; font-family: 'Montserrat', sans-serif; transition: 0.2s; text-align: left; display: block; }
 .btn-gen:hover { background-color: #2c3e50; transform: scale(1.02); border-color: #f1c40f; }
 
@@ -52,7 +48,7 @@ input { padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; border: none
 input:focus { transform: scale(1.05); }
 
 /* =========================================
-   GRILLES ET CASES (CLASSIQUE)
+   GRILLES ET CASES (CLASSIQUE ET MICRO)
 ========================================= */
 #pokedex-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
 .pokemon-box { width: 100px; height: 100px; background-color: rgba(25, 35, 45, 0.8); border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #34495e; }
@@ -61,33 +57,22 @@ input:focus { transform: scale(1.05); }
 .pokemon-box.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
 .ombre { filter: brightness(0) invert(0); opacity: 0.6; }
 
-/* =========================================
-   CASES "MICRO" (Pour le Pokédex Entier et Par Type)
-========================================= */
+/* Cases très réduites pour les modes avec beaucoup de Pokémon */
 .gen-container { background-color: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #34495e; width: 100%; }
 .gen-title { font-size: 1.5rem; color: #f1c40f; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #f1c40f; padding-bottom: 5px; text-align: left; }
 .grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 
-.pokemon-box-micro { width: 50px; height: 50px; background-color: rgba(25, 35, 45, 0.8); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
-.pokemon-box-micro span.numero { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; }
+/* --- CASES SPÉCIALES AGRANDIES (Passage de 50px à 75px) --- */
+.pokemon-box-micro { width: 75px; height: 75px; background-color: rgba(25, 35, 45, 0.8); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
+.pokemon-box-micro span.numero { font-size: 0.9rem; color: #7f8c8d; font-weight: bold; }
 .pokemon-box-micro.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
 .pokemon-box-micro.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
-.pokemon-box-micro img { width: 35px !important; height: 35px !important; }
-.pokemon-box-micro span.nom { font-size: 0.4rem !important; margin-top: 1px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
+.pokemon-box-micro img { width: 45px !important; height: 45px !important; }
+.pokemon-box-micro span.nom { font-size: 0.55rem !important; margin-top: 2px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
 
-/* =========================================
-   CASES "SPÉCIALES" (75px pour Top 100 et Légendaires)
-========================================= */
-.pokemon-box-special { width: 75px; height: 75px; background-color: rgba(25, 35, 45, 0.8); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
-.pokemon-box-special span.numero { font-size: 0.9rem; color: #7f8c8d; font-weight: bold; }
-.pokemon-box-special.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
-.pokemon-box-special.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
-.pokemon-box-special img { width: 45px !important; height: 45px !important; }
-.pokemon-box-special span.nom { font-size: 0.55rem !important; margin-top: 2px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
-
-/* Affichage des statistiques dans les cases Spéciales */
+/* --- SPÉCIAL : Affichage de la stat dans la case --- */
 .valeur-stat { font-size: 0.8rem; color: #f1c40f; font-weight: bold; margin-top: 2px; text-align: center; }
-.pokemon-box-special.trouve .valeur-stat, .pokemon-box-special.rate .valeur-stat { font-size: 0.55rem; margin-top: 0px; }
+.pokemon-box-micro.trouve .valeur-stat, .pokemon-box-micro.rate .valeur-stat { font-size: 0.55rem; margin-top: 0px; }
 
 /* =========================================
    MENU DES TYPES
@@ -99,7 +84,6 @@ input:focus { transform: scale(1.05); }
 .btn-type:hover img { transform: scale(1.1); }
 .btn-type.actif img { transform: scale(1.15); box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
 .btn-type.actif span { background-color: #f1c40f; color: white; }
-
 #titre-dynamique, #titre-type-choisi { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); display: none; }
 
 /* =========================================
@@ -110,76 +94,4 @@ input:focus { transform: scale(1.05); }
 .btn-special:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
 .btn-special.actif { border-color: #f1c40f; box-shadow: 0 0 20px rgba(241, 196, 15, 0.8); background: linear-gradient(135deg, #f39c12, #e67e22); }
 
-/* =========================================
-   NOUVEAU : STYLES POUR LES ÉQUIPES DE DRESSEURS
-========================================= */
-.dresseur-section {
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 40px;
-    border: 1px solid #34495e;
-    width: 100%;
-}
-
-.dresseur-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border-bottom: 2px solid #f1c40f;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.dresseur-header img {
-    height: 80px; 
-    image-rendering: pixelated; 
-}
-
-.dresseur-header h2 {
-    font-size: 1.8rem;
-    color: #f1c40f;
-    margin: 0;
-    text-align: left;
-}
-
-.equipe-titre {
-    font-size: 1rem;
-    color: #bdc3c7;
-    text-align: left;
-    margin-bottom: 10px;
-    font-style: italic;
-}
-
-.types-inconnus {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-.types-inconnus img {
-    width: 25px !important;
-    height: 25px !important;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
 footer { margin-top: 60px; padding: 20px; font-size: 1.2rem; color: #bdc3c7; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
-
-/* =========================================
-   MEDIA QUERIES (Pour l'affichage Mobile)
-========================================= */
-@media (max-width: 768px) {
-    #menu-container {
-        position: relative;
-        top: 0;
-        left: 0;
-        margin-bottom: 20px;
-    }
-    input {
-        position: relative;
-        top: 0;
-        margin-bottom: 20px;
-    }
-}

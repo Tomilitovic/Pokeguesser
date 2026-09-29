@@ -11,7 +11,6 @@ const scoreText = document.getElementById('score'), timerText = document.getElem
 let scoreActuel = 0, pokemonsData = {}, pokemonsTrouves = [];
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
-// VARIABLES À CHANGER POUR LES AUTRES GÉNÉRATIONS
 const scoreMax = 100;
 const idDebut = 152;
 const idFin = 251;
@@ -35,14 +34,21 @@ function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${idDebut}, _lte: ${idFin}}}) { id pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${idDebut}, _lte: ${idFin}}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
+        
         data.data.pokemonspecies.forEach(e => {
-            const nomFrancais = normaliserTexte(e.pokemonspeciesnames[0].name);
-            pokemonsData[nomFrancais] = { id: e.id, formes: e.pokemons.map(p => p.id), vraiNom: e.pokemonspeciesnames[0].name };
+            const nomAnglais = normaliserTexte(e.name);
+            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+            const nomFrancais = normaliserTexte(vraiNom);
+            const formes = e.pokemons.map(p => p.id);
+            
+            pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
+            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
         });
+        
         input.placeholder = "Tapez un nom de Pokémon..."; input.disabled = false; input.focus();
     } catch (err) { input.placeholder = "Erreur de chargement !"; }
 }
