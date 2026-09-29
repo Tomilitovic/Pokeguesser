@@ -23,7 +23,7 @@ let regionActive = null;
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
 // =========================================
-// 1. LE GRAND DICTIONNAIRE DES DRESSEURS (Générations 1 à 9)
+// 1. LE GRAND DICTIONNAIRE DES DRESSEURS
 // =========================================
 const bddDresseurs = {
 
@@ -40,6 +40,7 @@ const bddDresseurs = {
         { nom: "Blue / Trace (Maître)", sprite: "blue.png", equipes: [ { nom: "RFVF (Starter Plante)", pokemons: [18, 65, 112, 103, 130, 3] }, { nom: "RFVF (Starter Feu)", pokemons: [18, 65, 112, 103, 130, 6] }, { nom: "RFVF (Starter Eau)", pokemons: [18, 65, 112, 103, 59, 9] }, { nom: "Let's Go (Trace - Starter Évoli)", pokemons: [18, 78, 80, 105, 143, 135] }, { nom: "Let's Go (Trace - Starter Pikachu)", pokemons: [18, 78, 80, 105, 143, 136] } ] }
     ],
 
+    // --- GÉNÉRATION 2 (LIGUE RESTAURÉE 1ER + 2ND PASSAGE) ---
     'gen2': [
         { nom: "Albert (Mauville)", sprite: "albert.png", equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [16, 17] }, { nom: "2nd Passage (Revanche HGSS)", pokemons: [398, 164, 277, 430, 279, 18] } ] },
         { nom: "Hector (Écorcia)", sprite: "hector.png", equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [11, 14, 123] }, { nom: "2nd Passage (Revanche HGSS)", pokemons: [292, 416, 127, 214, 469, 212] } ] },
@@ -50,7 +51,16 @@ const bddDresseurs = {
         { nom: "Frédo (Acajou)", sprite: "fredo.png", equipes: [ { nom: "Or / Argent / Cristal / HGSS", pokemons: [86, 87, 221] }, { nom: "2nd Passage (Revanche HGSS)", pokemons: [460, 87, 362, 478, 365, 473] } ] },
         { nom: "Sandra (Ébènelle)", sprite: "sandra.png", equipes: [ { nom: "HeartGold / SoulSilver", pokemons: [130, 148, 148, 230] }, { nom: "2nd Passage (Revanche HGSS)", pokemons: [130, 142, 230, 6, 149, 149] } ] },
         { nom: "Admins Team Rocket", sprite: "admin_rocket.png", equipes: [ { nom: "Amos (Tour Radio)", pokemons: [41, 109] }, { nom: "Lambda (Tour Radio)", pokemons: [109, 109, 109, 109, 109, 110] }, { nom: "Lance (Tour Radio)", pokemons: [24, 198, 45] }, { nom: "Apollon (Tour Radio)", pokemons: [228, 109, 229] } ] },
-        { nom: "Conseil 4 (Ligue)", sprite: "ligue2.png", equipes: [ { nom: "Clément (2nd Passage)", pokemons: [437, 124, 326, 80, 282, 178] }, { nom: "Koga (2nd Passage)", pokemons: [435, 49, 317, 89, 454, 169] }, { nom: "Aldo (2nd Passage)", pokemons: [237, 107, 106, 297, 448, 68] }, { nom: "Marion (2nd Passage)", pokemons: [461, 442, 359, 430, 229, 197] } ] },
+        { nom: "Conseil 4 (Ligue)", sprite: "ligue2.png", equipes: [ 
+            { nom: "Clément (1er Passage)", pokemons: [178, 124, 103, 80, 178] },
+            { nom: "Clément (2nd Passage)", pokemons: [437, 124, 326, 80, 282, 178] }, 
+            { nom: "Koga (1er Passage)", pokemons: [168, 49, 205, 89, 169] },
+            { nom: "Koga (2nd Passage)", pokemons: [435, 49, 317, 89, 454, 169] }, 
+            { nom: "Aldo (1er Passage)", pokemons: [237, 106, 107, 95, 68] },
+            { nom: "Aldo (2nd Passage)", pokemons: [237, 107, 106, 297, 448, 68] }, 
+            { nom: "Marion (1er Passage)", pokemons: [197, 45, 94, 198, 229] },
+            { nom: "Marion (2nd Passage)", pokemons: [461, 442, 359, 430, 229, 197] } 
+        ] },
         { nom: "Peter (Maître de la Ligue)", sprite: "peter_maitre.png", equipes: [ { nom: "1er Passage (Ligue)", pokemons: [130, 149, 149, 142, 6, 149] }, { nom: "2nd Passage (Remakes HGSS)", pokemons: [373, 445, 334, 142, 6, 149] } ] },
         { nom: "Silver & Red", sprite: "silver_red.png", equipes: [ { nom: "Silver (Combat Final - Méganium)", pokemons: [215, 169, 82, 94, 65, 154] }, { nom: "Silver (Combat Final - Typhlosion)", pokemons: [215, 169, 82, 94, 65, 157] }, { nom: "Silver (Combat Final - Aligatueur)", pokemons: [215, 169, 82, 94, 65, 160] }, { nom: "Red (Boss Mont Argenté)", pokemons: [25, 131, 143, 3, 6, 9] } ] }
     ],
@@ -86,6 +96,7 @@ const bddDresseurs = {
         { nom: "René (Rival)", sprite: "rene.png", equipes: [ { nom: "Combat Final (Starter Plante)", pokemons: [398, 407, 143, 214, 78, 395] }, { nom: "Combat Final (Starter Feu)", pokemons: [398, 407, 143, 214, 419, 389] }, { nom: "Combat Final (Starter Eau)", pokemons: [398, 407, 143, 214, 78, 392] } ] }
     ],
 
+    // --- GÉNÉRATION 5 (LIGUE RESTAURÉE 1ER + 2ND PASSAGE + RIVAUX COMPLETS) ---
     'gen5': [
         { nom: "Rachid, Noa, Armando", sprite: "r_n_a.png", equipes: [ { nom: "Ogoesse", pokemons: [506, 511, 513, 515] } ] },
         { nom: "Aloé & Tcheren", sprite: "aloe_tcheren.png", equipes: [ { nom: "Aloé (Noir/Blanc)", pokemons: [507, 505] }, { nom: "Tcheren (Arène N2/B2)", pokemons: [504, 507] } ] },
@@ -96,35 +107,51 @@ const bddDresseurs = {
         { nom: "Zhu & Strykna", sprite: "zhu_strykna.png", equipes: [ { nom: "Zhu (Flocombe - NB)", pokemons: [583, 615, 614] }, { nom: "Strykna (Ondes-sur-Mer - N2/B2)", pokemons: [109, 544] } ] },
         { nom: "Watson, Iris, Amana", sprite: "watson_iris_amana.png", equipes: [ { nom: "Watson (Janusia N2/B2)", pokemons: [621, 330, 612] }, { nom: "Amana (Papeloa N2/B2)", pokemons: [565, 563, 593] } ] },
         { nom: "Team Plasma", sprite: "plasma.png", equipes: [ { nom: "N (Combat Final NB)", pokemons: [643, 584, 601, 567, 581, 604] }, { nom: "Ghetis (Combat Final NB)", pokemons: [563, 626, 565, 537, 604, 635] }, { nom: "Nikolaï (Boss N2B2)", pokemons: [82, 462, 606, 603, 601, 601] } ] },
-        { nom: "Conseil 4 (Ligue)", sprite: "ligue5.png", equipes: [ { nom: "Anis (Revanche N2B2)", pokemons: [563, 623, 426, 354, 593, 609] }, { nom: "Pieris (Revanche N2B2)", pokemons: [560, 553, 430, 229, 530, 625] }, { nom: "Percila (Revanche N2B2)", pokemons: [579, 561, 376, 437, 518, 576] }, { nom: "Kunz (Revanche N2B2)", pokemons: [538, 539, 448, 308, 534, 620] } ] },
+        { nom: "Conseil 4 (Ligue)", sprite: "ligue5.png", equipes: [ 
+            { nom: "Anis (1er Passage)", pokemons: [563, 593, 623, 609] },
+            { nom: "Anis (Revanche N2B2)", pokemons: [563, 623, 426, 354, 593, 609] }, 
+            { nom: "Pieris (1er Passage)", pokemons: [560, 553, 510, 625] },
+            { nom: "Pieris (Revanche N2B2)", pokemons: [560, 553, 430, 229, 530, 625] }, 
+            { nom: "Percila (1er Passage)", pokemons: [579, 518, 561, 576] },
+            { nom: "Percila (Revanche N2B2)", pokemons: [579, 561, 376, 437, 518, 576] }, 
+            { nom: "Kunz (1er Passage)", pokemons: [538, 539, 620, 534] },
+            { nom: "Kunz (Revanche N2B2)", pokemons: [538, 539, 448, 308, 534, 620] } 
+        ] },
         { nom: "Goyah & Iris (Maîtres)", sprite: "goyah_iris.png", equipes: [ { nom: "Goyah (Ligue Noir / Blanc)", pokemons: [617, 626, 584, 589, 621, 637] }, { nom: "Iris (Ligue Noir 2 / Blanc 2)", pokemons: [635, 621, 306, 131, 567, 612] } ] },
-        { nom: "Rivaux (Tcheren, Bel, Matis)", sprite: "rivaux_5g.png", equipes: [ { nom: "Tcheren (Combat Final NB)", pokemons: [520, 512, 510, 521] }, { nom: "Matis (Combat Final N2B2)", pokemons: [520, 521, 626, 512, 500] } ] }
+        { nom: "Rivaux (Tcheren & Matis)", sprite: "rivaux_5g.png", equipes: [ 
+            { nom: "Tcheren (Final NB - Plante)", pokemons: [521, 526, 612, 510, 511, 500] }, 
+            { nom: "Tcheren (Final NB - Feu)", pokemons: [521, 526, 612, 510, 513, 503] }, 
+            { nom: "Tcheren (Final NB - Eau)", pokemons: [521, 526, 612, 510, 515, 497] }, 
+            { nom: "Matis (Final N2B2 - Plante)", pokemons: [521, 626, 330, 604, 513, 503] }, 
+            { nom: "Matis (Final N2B2 - Feu)", pokemons: [521, 626, 330, 604, 515, 497] },
+            { nom: "Matis (Final N2B2 - Eau)", pokemons: [521, 626, 330, 604, 511, 500] } 
+        ] }
     ],
 
+    // --- GÉNÉRATION 6 (CORRIGÉE : CHATEAU DE COMBAT + LIGUE + LYSANDRE) ---
     'gen6': [
-        { nom: "Violette (Neuvartault)", sprite: "violette.png", equipes: [ { nom: "1er Passage", pokemons: [283, 666] }, { nom: "2nd Passage (Château de Combat)", pokemons: [284, 469, 666] } ] },
-        { nom: "Lino (Relifac-le-Haut)", sprite: "lino.png", equipes: [ { nom: "1er Passage", pokemons: [696, 698] }, { nom: "2nd Passage (Château de Combat)", pokemons: [696, 698, 697] } ] },
-        { nom: "Cornélia (Yantra)", sprite: "cornelia.png", equipes: [ { nom: "1er Passage", pokemons: [619, 66, 701] }, { nom: "2nd Passage (Château de Combat)", pokemons: [66, 619, 701, 448] } ] },
-        { nom: "Amaro (Port Tempères)", sprite: "amaro.png", equipes: [ { nom: "1er Passage", pokemons: [189, 673, 70] }, { nom: "2nd Passage (Château de Combat)", pokemons: [189, 673, 70, 71] } ] },
-        { nom: "Lem (Illumis)", sprite: "lem.png", equipes: [ { nom: "1er Passage", pokemons: [587, 82, 695] }, { nom: "2nd Passage (Château de Combat)", pokemons: [587, 462, 695, 82] } ] },
-        { nom: "Valériane (Romant-sous-Bois)", sprite: "valeriane.png", equipes: [ { nom: "1er Passage", pokemons: [303, 122, 700] }, { nom: "2nd Passage (Château de Combat)", pokemons: [303, 122, 700, 683] } ] },
-        { nom: "Astéra (Flusselles)", sprite: "astera.png", equipes: [ { nom: "1er Passage", pokemons: [561, 199, 678] }, { nom: "2nd Passage (Château de Combat)", pokemons: [561, 199, 678, 282] } ] },
-        { nom: "Urup (Auffrac-les-Congères)", sprite: "urup.png", equipes: [ { nom: "1er Passage", pokemons: [460, 615, 713] }, { nom: "2nd Passage (Château de Combat)", pokemons: [460, 615, 713, 365] } ] },
-        { nom: "Team Flare", sprite: "flare.png", equipes: [ { nom: "Lysandre (Boss Final)", pokemons: [619, 468, 668, 130] }, { nom: "Xanthin (Admin)", pokemons: [691, 687] } ] },
-        { nom: "Conseil 4 (Ligue)", sprite: "ligue6.png", equipes: [ { nom: "Malva (Feu)", pokemons: [668, 219, 323, 663] }, { nom: "Narcisse (Eau)", pokemons: [689, 121, 130, 693] }, { nom: "Thyméo (Acier)", pokemons: [707, 476, 212, 681] }, { nom: "Dracéna (Dragon)", pokemons: [691, 334, 621, 715] } ] },
+        { nom: "Violette (Neuvartault)", sprite: "violette.png", equipes: [ { nom: "1er Passage", pokemons: [283, 666] }, { nom: "Château de Combat (Revanche)", pokemons: [284, 666] } ] },
+        { nom: "Lino (Relifac-le-Haut)", sprite: "lino.png", equipes: [ { nom: "1er Passage", pokemons: [696, 698] }, { nom: "Château de Combat (Revanche)", pokemons: [697, 699] } ] },
+        { nom: "Cornélia (Yantra)", sprite: "cornelia.png", equipes: [ { nom: "1er Passage", pokemons: [619, 67, 701] }, { nom: "Château de Combat (Revanche)", pokemons: [68, 701, 448] } ] },
+        { nom: "Amaro (Port Tempères)", sprite: "amaro.png", equipes: [ { nom: "1er Passage", pokemons: [189, 673, 70] }, { nom: "Château de Combat (Revanche)", pokemons: [189, 673] } ] },
+        { nom: "Lem (Illumis)", sprite: "lem.png", equipes: [ { nom: "1er Passage", pokemons: [587, 82, 695] }, { nom: "Château de Combat (Revanche)", pokemons: [462, 695] } ] },
+        { nom: "Valériane (Romant-sous-Bois)", sprite: "valeriane.png", equipes: [ { nom: "1er Passage", pokemons: [303, 122, 700] }, { nom: "Château de Combat (Revanche)", pokemons: [303, 700] } ] },
+        { nom: "Astéra (Flusselles)", sprite: "astera.png", equipes: [ { nom: "1er Passage", pokemons: [561, 199, 678] }, { nom: "Château de Combat (Revanche)", pokemons: [199, 678] } ] },
+        { nom: "Urup (Auffrac-les-Congères)", sprite: "urup.png", equipes: [ { nom: "1er Passage", pokemons: [460, 615, 713] }, { nom: "Château de Combat (Revanche)", pokemons: [460, 713] } ] },
+        { nom: "Team Flare", sprite: "flare.png", equipes: [ { nom: "Lysandre (Boss Final)", pokemons: [620, 430, 668, 130] }, { nom: "Xanthin (Admin)", pokemons: [691, 687] } ] },
+        { nom: "Conseil 4 (Ligue Kalos)", sprite: "ligue6.png", equipes: [ { nom: "Malva (Feu)", pokemons: [668, 324, 663, 609] }, { nom: "Narcisse (Eau)", pokemons: [693, 121, 130, 689] }, { nom: "Thyméo (Acier)", pokemons: [707, 476, 212, 681] }, { nom: "Dracéna (Dragon)", pokemons: [691, 334, 621, 715] } ] },
         { nom: "Dianthéa (Maître)", sprite: "dianthea.png", equipes: [ { nom: "Ligue (X/Y)", pokemons: [701, 697, 699, 711, 706, 282] } ] },
         { nom: "Serena / Kalem (Rival)", sprite: "serena_kalem.png", equipes: [ { nom: "Combat Final Post-Game (Starter Plante)", pokemons: [461, 35, 135, 334, 359, 652] }, { nom: "Combat Final Post-Game (Starter Feu)", pokemons: [461, 35, 134, 334, 359, 655] }, { nom: "Combat Final Post-Game (Starter Eau)", pokemons: [461, 35, 136, 334, 359, 658] } ] }
     ],
 
-    // --- GÉNÉRATION 7 (CORRIGÉE : Capitaines + Défense de Danh + Différences USUL) ---
     'gen7': [
         { nom: "Capitaines d'Épreuve", sprite: "capitaines.png", equipes: [ 
-            { nom: "Althéo (Normal)", pokemons: [735, 235, 775] }, // Argouste, Queulorior, Dodoala (Revanche)
-            { nom: "Néphie (Eau)", pokemons: [171, 91, 752] }, // Lanturn, Crustabri, Tarenbulle (Revanche)
-            { nom: "Kiawe (Feu)", pokemons: [59, 663, 105] }, // Arcanin, Flambusard, Ossatueur d'Alola (Revanche)
-            { nom: "Barbara (Plante)", pokemons: [709, 763, 756] }, // Desséliande, Sucreine, Lampignon (Revanche)
-            { nom: "Chrys (Électrik)", pokemons: [777, 462, 466, 76] }, // Togedemaru, Magnézone, Élekable, Grolem d'Alola
-            { nom: "Oléa (Fée)", pokemons: [707, 210, 756, 40, 743] } // Trousselin, Granbull, Lampignon, Grodoudou, Rubombelle
+            { nom: "Althéo (Normal)", pokemons: [735, 235, 775] }, 
+            { nom: "Néphie (Eau)", pokemons: [171, 91, 752] }, 
+            { nom: "Kiawe (Feu)", pokemons: [59, 663, 105] }, 
+            { nom: "Barbara (Plante)", pokemons: [709, 763, 756] }, 
+            { nom: "Chrys (Électrik)", pokemons: [777, 462, 466, 76] }, 
+            { nom: "Oléa (Fée)", pokemons: [707, 210, 756, 40, 743] } 
         ] },
         { nom: "Doyens d'Alola (Kahunas)", sprite: "doyens.png", equipes: [ 
             { nom: "Pectorius (Mele-Mele S/L)", pokemons: [56, 296, 739] }, 
@@ -132,7 +159,7 @@ const bddDresseurs = {
             { nom: "Alyxia (Akala S/L)", pokemons: [299, 525, 745] }, 
             { nom: "Alyxia (Akala US/UL)", pokemons: [347, 345, 745] }, 
             { nom: "Danh (Ula-Ula)", pokemons: [302, 552, 53] }, 
-            { nom: "Danh (Défense Titre)", pokemons: [302, 553, 430, 359, 53] }, // Ténéfix, Crocorible, Corboss, Absol, Persian
+            { nom: "Danh (Défense Titre)", pokemons: [302, 553, 430, 359, 53] }, 
             { nom: "Paulie (Poni S/L)", pokemons: [51, 423, 330, 750] }, 
             { nom: "Paulie (Poni US/UL)", pokemons: [623, 423, 330, 750] } 
         ] },
@@ -142,11 +169,11 @@ const bddDresseurs = {
             { nom: "Elsa-Mina (Boss Æther)", pokemons: [36, 549, 760, 428, 350] } 
         ] },
         { nom: "Conseil 4 (Ligue Alola)", sprite: "ligue7.png", equipes: [ 
-            { nom: "Pectorius (Ligue S/L)", pokemons: [297, 57, 760, 62, 740] }, // Colossinge !
-            { nom: "Molène (Ligue US/UL)", pokemons: [707, 625, 462, 376, 51] }, // Triopikeur d'Alola pour l'Acier
+            { nom: "Pectorius (Ligue S/L)", pokemons: [297, 57, 760, 62, 740] }, 
+            { nom: "Molène (Ligue US/UL)", pokemons: [707, 625, 462, 376, 51] }, 
             { nom: "Alyxia (Ligue S/L)", pokemons: [369, 703, 76, 476, 745] }, 
             { nom: "Alyxia (Ligue US/UL)", pokemons: [348, 346, 526, 476, 745] }, 
-            { nom: "Margie (Ligue S/L)", pokemons: [302, 426, 781, 478, 770] }, // Trépassable !
+            { nom: "Margie (Ligue S/L)", pokemons: [302, 426, 781, 478, 770] }, 
             { nom: "Margie (Ligue US/UL)", pokemons: [354, 426, 781, 478, 770] }, 
             { nom: "Kahili (Ligue S/L)", pokemons: [227, 169, 741, 630, 733] }, 
             { nom: "Kahili (Ligue US/UL)", pokemons: [628, 701, 741, 630, 733] } 
@@ -162,13 +189,17 @@ const bddDresseurs = {
         ] }
     ],
 
+    // --- GÉNÉRATION 8 (CORRIGÉE : EXCLUSIVITÉS + TOURNOIS) ---
     'gen8': [
-        { nom: "Percy (Plante)", sprite: "percy.png", equipes: [ { nom: "1er Passage", pokemons: [829, 830] }, { nom: "2nd Passage (Tournoi des Champions)", pokemons: [275, 45, 830, 762, 842] } ] },
-        { nom: "Donna (Eau)", sprite: "donna.png", equipes: [ { nom: "1er Passage", pokemons: [118, 846, 834] }, { nom: "2nd Passage (Tournoi des Champions)", pokemons: [768, 279, 119, 846, 834] } ] },
-        { nom: "Kabu (Feu)", sprite: "kabu.png", equipes: [ { nom: "1er Passage", pokemons: [38, 59, 851] }, { nom: "2nd Passage (Tournoi des Champions)", pokemons: [324, 38, 59, 776, 851] } ] },
-        { nom: "Faïza & Chaz", sprite: "faiza_chaz.png", equipes: [ { nom: "Faïza (Épée - 2nd Passage)", pokemons: [701, 675, 865, 68, 453] }, { nom: "Chaz (Bouclier - 2nd Passage)", pokemons: [94, 778, 864, 477, 855] } ] },
-        { nom: "Team Yell & Macro Cosmos", sprite: "yell_macro.png", equipes: [ { nom: "Shehroz (Macro Cosmos)", pokemons: [879, 601, 598, 863, 879] }, { nom: "Peterson (Team Yell)", pokemons: [860, 454, 862, 861] } ] },
-        { nom: "Tarak (Maître Invaincu)", sprite: "tarak.png", equipes: [ { nom: "Combat Final", pokemons: [681, 612, 887, 537, 815, 6] } ] },
+        { nom: "Percy (Plante)", sprite: "percy.png", equipes: [ { nom: "1er Passage", pokemons: [829, 830] }, { nom: "Tournoi des Champions", pokemons: [275, 182, 421, 763, 840, 830] } ] },
+        { nom: "Donna (Eau)", sprite: "donna.png", equipes: [ { nom: "1er Passage", pokemons: [118, 846, 834] }, { nom: "Tournoi des Champions", pokemons: [768, 279, 847, 119, 834] } ] },
+        { nom: "Kabu (Feu)", sprite: "kabu.png", equipes: [ { nom: "1er Passage", pokemons: [38, 59, 851] }, { nom: "Tournoi des Champions", pokemons: [324, 38, 59, 758, 851] } ] },
+        { nom: "Faïza & Choucac (Épée)", sprite: "faiza_choucac.png", equipes: [ { nom: "Faïza (1er Passage)", pokemons: [237, 675, 865, 68] }, { nom: "Faïza (Tournoi)", pokemons: [701, 853, 865, 870, 68] }, { nom: "Choucac (1er Passage)", pokemons: [689, 213, 874, 839] }, { nom: "Choucac (Tournoi)", pokemons: [689, 213, 874, 248, 839] } ] },
+        { nom: "Chaz & Lona (Bouclier)", sprite: "chaz_lona.png", equipes: [ { nom: "Chaz (1er Passage)", pokemons: [562, 778, 864, 94] }, { nom: "Chaz (Tournoi)", pokemons: [477, 609, 864, 855, 94] }, { nom: "Lona (1er Passage)", pokemons: [873, 555, 875, 131] }, { nom: "Lona (Tournoi)", pokemons: [873, 555, 875, 866, 131] } ] },
+        { nom: "Travis & Rosemary (Tournoi)", sprite: "travis_marmie.png", equipes: [ { nom: "Travis (Tournoi Galar)", pokemons: [303, 282, 78, 700, 858] }, { nom: "Rosemary (Tournoi Galar)", pokemons: [510, 454, 560, 877, 861] } ] },
+        { nom: "Peterson & Roy", sprite: "peterson_roy.png", equipes: [ { nom: "Peterson (1er Passage)", pokemons: [560, 687, 435, 862] }, { nom: "Roy (1er Passage)", pokemons: [526, 330, 844, 884] }, { nom: "Roy (Tournoi)", pokemons: [324, 706, 776, 330, 884] } ] },
+        { nom: "Macro Cosmos", sprite: "macro_cosmos.png", equipes: [ { nom: "Shehroz (Boss Final)", pokemons: [589, 598, 863, 601, 879] } ] },
+        { nom: "Tarak (Maître Invaincu)", sprite: "tarak.png", equipes: [ { nom: "Combat Final", pokemons: [681, 887, 612, 537, 815, 6] } ] },
         { nom: "Nabil (Rival)", sprite: "nabil.png", equipes: [ { nom: "Combat Post-Game (Starter Plante)", pokemons: [832, 143, 823, 866, 815, 888] }, { nom: "Combat Post-Game (Starter Feu)", pokemons: [832, 143, 823, 866, 818, 888] }, { nom: "Combat Post-Game (Starter Eau)", pokemons: [832, 143, 823, 866, 812, 888] } ] },
         { nom: "Boss des DLC (Galar/Hisui)", sprite: "dlc8.png", equipes: [ { nom: "Mustar (Isolarmure)", pokemons: [620, 819, 776, 784, 86, 892] }, { nom: "Dhilan (Couronneige)", pokemons: [879, 567, 365, 884] }, { nom: "Saturnin (Isolarmure)", pokemons: [65, 80, 528, 867] }, { nom: "Sophora (Isolarmure)", pokemons: [452, 110, 569, 808] } ] }
     ],
