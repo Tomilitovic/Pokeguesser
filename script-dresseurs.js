@@ -70,108 +70,30 @@ const bddDresseurs = {
         { nom: "Brice / Flora & Timmy (Rivaux)", sprite: "brice_flora.png", equipes: [ { nom: "Flora/Brice (Combat Final)", pokemons: [277, 321, 219, 351, 254] }, { nom: "Timmy (Revanche Ultime ROSA)", pokemons: [334, 462, 663, 445, 350, 282] } ] }
     ],
 
-    // --- GÉNÉRATION 4 (CORRIGÉE À 100% !) ---
+    // --- GÉNÉRATION 4 (AVEC LES PARTENAIRES CAFE COMBAT) ---
     'gen4': [
+        { nom: "Pierrick (Charbourg)", sprite: "pierrick.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [74, 95, 408] }, { nom: "Café Combat (Platine)", pokemons: [142, 476, 409, 411, 248, 76] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [248, 142, 348, 346, 369, 409] } ] },
+        { nom: "Flo (Vestigion)", sprite: "flo.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [420, 387, 407] }, { nom: "Café Combat (Platine)", pokemons: [189, 421, 182, 275, 389, 407] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [189, 192, 421, 455, 389, 407] } ] },
+        { nom: "Mélina (Voilaroc)", sprite: "melina.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [67, 308, 448] }, { nom: "Café Combat (Platine)", pokemons: [237, 286, 68, 392, 454, 448] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [237, 286, 454, 68, 392, 448] } ] },
+        { nom: "Lovis (Verchamps)", sprite: "lovis.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [130, 195, 419] }, { nom: "Café Combat (Platine)", pokemons: [319, 195, 419, 130, 272, 279] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [186, 195, 130, 279, 272, 419] } ] },
+        { nom: "Kiméra (Unionpolis)", sprite: "kimera.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [426, 94, 429] }, { nom: "Platine (Aventure)", pokemons: [355, 93, 429] }, { nom: "Café Combat (Platine)", pokemons: [354, 426, 477, 429, 94, 478] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [354, 426, 94, 477, 478, 429] } ] },
+        { nom: "Charles (Joliberges)", sprite: "charles.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [436, 208, 411] }, { nom: "Café Combat (Platine)", pokemons: [227, 208, 462, 411, 306, 476] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [227, 208, 462, 476, 306, 411] } ] },
+        { nom: "Gladys (Frimapic)", sprite: "gladys.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [459, 215, 308, 460] }, { nom: "Café Combat (Platine)", pokemons: [460, 461, 478, 471, 365, 473] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [460, 124, 461, 478, 471, 473] } ] },
+        { nom: "Tanguy (Rivamar)", sprite: "tanguy.png", equipes: [ { nom: "Diamant / Perle / DEPS", pokemons: [26, 424, 224, 466] }, { nom: "Café Combat (Platine)", pokemons: [135, 26, 405, 171, 466, 462] }, { nom: "2nd Passage (Revanche DEPS)", pokemons: [479, 26, 405, 135, 466, 462] } ] },
         {
-            nom: "Pierrick (Charbourg)", sprite: "pierrick.png",
+            nom: "Partenaires (Café Combat)", sprite: "partenaires_gen4.png", 
             equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [74, 95, 408] },
-                { nom: "Café Combat (Platine)", pokemons: [142, 476, 409, 411, 248, 76] }, // Ptéra, Tarinorme, Charkos, Bastiodon, Tyranocif, Grolem
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [248, 142, 348, 346, 369, 409] } // Tyranocif, Ptéra, Armaldo, Vacilys, Relicanth, Charkos
+                { nom: "Sara", pokemons: [202, 426, 297, 350, 242] },
+                { nom: "Maïté", pokemons: [474, 94, 462, 468, 65] },
+                { nom: "Armand", pokemons: [359, 217, 373, 376, 448] },
+                { nom: "Viviane", pokemons: [291, 101, 169, 461, 59] },
+                { nom: "Cornil", pokemons: [213, 477, 476, 197, 344] }
             ]
         },
-        {
-            nom: "Flo (Vestigion)", sprite: "flo.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [420, 387, 407] },
-                { nom: "Café Combat (Platine)", pokemons: [189, 421, 182, 275, 389, 407] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [189, 192, 421, 455, 389, 407] }
-            ]
-        },
-        {
-            nom: "Mélina (Voilaroc)", sprite: "melina.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [67, 308, 448] },
-                { nom: "Café Combat (Platine)", pokemons: [237, 286, 68, 392, 454, 448] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [237, 286, 454, 68, 392, 448] }
-            ]
-        },
-        {
-            nom: "Lovis (Verchamps)", sprite: "lovis.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [130, 195, 419] },
-                { nom: "Café Combat (Platine)", pokemons: [319, 195, 419, 130, 272, 279] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [186, 195, 130, 279, 272, 419] }
-            ]
-        },
-        {
-            nom: "Kiméra (Unionpolis)", sprite: "kimera.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [426, 94, 429] },
-                { nom: "Platine (Aventure)", pokemons: [355, 93, 429] },
-                { nom: "Café Combat (Platine)", pokemons: [354, 426, 477, 429, 94, 478] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [354, 426, 94, 477, 478, 429] }
-            ]
-        },
-        {
-            nom: "Charles (Joliberges)", sprite: "charles.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [436, 208, 411] },
-                { nom: "Café Combat (Platine)", pokemons: [227, 208, 462, 411, 306, 476] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [227, 208, 462, 476, 306, 411] }
-            ]
-        },
-        {
-            nom: "Gladys (Frimapic)", sprite: "gladys.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [459, 215, 308, 460] }, 
-                { nom: "Café Combat (Platine)", pokemons: [460, 461, 478, 471, 365, 473] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [460, 124, 461, 478, 471, 473] }
-            ]
-        },
-        {
-            nom: "Tanguy (Rivamar)", sprite: "tanguy.png",
-            equipes: [
-                { nom: "Diamant / Perle / DEPS", pokemons: [26, 424, 224, 466] },
-                { nom: "Café Combat (Platine)", pokemons: [135, 26, 405, 171, 466, 462] },
-                { nom: "2nd Passage (Revanche DEPS)", pokemons: [479, 26, 405, 135, 466, 462] }
-            ]
-        },
-        {
-            nom: "Team Galaxie", sprite: "galaxie.png",
-            equipes: [
-                { nom: "Hélio (Boss - Colonnes Lances)", pokemons: [430, 130, 461, 169] },
-                { nom: "Saturne (Admin)", pokemons: [64, 436, 454] }
-            ]
-        },
-        {
-            nom: "Conseil 4 (Ligue)", sprite: "ligue4.png",
-            equipes: [
-                { nom: "Aaron (DP / DEPS 1er)", pokemons: [269, 267, 416, 214, 452] },
-                { nom: "Aaron (Revanche DEPS)", pokemons: [469, 212, 416, 214, 452, 330] }, // Ajout de Libégon (330) !
-                { nom: "Terry (DP / DEPS 1er)", pokemons: [195, 185, 76, 340, 450] },
-                { nom: "Terry (Revanche DEPS)", pokemons: [340, 472, 34, 473, 464, 450] },
-                { nom: "Adrien (DP / DEPS 1er)", pokemons: [78, 208, 426, 428, 392] },
-                { nom: "Adrien (Revanche DEPS)", pokemons: [38, 229, 59, 78, 392, 467] },
-                { nom: "Lucio (DP / DEPS 1er)", pokemons: [122, 203, 308, 65, 437] },
-                { nom: "Lucio (Revanche DEPS)", pokemons: [122, 196, 80, 437, 65, 475] }
-            ]
-        },
-        {
-            nom: "Cynthia (Maître de la Ligue)", sprite: "cynthia.png",
-            equipes: [
-                { nom: "1er Passage (DP / DEPS)", pokemons: [442, 407, 423, 448, 350, 445] },
-                { nom: "Revanche Ultime (DEPS)", pokemons: [442, 407, 468, 448, 350, 445] }
-            ]
-        },
-        {
-            nom: "René (Rival)", sprite: "rene.png",
-            equipes: [
-                { nom: "Combat Final (Starter Plante)", pokemons: [398, 407, 143, 214, 78, 395] },
-                { nom: "Combat Final (Starter Feu)", pokemons: [398, 407, 143, 214, 419, 389] },
-                { nom: "Combat Final (Starter Eau)", pokemons: [398, 407, 143, 214, 78, 392] }
-            ]
-        }
+        { nom: "Team Galaxie", sprite: "galaxie.png", equipes: [ { nom: "Hélio (Boss - Colonnes Lances)", pokemons: [430, 130, 461, 169] }, { nom: "Saturne (Admin)", pokemons: [64, 436, 454] } ] },
+        { nom: "Conseil 4 (Ligue)", sprite: "ligue4.png", equipes: [ { nom: "Aaron (DP / DEPS 1er)", pokemons: [269, 267, 416, 214, 452] }, { nom: "Aaron (Revanche DEPS)", pokemons: [469, 212, 416, 214, 452, 330] }, { nom: "Terry (DP / DEPS 1er)", pokemons: [195, 185, 76, 340, 450] }, { nom: "Terry (Revanche DEPS)", pokemons: [340, 472, 34, 473, 464, 450] }, { nom: "Adrien (DP / DEPS 1er)", pokemons: [78, 208, 426, 428, 392] }, { nom: "Adrien (Revanche DEPS)", pokemons: [38, 229, 59, 78, 392, 467] }, { nom: "Lucio (DP / DEPS 1er)", pokemons: [122, 203, 308, 65, 437] }, { nom: "Lucio (Revanche DEPS)", pokemons: [122, 196, 80, 437, 65, 475] } ] },
+        { nom: "Cynthia (Maître de la Ligue)", sprite: "cynthia.png", equipes: [ { nom: "1er Passage (DP / DEPS)", pokemons: [442, 407, 423, 448, 350, 445] }, { nom: "Revanche Ultime (DEPS)", pokemons: [442, 407, 468, 448, 350, 445] } ] },
+        { nom: "René (Rival)", sprite: "rene.png", equipes: [ { nom: "Combat Final (Starter Plante)", pokemons: [398, 407, 143, 214, 78, 395] }, { nom: "Combat Final (Starter Feu)", pokemons: [398, 407, 143, 214, 419, 389] }, { nom: "Combat Final (Starter Eau)", pokemons: [398, 407, 143, 214, 78, 392] } ] }
     ],
 
     'gen5': [
@@ -222,7 +144,6 @@ const bddDresseurs = {
         { nom: "Boss des DLC (Galar/Hisui)", sprite: "dlc8.png", equipes: [ { nom: "Mustar (Isolarmure)", pokemons: [620, 819, 776, 784, 86, 892] }, { nom: "Dhilan (Couronneige)", pokemons: [879, 567, 365, 884] }, { nom: "Saturnin (Isolarmure)", pokemons: [65, 80, 528, 867] }, { nom: "Sophora (Isolarmure)", pokemons: [452, 110, 569, 808] } ] }
     ],
 
-    // --- GÉNÉRATION 9 (Corrigée : Okuba Vol et Professeurs Séparés) ---
     'gen9': [
         { nom: "Éra (Plante)", sprite: "era.png", equipes: [ { nom: "1er Passage", pokemons: [401, 192, 216] }, { nom: "2nd Passage (Revanche)", pokemons: [286, 185, 401, 357, 192] } ] },
         { nom: "Colza (Insecte)", sprite: "colza.png", equipes: [ { nom: "1er Passage", pokemons: [174, 191, 185] }, { nom: "2nd Passage (Revanche)", pokemons: [189, 192, 174, 763, 357] } ] },
@@ -245,9 +166,9 @@ const bddDresseurs = {
             { nom: "Prof Turum (IA - Violet)", pokemons: [994, 991, 992, 993, 995, 1006] }
         ] },
         { nom: "Menzi (Rival)", sprite: "menzi.png", equipes: [
-            { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 906, 982, 706, 922, 911] },
-            { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 906, 982, 706, 922, 914] },
-            { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 906, 982, 706, 922, 908] }
+            { nom: "Combat Ultime (Starter Plante)", pokemons: [745, 968, 982, 706, 923, 911] },
+            { nom: "Combat Ultime (Starter Feu)", pokemons: [745, 968, 982, 706, 923, 914] },
+            { nom: "Combat Ultime (Starter Eau)", pokemons: [745, 968, 982, 706, 923, 908] }
         ] },
         { nom: "Boss des DLC (Paldea)", sprite: "dlc9.png", equipes: [
             { nom: "Kassis (Maître DLC 2)", pokemons: [149, 472, 727, 474, 982, 1019] },
@@ -281,6 +202,7 @@ btnRetour.addEventListener('click', () => {
     specialMenu.style.display = 'flex';
 });
 
+// NORMALISATION TEXTE : Retire les "." pour M. Mime !
 function normaliserTexte(texte) { 
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[- .']/g, "").toLowerCase().trim(); 
 }
