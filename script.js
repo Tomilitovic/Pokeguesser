@@ -26,12 +26,14 @@ for (let i = 1; i <= 151; i++) {
     grid.appendChild(box);
 }
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
+// Le correctif magique pour M. Mime et Porygon2 !
+function normaliserTexte(texte) { 
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
+}
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true;
-    // La requête est corrigée et sécurisée
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
@@ -43,7 +45,7 @@ async function chargerPokemons() {
             const formes = e.pokemons.map(p => p.id);
             
             pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
-            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name }; // Le nom anglais marche aussi en cas d'erreur de frappe !
+            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
         });
         
         input.placeholder = "Tapez un nom de Pokémon..."; input.disabled = false; input.focus();

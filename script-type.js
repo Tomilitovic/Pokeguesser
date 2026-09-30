@@ -61,7 +61,7 @@ btnRetourTypes.addEventListener('click', () => {
     typeMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
 
 function chargerType(type) {
     typeActif = type;
@@ -74,7 +74,6 @@ function chargerType(type) {
     timerText.innerText = formatTime(0); clearInterval(timerInterval); timerStarted = false;
     document.getElementById('btn-ombre').disabled = false;
     
-    // Arceus et Silvallié sont inclus d'office
     pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type) || p.id === 493 || p.id === 773);
     scoreMax = pokeDuTypeActuel.length; scoreText.innerText = scoreActuel; maxText.innerText = scoreMax;
     grid.innerHTML = '';
@@ -99,7 +98,7 @@ function chargerType(type) {
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse des 18 types (patiente un peu)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id generation_id pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name generation_id pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
@@ -107,16 +106,17 @@ async function initialiserBaseDeDonnees() {
         data.data.pokemonspecies.forEach(e => {
             let typesSet = new Set();
             e.pokemons.forEach(p => p.pokemontypes.forEach(pt => typesSet.add(pt.type.name)));
+            
+            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+            
             allPokemons.push({
                 id: e.id, generation: e.generation_id,
-                nomFrancais: normaliserTexte(e.pokemonspeciesnames[0].name), vraiNom: e.pokemonspeciesnames[0].name,
+                nomFrancais: normaliserTexte(vraiNom), nomAnglais: normaliserTexte(e.name), vraiNom: vraiNom,
                 formes: e.pokemons.map(p => p.id), types: Array.from(typesSet)
             });
         });
         
-        // Tri parfait par numéro de Pokédex
         allPokemons.sort((a, b) => a.id - b.id);
-        
         input.placeholder = "Choisissez un type au-dessus pour commencer...";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }
@@ -140,7 +140,7 @@ function validerPokemon(idPokemon, formes, nomSaisi) {
         box.innerHTML = `<img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idPokemon}.png"><span class="nom">${nomSaisi}</span>`;
         
         if (formes.length > 1) {
-            let index = 0; setInterval(() => {
+            let index = 0; intervalsFormes[idPokemon] = setInterval(() => {
                 let img = document.getElementById(`img-${idPokemon}`);
                 if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formes[index]}.png`; }
             }, 10000);
@@ -161,7 +161,7 @@ input.addEventListener('input', (e) => {
         e.target.value = ""; return;
     }
     
-    const p = pokeDuTypeActuel.find(poke => poke.nomFrancais === texte);
+    const p = pokeDuTypeActuel.find(poke => poke.nomFrancais === texte || poke.nomAnglais === texte);
     if (p && !pokemonsTrouves.includes(p.id)) { validerPokemon(p.id, p.formes, p.vraiNom); e.target.value = ""; }
 });
 

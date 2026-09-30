@@ -11,9 +11,9 @@ const scoreText = document.getElementById('score'), timerText = document.getElem
 let scoreActuel = 0, pokemonsData = {}, pokemonsTrouves = [];
 let timerInterval, timerStarted = false, secondsElapsed = 0;
 
-const scoreMax = 96; 
-const idDebut = 810; 
-const idFin = 905; 
+const scoreMax = 96;
+const idDebut = 810;
+const idFin = 905;
 
 function formatTime(sec) { return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`; }
 function startTimer() {
@@ -30,18 +30,25 @@ for (let i = idDebut; i <= idFin; i++) {
     grid.appendChild(box);
 }
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${idDebut}, _lte: ${idFin}}}) { id pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${idDebut}, _lte: ${idFin}}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
+        
         data.data.pokemonspecies.forEach(e => {
-            const nomFrancais = normaliserTexte(e.pokemonspeciesnames[0].name);
-            pokemonsData[nomFrancais] = { id: e.id, formes: e.pokemons.map(p => p.id), vraiNom: e.pokemonspeciesnames[0].name };
+            const nomAnglais = normaliserTexte(e.name);
+            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+            const nomFrancais = normaliserTexte(vraiNom);
+            const formes = e.pokemons.map(p => p.id);
+            
+            pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
+            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
         });
+        
         input.placeholder = "Tapez un nom de Pokémon..."; input.disabled = false; input.focus();
     } catch (err) { input.placeholder = "Erreur de chargement !"; }
 }

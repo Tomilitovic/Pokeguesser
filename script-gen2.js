@@ -30,7 +30,7 @@ for (let i = idDebut; i <= idFin; i++) {
     grid.appendChild(box);
 }
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true;

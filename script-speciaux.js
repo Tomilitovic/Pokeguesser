@@ -64,20 +64,22 @@ btnRetour.addEventListener('click', () => {
     specialMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s-]/g, "").toLowerCase(); }
+function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id is_legendary is_mythical pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name is_legendary is_mythical pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
         
         data.data.pokemonspecies.forEach(e => {
             const speciesId = e.id;
-            const vraiNom = e.pokemonspeciesnames[0].name;
+            const nomAnglais = normaliserTexte(e.name);
+            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
             const nomNormalise = normaliserTexte(vraiNom);
             pokemonsData[nomNormalise] = speciesId;
+            pokemonsData[nomAnglais] = speciesId;
             
             let category = null;
             const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
