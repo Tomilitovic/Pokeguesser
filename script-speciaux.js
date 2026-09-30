@@ -70,86 +70,91 @@ function normaliserTexte(texte) {
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name is_legendary is_mythical pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
     try {
-        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
-        const data = await reponse.json();
+        const chunks = [{min: 1, max: 350}, {min: 351, max: 700}, {min: 701, max: 1025}];
         
-        data.data.pokemonspecies.forEach(e => {
-            const speciesId = e.id;
-            const nomAnglais = normaliserTexte(e.name);
-            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
-            const nomNormalise = normaliserTexte(vraiNom);
-            pokemonsData[nomNormalise] = speciesId;
-            pokemonsData[nomAnglais] = speciesId;
+        for (let chunk of chunks) {
+            const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${chunk.min}, _lte: ${chunk.max}}}) { id name is_legendary is_mythical pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
+            const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
+            const data = await reponse.json();
             
-            let category = null;
-            const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
-            const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1005, 1006, 1009, 1010, 1020, 1021, 1022, 1023];
-            const pseudos = [149, 248, 373, 376, 445, 635, 706, 784, 887, 998];
-            
-            if (ubs.includes(speciesId)) category = "Ultra-Chimères";
-            else if (paradoxes.includes(speciesId)) category = "Paradoxes";
-            else if (pseudos.includes(speciesId)) category = "Pseudo-Légendaires";
-            else if (e.is_mythical) category = "Fabuleux"; 
-            else if (e.is_legendary) category = "Légendaires";
-            
-            let normalForms = [];
-            let megaForms = [];
-            e.pokemons.forEach(p => {
-                const name = p.name;
-                if (name.includes("-gmax") || name.includes("-eternamax") || name.includes("-totem")) return; 
-                if (name.includes("-mega") || name.includes("-primal")) { megaForms.push(p); } 
-                else { normalForms.push(p); }
+            data.data.pokemonspecies.forEach(e => {
+                const speciesId = e.id;
+                const nomAnglais = normaliserTexte(e.name);
+                const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+                const nomNormalise = normaliserTexte(vraiNom);
+                pokemonsData[nomNormalise] = speciesId;
+                pokemonsData[nomAnglais] = speciesId;
+                
+                let category = null;
+                const ubs = [793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806];
+                const paradoxes = [984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 1005, 1006, 1009, 1010, 1020, 1021, 1022, 1023];
+                const pseudos = [149, 248, 373, 376, 445, 635, 706, 784, 887, 998];
+                
+                if (ubs.includes(speciesId)) category = "Ultra-Chimères";
+                else if (paradoxes.includes(speciesId)) category = "Paradoxes";
+                else if (pseudos.includes(speciesId)) category = "Pseudo-Légendaires";
+                else if (e.is_mythical) category = "Fabuleux"; 
+                else if (e.is_legendary) category = "Légendaires";
+                
+                let normalForms = [];
+                let megaForms = [];
+                e.pokemons.forEach(p => {
+                    const name = p.name;
+                    if (name.includes("-gmax") || name.includes("-eternamax") || name.includes("-totem")) return; 
+                    if (name.includes("-mega") || name.includes("-primal")) { megaForms.push(p); } 
+                    else { normalForms.push(p); }
+                });
+
+                if (normalForms.length > 0) {
+                    let maxWeight = 0, maxHeight = 0;
+                    let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                    let formIds = [];
+                    normalForms.forEach(p => {
+                        formIds.push(p.id);
+                        if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                        if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+                        let stats = {};
+                        p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                        if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                        if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                        if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                        if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                        if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                        if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                    });
+                    allForms.push({
+                        id: speciesId, speciesId: speciesId, vraiNom: vraiNom, formes: formIds, isMega: false, isDefault: true, category: category,
+                        weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
+                    });
+                }
+
+                if (megaForms.length > 0) {
+                    let maxWeight = 0, maxHeight = 0;
+                    let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
+                    let formIds = [];
+                    megaForms.forEach(p => {
+                        formIds.push(p.id);
+                        if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
+                        if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
+                        let stats = {};
+                        p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
+                        if (stats['hp'] > maxHp) maxHp = stats['hp'];
+                        if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
+                        if (stats['defense'] > maxDef) maxDef = stats['defense'];
+                        if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
+                        if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
+                        if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
+                    });
+                    let suffix = megaForms[0].name.includes("-primal") ? " (Primo)" : " (Méga)";
+                    allForms.push({
+                        id: formIds[0], speciesId: speciesId, vraiNom: vraiNom + suffix, formes: formIds, isMega: true, isDefault: false, category: null,
+                        weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
+                    });
+                }
             });
-
-            if (normalForms.length > 0) {
-                let maxWeight = 0, maxHeight = 0;
-                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
-                let formIds = [];
-                normalForms.forEach(p => {
-                    formIds.push(p.id);
-                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
-                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
-                    let stats = {};
-                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
-                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
-                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
-                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
-                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
-                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
-                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
-                });
-                allForms.push({
-                    id: speciesId, speciesId: speciesId, vraiNom: vraiNom, formes: formIds, isMega: false, isDefault: true, category: category,
-                    weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
-                });
-            }
-
-            if (megaForms.length > 0) {
-                let maxWeight = 0, maxHeight = 0;
-                let maxHp = 0, maxAtk = 0, maxDef = 0, maxSpa = 0, maxSpd = 0, maxSpe = 0;
-                let formIds = [];
-                megaForms.forEach(p => {
-                    formIds.push(p.id);
-                    if (p.weight / 10 > maxWeight) maxWeight = p.weight / 10;
-                    if (p.height / 10 > maxHeight) maxHeight = p.height / 10;
-                    let stats = {};
-                    p.pokemonstats.forEach(s => stats[s.stat.name] = s.base_stat);
-                    if (stats['hp'] > maxHp) maxHp = stats['hp'];
-                    if (stats['attack'] > maxAtk) maxAtk = stats['attack'];
-                    if (stats['defense'] > maxDef) maxDef = stats['defense'];
-                    if (stats['special-attack'] > maxSpa) maxSpa = stats['special-attack'];
-                    if (stats['special-defense'] > maxSpd) maxSpd = stats['special-defense'];
-                    if (stats['speed'] > maxSpe) maxSpe = stats['speed'];
-                });
-                let suffix = megaForms[0].name.includes("-primal") ? " (Primo)" : " (Méga)";
-                allForms.push({
-                    id: formIds[0], speciesId: speciesId, vraiNom: vraiNom + suffix, formes: formIds, isMega: true, isDefault: false, category: null,
-                    weight: maxWeight, height: maxHeight, hp: maxHp, atk: maxAtk, def: maxDef, spa: maxSpa, spd: maxSpd, spe: maxSpe
-                });
-            }
-        });
+        }
+        
         input.placeholder = "Choisissez un mode spécial au-dessus !";
     } catch (err) { input.placeholder = "Erreur réseau !"; }
 }

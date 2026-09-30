@@ -45,26 +45,32 @@ generations.forEach(gen => {
     container.appendChild(gridSmall); grid.appendChild(container);
 });
 
+// Le correctif absolu pour M. Mime et les espaces
 function normaliserTexte(texte) { 
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
 }
 
 async function chargerPokemons() {
     input.placeholder = "Chargement des 1025 Pokémon (patiente un peu)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
     try {
-        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
-        const data = await reponse.json();
+        // TÉLÉCHARGEMENT EN 3 BLOCS POUR NE PLUS PLANTER L'API
+        const chunks = [{min: 1, max: 350}, {min: 351, max: 700}, {min: 701, max: 1025}];
         
-        data.data.pokemonspecies.forEach(e => {
-            const nomAnglais = normaliserTexte(e.name);
-            const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
-            const nomFrancais = normaliserTexte(vraiNom);
-            const formes = e.pokemons.map(p => p.id);
+        for (let chunk of chunks) {
+            const requeteGraphQL = `query { pokemonspecies(where: {id: {_gte: ${chunk.min}, _lte: ${chunk.max}}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
+            const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
+            const data = await reponse.json();
             
-            pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
-            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
-        });
+            data.data.pokemonspecies.forEach(e => {
+                const nomAnglais = normaliserTexte(e.name);
+                const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+                const nomFrancais = normaliserTexte(vraiNom);
+                const formes = e.pokemons.map(p => p.id);
+                
+                pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
+                pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
+            });
+        }
         
         input.placeholder = "Tapez un nom de Pokémon..."; input.disabled = false; input.focus();
     } catch (err) { input.placeholder = "Erreur de chargement !"; }
