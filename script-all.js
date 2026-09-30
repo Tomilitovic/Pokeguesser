@@ -45,7 +45,9 @@ generations.forEach(gen => {
     container.appendChild(gridSmall); grid.appendChild(container);
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
+function normaliserTexte(texte) { 
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
+}
 
 async function chargerPokemons() {
     input.placeholder = "Chargement des 1025 Pokémon (patiente un peu)..."; input.disabled = true;
