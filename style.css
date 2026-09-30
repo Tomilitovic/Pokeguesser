@@ -48,15 +48,14 @@ input { padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; border: none
 input:focus { transform: scale(1.05); }
 
 /* =========================================
-   GRILLES ET CASES
+   GRILLES ET CASES (CLASSIQUE ET MICRO)
 ========================================= */
 #pokedex-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
-#pokedex-grid img { max-width: 80px; max-height: 80px; object-fit: contain; }
-
 .pokemon-box { width: 100px; height: 100px; background-color: rgba(25, 35, 45, 0.8); border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #34495e; overflow: hidden; }
 .pokemon-box span.numero { font-size: 1.2rem; color: #7f8c8d; font-weight: bold; }
 .pokemon-box.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
 .pokemon-box.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
+.pokemon-box img { max-width: 80px; max-height: 80px; object-fit: contain; }
 .ombre { filter: brightness(0) invert(0); opacity: 0.6; }
 
 /* Cases très réduites pour les modes avec beaucoup de Pokémon */
@@ -96,4 +95,26 @@ input:focus { transform: scale(1.05); }
 .btn-special:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
 .btn-special.actif { border-color: #f1c40f; box-shadow: 0 0 20px rgba(241, 196, 15, 0.8); background: linear-gradient(135deg, #f39c12, #e67e22); }
 
+/* =========================================
+   STYLES POUR LES ÉQUIPES DE DRESSEURS
+========================================= */
+.dresseur-section { background-color: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 15px; margin-bottom: 40px; border: 1px solid #34495e; width: 100%; }
+.dresseur-header { display: flex; align-items: center; gap: 15px; border-bottom: 2px solid #f1c40f; padding-bottom: 10px; margin-bottom: 20px; }
+.dresseur-header img { height: 80px; image-rendering: pixelated; }
+.dresseur-header h2 { font-size: 1.8rem; color: #f1c40f; margin: 0; text-align: left; }
+.equipe-titre { font-size: 1rem; color: #bdc3c7; text-align: left; margin-bottom: 10px; font-style: italic; }
+.types-inconnus { display: flex; justify-content: center; gap: 5px; margin-top: 5px; }
+.types-inconnus img { width: 25px !important; height: 25px !important; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+
 footer { margin-top: 60px; padding: 20px; font-size: 1.2rem; color: #bdc3c7; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+
+/* =========================================
+   MEDIA QUERIES (Pour l'affichage Mobile)
+========================================= */
+@media (max-width: 768px) {
+    #top-nav { position: relative; top: 0; left: 0; flex-direction: column; align-items: center; margin-bottom: 20px; }
+    #audio-controls { position: relative; top: 0; right: 0; margin-bottom: 15px; }
+    header { margin-top: 10px; flex-direction: column; }
+    .dropdown-content { position: relative; top: 0; width: 100%; }
+    input { position: relative; top: 0; width: 85%; margin-bottom: 20px; }
+}

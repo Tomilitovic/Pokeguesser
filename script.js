@@ -26,13 +26,15 @@ for (let i = 1; i <= 151; i++) {
     grid.appendChild(box);
 }
 
+// Nettoyage agressif : M. Mime devient mmime
 function normaliserTexte(texte) { 
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
 }
 
 async function chargerPokemons() {
     input.placeholder = "Chargement..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
+    // La requête est revenue à language_id: {_eq: 5} pour ne plus planter !
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();

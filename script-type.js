@@ -76,6 +76,7 @@ function chargerType(type) {
     timerText.innerText = formatTime(0); clearInterval(timerInterval); timerStarted = false;
     document.getElementById('btn-ombre').disabled = false;
     
+    // Arceus et Silvallié sont inclus d'office
     pokeDuTypeActuel = allPokemons.filter(p => p.types.includes(type) || p.id === 493 || p.id === 773);
     scoreMax = pokeDuTypeActuel.length; scoreText.innerText = scoreActuel; maxText.innerText = scoreMax;
     grid.innerHTML = '';
@@ -100,7 +101,7 @@ function chargerType(type) {
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse des 18 types (patiente un peu)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name generation_id pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name generation_id pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id pokemontypes { type { name } } } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
@@ -120,6 +121,7 @@ async function initialiserBaseDeDonnees() {
             });
         });
         
+        // Tri parfait par numéro de Pokédex
         allPokemons.sort((a, b) => a.id - b.id);
         input.placeholder = "Choisissez un type au-dessus pour commencer...";
     } catch (err) { input.placeholder = "Erreur réseau !"; }

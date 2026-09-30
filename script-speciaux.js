@@ -70,7 +70,7 @@ function normaliserTexte(texte) {
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name is_legendary is_mythical pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 1025}}) { id name is_legendary is_mythical pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id name height weight pokemonstats { base_stat stat { name } } } } }`;
     try {
         const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
         const data = await reponse.json();
