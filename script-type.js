@@ -61,7 +61,9 @@ btnRetourTypes.addEventListener('click', () => {
     typeMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
+function normaliserTexte(texte) { 
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
+}
 
 function chargerType(type) {
     typeActif = type;
@@ -107,11 +109,13 @@ async function initialiserBaseDeDonnees() {
             let typesSet = new Set();
             e.pokemons.forEach(p => p.pokemontypes.forEach(pt => typesSet.add(pt.type.name)));
             
+            const nomAnglais = normaliserTexte(e.name);
             const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
+            const nomFrancais = normaliserTexte(vraiNom);
             
             allPokemons.push({
                 id: e.id, generation: e.generation_id,
-                nomFrancais: normaliserTexte(vraiNom), nomAnglais: normaliserTexte(e.name), vraiNom: vraiNom,
+                nomFrancais: nomFrancais, nomAnglais: nomAnglais, vraiNom: vraiNom,
                 formes: e.pokemons.map(p => p.id), types: Array.from(typesSet)
             });
         });

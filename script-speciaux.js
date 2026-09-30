@@ -64,7 +64,9 @@ btnRetour.addEventListener('click', () => {
     specialMenu.style.display = 'flex';
 });
 
-function normaliserTexte(texte) { return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); }
+function normaliserTexte(texte) { 
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
+}
 
 async function initialiserBaseDeDonnees() {
     input.placeholder = "Analyse et fusion des Pokémon (patiente)..."; input.disabled = true;
