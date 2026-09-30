@@ -26,7 +26,6 @@ for (let i = 1; i <= 151; i++) {
     grid.appendChild(box);
 }
 
-// Le correctif magique pour M. Mime et Porygon2 !
 function normaliserTexte(texte) { 
     return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
 }

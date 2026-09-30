@@ -4,7 +4,7 @@
 body { font-family: 'Montserrat', sans-serif; text-align: center; margin: 0; padding: 20px; color: white; background-image: url("fond.jpeg"); background-size: cover; background-attachment: fixed; background-position: center; position: relative; }
 
 /* =========================================
-   NOUVELLE NAVIGATION LES ONGLETS CÔTE À CÔTE
+   NOUVELLE NAVIGATION : LES ONGLETS CÔTE À CÔTE
 ========================================= */
 #top-nav { position: absolute; top: 20px; left: 20px; display: flex; gap: 15px; z-index: 9999; align-items: flex-start; }
 .menu-container { position: relative; padding-bottom: 20px; }
@@ -48,9 +48,11 @@ input { padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; border: none
 input:focus { transform: scale(1.05); }
 
 /* =========================================
-   GRILLES ET CASES (CLASSIQUE ET MICRO)
+   GRILLES ET CASES
 ========================================= */
 #pokedex-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
+#pokedex-grid img { max-width: 80px; max-height: 80px; object-fit: contain; } /* FIX DES IMAGES GEANTES */
+
 .pokemon-box { width: 100px; height: 100px; background-color: rgba(25, 35, 45, 0.8); border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #34495e; }
 .pokemon-box span.numero { font-size: 1.2rem; color: #7f8c8d; font-weight: bold; }
 .pokemon-box.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
@@ -62,15 +64,15 @@ input:focus { transform: scale(1.05); }
 .gen-title { font-size: 1.5rem; color: #f1c40f; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #f1c40f; padding-bottom: 5px; text-align: left; }
 .grid-small { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 
-/* --- CASES SPÉCIALES AGRANDIES (Passage de 50px à 75px) --- */
+/* Cases agrandies à 75px pour la lisibilité */
 .pokemon-box-micro { width: 75px; height: 75px; background-color: rgba(25, 35, 45, 0.8); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #34495e; box-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; }
 .pokemon-box-micro span.numero { font-size: 0.9rem; color: #7f8c8d; font-weight: bold; }
 .pokemon-box-micro.trouve { background-color: rgba(46, 204, 113, 0.2); border-color: #2ecc71; }
 .pokemon-box-micro.rate { background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
-.pokemon-box-micro img { width: 45px !important; height: 45px !important; }
+.pokemon-box-micro img { width: 45px !important; height: 45px !important; max-width: none; max-height: none; }
 .pokemon-box-micro span.nom { font-size: 0.55rem !important; margin-top: 2px !important; color: white; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 95%; }
 
-/* --- SPÉCIAL : Affichage de la stat dans la case --- */
+/* Affichage des statistiques dans les cases Spéciales */
 .valeur-stat { font-size: 0.8rem; color: #f1c40f; font-weight: bold; margin-top: 2px; text-align: center; }
 .pokemon-box-micro.trouve .valeur-stat, .pokemon-box-micro.rate .valeur-stat { font-size: 0.55rem; margin-top: 0px; }
 
