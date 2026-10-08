@@ -6,55 +6,82 @@ btnMute.addEventListener('click', () => {
     isMusicPlaying = !isMusicPlaying;
 });
 
-const grid = document.getElementById('pokedex-grid'), input = document.getElementById('saisie');
-const scoreText = document.getElementById('score'), timerText = document.getElementById('timer');
-let scoreActuel = 0, pokemonsData = {}, pokemonsTrouves = [];
-let timerInterval, timerStarted = false, secondsElapsed = 0;
+const grid = document.getElementById('pokedex-grid');
+const input = document.getElementById('saisie');
+const scoreText = document.getElementById('score');
+const timerText = document.getElementById('timer');
 
-function formatTime(sec) { return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`; }
+let scoreActuel = 0;
+let pokemonsData = {};
+let pokemonsTrouves = [];
+let timerInterval;
+let timerStarted = false;
+let secondsElapsed = 0;
+
+function formatTime(sec) {
+    return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`;
+}
+
 function startTimer() {
     if (!timerStarted && scoreActuel < 151) {
         timerStarted = true;
-        timerInterval = setInterval(() => { secondsElapsed++; timerText.innerText = formatTime(secondsElapsed); }, 1000);
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            timerText.innerText = formatTime(secondsElapsed);
+        }, 1000);
     }
 }
+
 document.getElementById('btn-reset').addEventListener('click', () => { location.reload(); });
 
 for (let i = 1; i <= 151; i++) {
-    let box = document.createElement('div'); box.classList.add('pokemon-box'); box.id = "box-" + i;
+    let box = document.createElement('div');
+    box.classList.add('pokemon-box');
+    box.id = "box-" + i;
     box.innerHTML = `<span class="numero">#${i.toString().padStart(3, '0')}</span>`;
     grid.appendChild(box);
 }
 
-// Nettoyage agressif : M. Mime devient mmime
-function normaliserTexte(texte) { 
-    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim(); 
+function normaliserTexte(texte) {
+    return texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase().trim();
 }
 
 async function chargerPokemons() {
-    input.placeholder = "Chargement..."; input.disabled = true;
-    // La requête est revenue à language_id: {_eq: 5} pour ne plus planter !
-    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {language_id: {_eq: 5}}) { name } pokemons { id } } }`;
+    input.placeholder = "Chargement...";
+    input.disabled = true;
+    
+    // Requête corrigée pour éviter l'erreur CORS
+    const requeteGraphQL = `query { pokemonspecies(where: {id: {_lte: 151}}) { id name pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "fr"}}}) { name } pokemons { id } } }`;
+
     try {
-        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: requeteGraphQL }) });
+        const reponse = await fetch('https://graphql.pokeapi.co/v1beta2', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: requeteGraphQL })
+        });
         const data = await reponse.json();
-        
+
         data.data.pokemonspecies.forEach(e => {
+            const id = e.id;
             const nomAnglais = normaliserTexte(e.name);
             const vraiNom = (e.pokemonspeciesnames && e.pokemonspeciesnames.length > 0) ? e.pokemonspeciesnames[0].name : e.name;
             const nomFrancais = normaliserTexte(vraiNom);
             const formes = e.pokemons.map(p => p.id);
-            
-            pokemonsData[nomFrancais] = { id: e.id, formes: formes, vraiNom: vraiNom };
-            pokemonsData[nomAnglais] = { id: e.id, formes: formes, vraiNom: e.name };
+
+            pokemonsData[nomFrancais] = { id: id, formes: formes, vraiNom: vraiNom };
+            pokemonsData[nomAnglais] = { id: id, formes: formes, vraiNom: e.name };
         });
-        
-        input.placeholder = "Tapez un nom de Pokémon..."; input.disabled = false; input.focus();
-    } catch (err) { input.placeholder = "Erreur de chargement !"; }
+
+        input.placeholder = "Tapez un nom de Pokémon...";
+        input.disabled = false;
+        input.focus();
+    } catch (err) {
+        input.placeholder = "Erreur de chargement !";
+    }
 }
 
 function declencherVictoire() {
-    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg').play();
+    new Audio('https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/25.ogg').play().catch(()=>{});
     let duration = 15000, end = Date.now() + duration;
     let interval = setInterval(() => {
         if (Date.now() > end) return clearInterval(interval);
@@ -65,36 +92,59 @@ function declencherVictoire() {
 function validerPokemon(idPokemon, formes, nomSaisi) {
     const box = document.getElementById("box-" + idPokemon);
     if (!box.classList.contains('trouve')) {
-        box.classList.remove('rate'); box.classList.add('trouve');
-        scoreActuel++; scoreText.innerText = scoreActuel; pokemonsTrouves.push(idPokemon);
+        box.classList.remove('rate');
+        box.classList.add('trouve');
+        scoreActuel++;
+        scoreText.innerText = scoreActuel;
+        pokemonsTrouves.push(idPokemon);
+
         let cri = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`);
-        cri.volume = 0.5; cri.play().catch(e => {}); 
+        cri.volume = 0.5; cri.play().catch(()=>{});
+
         box.innerHTML = `<img id="img-${idPokemon}" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idPokemon}.png"><span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${nomSaisi}</span>`;
-        
+
         if (formes.length > 1) {
-            let index = 0; setInterval(() => {
+            let index = 0;
+            setInterval(() => {
                 let img = document.getElementById(`img-${idPokemon}`);
-                if (img) { index = (index + 1) % formes.length; img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formes[index]}.png`; }
+                if (img) {
+                    index = (index + 1) % formes.length;
+                    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formes[index]}.png`;
+                }
             }, 10000);
         }
-        
-        if (scoreActuel === 151) { clearInterval(timerInterval); input.disabled = true; input.placeholder = "INCROYABLE ! FINI !"; declencherVictoire(); }
+
+        if (scoreActuel === 151) {
+            clearInterval(timerInterval);
+            input.disabled = true;
+            input.placeholder = "INCROYABLE ! FINI !";
+            declencherVictoire();
+        }
     }
 }
 
 input.addEventListener('input', (e) => {
     startTimer();
     const texte = normaliserTexte(e.target.value);
-    
+
     if (texte === "nidoran") {
-        const pF = Object.values(pokemonsData).find(p => p.id === 29), pM = Object.values(pokemonsData).find(p => p.id === 32);
+        const pF = Object.values(pokemonsData).find(p => p.id === 29);
+        const pM = Object.values(pokemonsData).find(p => p.id === 32);
         if (pF && !pokemonsTrouves.includes(29)) validerPokemon(29, pF.formes, pF.vraiNom);
         if (pM && !pokemonsTrouves.includes(32)) validerPokemon(32, pM.formes, pM.vraiNom);
-        e.target.value = ""; return;
+        e.target.value = "";
+        return;
     }
-    
-    if (pokemonsData[texte] && !pokemonsTrouves.includes(pokemonsData[texte].id)) {
-        validerPokemon(pokemonsData[texte].id, pokemonsData[texte].formes, pokemonsData[texte].vraiNom); e.target.value = "";
+
+    if (pokemonsData[texte]) {
+        const idPokemon = pokemonsData[texte].id;
+        const formes = pokemonsData[texte].formes;
+        const box = document.getElementById("box-" + idPokemon);
+
+        if (!box.classList.contains('trouve')) {
+            validerPokemon(idPokemon, formes, pokemonsData[texte].vraiNom);
+            e.target.value = "";
+        }
     }
 });
 
@@ -102,19 +152,26 @@ document.getElementById('btn-ombre').addEventListener('click', () => {
     startTimer();
     for (let i = 1; i <= 151; i++) {
         let box = document.getElementById("box-" + i);
-        if (!box.classList.contains('trouve') && !box.classList.contains('rate')) { box.innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i}.png">`; }
+        if (!box.classList.contains('trouve') && !box.classList.contains('rate')) {
+            box.innerHTML = `<img class="ombre" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i}.png">`;
+        }
     }
     document.getElementById('btn-ombre').disabled = true;
 });
 
 document.getElementById('btn-abandon').addEventListener('click', () => {
     if (confirm("Voulez-vous vraiment abandonner et révéler les réponses ?")) {
-        clearInterval(timerInterval); input.disabled = true; input.placeholder = "Quiz terminé !";
+        clearInterval(timerInterval);
+        input.disabled = true;
+        input.placeholder = "Quiz terminé !";
         for (let i = 1; i <= 151; i++) {
             if (!pokemonsTrouves.includes(i)) {
-                let box = document.getElementById("box-" + i); box.classList.add('rate');
+                let box = document.getElementById("box-" + i);
+                box.classList.add('rate');
                 let vraiNom = "Inconnu";
-                for (let key in pokemonsData) { if (pokemonsData[key].id === i) vraiNom = pokemonsData[key].vraiNom; }
+                for (let key in pokemonsData) {
+                    if (pokemonsData[key].id === i) vraiNom = pokemonsData[key].vraiNom;
+                }
                 box.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i}.png"><span style="font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: white;">${vraiNom}</span>`;
             }
         }
